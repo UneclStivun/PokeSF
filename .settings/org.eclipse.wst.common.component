@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-    <wb-module deploy-name="PokemonStrategyFinder">
+        
+    <wb-module deploy-name="PokeSF">
+                
         <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
+                
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
-        <property name="context-root" value="PokemonStrategyFinder"/>
-        <property name="java-output-path" value="/PokemonStrategyFinder/build/classes"/>
+                
+        <property name="java-output-path" value="/PokeSF/build/classes"/>
+        <property name="context-root" value="PokeSF"/>
+            
     </wb-module>
+    
 </project-modules>
