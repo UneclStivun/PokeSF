@@ -3,8 +3,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-1">
-<title>Pokemon Finder</title>
+	<meta charset="ISO-8859-1">
+	<title>Pokemon Finder</title>
 </head>
 <body>
 

@@ -4,9 +4,14 @@
 <html>
 <head>
 	<meta charset="ISO-8859-1">
-	<title>Insert title here</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">	
+	<title>Delete Pokemon</title>
 </head>
 <body>
-
+	Select Pokemon to delete.<br>
+	<br>
+	Do you want to delete this Pokemon?
+	<br>
+<button class="btn btn-danger">Delete</button>
 </body>
 </html>
