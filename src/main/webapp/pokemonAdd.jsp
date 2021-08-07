@@ -4,12 +4,18 @@
 <html>
 <head>
 	<meta charset="ISO-8859-1">
+	
+	<!--  Bootstrap -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	 
+	<!-- Ajax -->
+	<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+	
 	<title>Add Pokemon</title>
 </head>
 <body>
-	<form method="post" action="">
-		<input type="text" class="form-control" placeholder="Pokemon Name">
+	<form id="formoid" method="post" action="ServletPokemonAdd">
+		<input type="text" class="form-control" placeholder="Pokemon Name" name="pokemon_name">
 		<br>
 		<label>Pokemon Type 1:</label>
 		<select name="pokemon_type_1">
@@ -30,7 +36,8 @@
 			<option value="dragon">Dragon</option>		
 		</select>
 		<label style="margin-left: 5em">Pokemon Type 2:</label>
-		<select name="pokemon_type_1">
+		<select name="pokemon_type_2">
+			<option value="null">-</option>
 			<option value="normal">Normal</option>
 			<option value="fire">Fire</option>
 			<option value="water">Water</option>
@@ -48,17 +55,17 @@
 			<option value="dragon">Dragon</option>		
 		</select>
 		<br><br>
-		<input type="number" min="1" max="255" class="form-control" placeholder="Pokemon Hit Points (min:1 max:255) ">
+		<input type="number" min="1" max="255" class="form-control" placeholder="Pokemon Hit Points (min:1 max:255)" name="pokemon_hp">
 		<br>
-		<input type="number" min="1" max="200" class="form-control" placeholder="Pokemon Attack Value (min:1 max:200)">
+		<input type="number" min="1" max="200" class="form-control" placeholder="Pokemon Attack Value (min:1 max:200)" name="pokemon_attack">
 		<br>
-		<input type="number" min="1" max="250" class="form-control" placeholder="Pokemon Defense Value (min:1 max:250)">
+		<input type="number" min="1" max="250" class="form-control" placeholder="Pokemon Defense Value (min:1 max:250)" name="pokemon_defense">
 		<br>
-		<input type="number" min="1" max="200" class="form-control" placeholder="Pokemon Special Attack Value (min:1 max:200)">
+		<input type="number" min="1" max="200" class="form-control" placeholder="Pokemon Special Attack Value (min:1 max:200)" name="pokemon_specialattack">
 		<br>
-		<input type="number" min="1" max="250" class="form-control" placeholder="Pokemon Special Defense Value (min:1 max:250)">
+		<input type="number" min="1" max="250" class="form-control" placeholder="Pokemon Special Defense Value (min:1 max:250)" name="pokemon_specialdefense">
 		<br>
-		<input type="number" min="1" max="200" class="form-control" placeholder="Pokemon Speed Value (min:1 max:200)">
+		<input type="number" min="1" max="200" class="form-control" placeholder="Pokemon Speed Value (min:1 max:200)" name="pokemon_speed">
 		<br>
 		<label>Pokemon Attack Type 1</label>
 		<select name="pokemon_attack_type_1">
@@ -159,7 +166,10 @@
 			<option value="status">Status</option>
 		</select>
 		<br><br>
-		<button class="btn btn-primary" type="submit">Add this Pokemon</button>		
+		<button class="btn btn-primary" type="submit">Add this pokemon</button>		
 	</form>
+	
+	<br>
+	<p class="font-weight-italic" style="color:red;">${message }</p>
 </body>
 </html>
