@@ -3,6 +3,7 @@ package pokemon;
 import java.io.IOException;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class ServletPokemonAdd
  */
+@WebServlet("/ServletPokemonAdd")
 public class ServletPokemonAdd extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -68,10 +70,23 @@ public class ServletPokemonAdd extends HttpServlet {
 			pokemon_specialattack = Integer.parseInt(request.getParameter("pokemon_specialattack"));
 			pokemon_specialdefense = Integer.parseInt(request.getParameter("pokemon_specialdefense"));
 			pokemon_speed = Integer.parseInt(request.getParameter("pokemon_speed"));
+			pokemon_attack_type_1 = request.getParameter("pokemon_attack_type_1");
+			pokemon_attack_type_2 = request.getParameter("pokemon_attack_type_2");
+			pokemon_attack_type_3 = request.getParameter("pokemon_attack_type_3");	
+			pokemon_attack_type_4 = request.getParameter("pokemon_attack_type_4");
+			pokemon_attack_class_1 = request.getParameter("pokemon_attack_class_1");
+			pokemon_attack_class_2 = request.getParameter("pokemon_attack_class_2");
+			pokemon_attack_class_3 = request.getParameter("pokemon_attack_class_3");
+			pokemon_attack_class_4 = request.getParameter("pokemon_attack_class_4");
 			
+			// Wenn zwei mal der gleiche Typ angegeben, gebe entsprechende Meldung zurück
 			if(pokemon_type_1.equals(pokemon_type_2)) {
-				System.out.println("Es wurde zwei Mal der gleiche Typ angegeben!");
+				request.setAttribute("message", "A pokemon can't have the same type twice.");
+				request.getRequestDispatcher("pokemonAdd.jsp").forward(request, response);
 			}
+			
+			// Füge Pokemon der Datenbank hinzu
+			pokemonToDatabase();
 			
 			// Gebe Nachricht mit Nutzereingaben als Besätigung zurück
 			request.setAttribute("message", "The following pokemon was added to the database:"
@@ -79,10 +94,15 @@ public class ServletPokemonAdd extends HttpServlet {
 			+ "<br>Attack: " + pokemon_attack + "<br>Defense: " + pokemon_defense + "<br>Specialattack: " + pokemon_specialattack
 			+ "<br>Specialdefense: " + pokemon_specialdefense + "<br>Speed: " + pokemon_speed);
 			
-		//Wenn nicht alle Felder gefüllt, gebe entsprechende Nachricht zurück
+		// Wenn nicht alle Felder gefüllt, gebe entsprechende Nachricht zurück
 		} else {
 			request.setAttribute("message", "Please fill in all empty fields");
 		}
 		request.getRequestDispatcher("pokemonAdd.jsp").forward(request, response);
+	}
+	
+	// Methode um Pokemon in die Datenbank einzutragen
+	private void pokemonToDatabase() {
+		
 	}
 }
