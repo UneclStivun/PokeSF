@@ -1,7 +1,9 @@
 package pokemon;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
+import database.DatabaseManipulator;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -33,7 +35,7 @@ public class ServletPokemonAdd extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
-		
+
 		String pokemon_name;
 		String pokemon_type_1;
 		String pokemon_type_2;
@@ -85,8 +87,18 @@ public class ServletPokemonAdd extends HttpServlet {
 				request.getRequestDispatcher("pokemonAdd.jsp").forward(request, response);
 			}
 			
-			// Füge Pokemon der Datenbank hinzu
-			pokemonToDatabase();
+			// Instanz von DatabaseManipulator wird erstellt
+			// Der Methode addPokemonToDatabase aus DatabaseManipulator werden die Pokemondaten übergeben
+			DatabaseManipulator dmPokemonDatabase = new DatabaseManipulator();
+			try {
+				dmPokemonDatabase.addPokemonToDatabase(pokemon_name, pokemon_type_1, pokemon_type_2, pokemon_hp,
+						pokemon_attack, pokemon_defense, pokemon_specialattack, pokemon_specialdefense, pokemon_speed,
+						pokemon_attack_type_1,pokemon_attack_type_2, pokemon_attack_type_3, pokemon_attack_type_4,
+						pokemon_attack_class_1, pokemon_attack_class_2, pokemon_attack_class_3, pokemon_attack_class_4);
+			} catch (SQLException e) {
+				e.printStackTrace();
+				response.sendRedirect("pokemonAdd.jsp");
+			}
 			
 			// Gebe Nachricht mit Nutzereingaben als Besätigung zurück
 			request.setAttribute("message", "The following pokemon was added to the database:"
@@ -98,11 +110,7 @@ public class ServletPokemonAdd extends HttpServlet {
 		} else {
 			request.setAttribute("message", "Please fill in all empty fields");
 		}
-		request.getRequestDispatcher("pokemonAdd.jsp").forward(request, response);
-	}
-	
-	// Methode um Pokemon in die Datenbank einzutragen
-	private void pokemonToDatabase() {
 		
+		request.getRequestDispatcher("pokemonAdd.jsp").forward(request, response);
 	}
 }

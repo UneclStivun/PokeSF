@@ -1,8 +1,11 @@
 package userManagement;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
+import database.DatabaseManipulator;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,7 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class ServletRegistUser
  */
-//@WebServlet("/ServletRegistUser")
+@WebServlet("/ServletRegistUser")
 public class ServletRegistUser extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -40,14 +43,36 @@ public class ServletRegistUser extends HttpServlet {
 		// Prüfen ob alle Formularfelder ausgefüllt wurden
 		if(!request.getParameter("user_name").isEmpty() && !request.getParameter("user_password").isEmpty()
 				&& !request.getParameter("user_email").isEmpty()) {
+			
+			// Wenn alle Felder gefüllt wurden, setze die Werte
 			user_name = request.getParameter("user_name");
 			user_password = request.getParameter("user_password");
 			user_email = request.getParameter("user_email");
 			
-			System.out.println(user_name + " ist nun mit der Email " + user_email + " angemeldet.");
+			//// PASSWORT UMWANDELN /////
+			
+			// Instanz von DatabaseManipulator wird erstellt
+			// Der Methode addUserToDatabase aus DatabaseManipulator werden die Nutzerdaten übergeben
+			DatabaseManipulator dmUserDatabase = new DatabaseManipulator();
+			
+			try {
+				// Überprüfe, ob die Email einmalig ist
+				// Wenn Email einmalig, füge Nutzer der Datenbank hinzu
+				// Falls Email bereits vorhanden, gebe entsprechende Meldung zurück
+				if(dmUserDatabase.emailIsUnique(user_email)) {
+					dmUserDatabase.addUserToDatabase(user_name, user_password, user_email);
+					request.setAttribute("message", "User " + user_name + " was created");
+				} else {
+					request.setAttribute("message", "The email address is already in use");
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+				request.setAttribute("message", "Something went wrong. Please try again");
+			}
 		} else {
-			response.sendRedirect("register.html");
+			request.setAttribute("message", "Please fill in all empty fields");
 		}
+		
+		request.getRequestDispatcher("registUser.jsp").forward(request, response);
 	}
-
 }

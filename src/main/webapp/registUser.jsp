@@ -18,6 +18,9 @@
 	    	<input type="email" name="user_email" class="form-control" placeholder="Please enter your email address">
 	 	</div>	  
 	  	<button type="submit" class="btn btn-primary">Register</button>
-</form>
+	</form>
+	
+	<br>
+	<p class="font-weight-italic" style="color:red;">${message }</p>
 </body>
 </html>
