@@ -5,7 +5,10 @@ import de.dfki.mycbr.core.DefaultCaseBase;
 import de.dfki.mycbr.core.Project;
 import de.dfki.mycbr.core.model.Concept;
 import de.dfki.mycbr.core.model.IntegerDesc;
+import de.dfki.mycbr.core.model.StringDesc;
 import de.dfki.mycbr.core.similarity.IntegerFct;
+import de.dfki.mycbr.core.similarity.config.NumberConfig;
+
 
 public class CaseBaseLoader_Pokemon {
 	//Membervariables
@@ -30,9 +33,6 @@ public class CaseBaseLoader_Pokemon {
 	
 	private IntegerFct iniFct;
 	
-	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	//Es fehlen noch Similarities für Typen und damit verbundene Schwächen/Stärken
-	//ToDo: Eigene Funktionen
 	public CaseBaseLoader_Pokemon(DatabaseManipulator dbm) {
 		this.dbm = dbm;
 	}
@@ -63,8 +63,37 @@ public class CaseBaseLoader_Pokemon {
 			//Specialdefense value
 			IntegerDesc spDef = new IntegerDesc(concept, "SpecialDefense", 1, 200);
 			
+			//Pokemontype 1
+			StringDesc pkType1 = new StringDesc(concept, "Pokemontype1");
 			
+			//Pokemontype 2
+			StringDesc pkType2 = new StringDesc(concept, "Pokemontype2");
 			
+			//Name of the Pokemon
+			StringDesc pkName = new StringDesc(concept, "Pokemonname");
+			
+			//Set all IntegerFunctions
+			hpFct = hp.addIntegerFct("HPFct", true);
+			hpFct.setFunctionTypeL(NumberConfig.POLYNOMIAL_WITH);
+			hpFct.setFunctionTypeR(NumberConfig.POLYNOMIAL_WITH);
+			
+			attFct = att.addIntegerFct("AttackFct", true);
+			attFct.setFunctionTypeL(NumberConfig.POLYNOMIAL_WITH);
+			attFct.setFunctionTypeR(NumberConfig.POLYNOMIAL_WITH);
+			
+			spAttFct = spAtt.addIntegerFct("SpecialAttackFct", true);
+			spAttFct.setFunctionTypeL(NumberConfig.POLYNOMIAL_WITH);
+			spAttFct.setFunctionTypeR(NumberConfig.POLYNOMIAL_WITH);
+			
+			defFct = def.addIntegerFct("DefenseFct", true);
+			defFct.setFunctionTypeL(NumberConfig.POLYNOMIAL_WITH);
+			defFct.setFunctionTypeR(NumberConfig.POLYNOMIAL_WITH);
+			
+			spDefFct = spDef.addIntegerFct("SpecialDefenseFct", true);
+			spDefFct.setFunctionTypeL(NumberConfig.POLYNOMIAL_WITH);
+			spDefFct.setFunctionTypeR(NumberConfig.POLYNOMIAL_WITH);
+			
+			cb = project.createDefaultCB("PokemonCB");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
