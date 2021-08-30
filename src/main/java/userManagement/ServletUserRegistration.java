@@ -11,16 +11,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class ServletRegistUser
+ * Servlet implementation class ServletuserRegistration
  */
-@WebServlet("/ServletRegistUser")
-public class ServletRegistUser extends HttpServlet {
+@WebServlet("/ServletUserRegistration")
+public class ServletUserRegistration extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
     /**
      * Default constructor. 
      */
-    public ServletRegistUser() {
+    public ServletUserRegistration() {
     }
 
 	/**
@@ -36,15 +36,15 @@ public class ServletRegistUser extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
 		
-		String user_name;
-		String user_password;
-		String user_email;
+		String user_name = "";
+		String user_password = "";
+		String user_email = "";
 		
 		// Prüfen ob alle Formularfelder ausgefüllt wurden
+		// Wenn alle Felder gefüllt wurden, setze die Werte, ansonsten entsprechende Meldung
 		if(!request.getParameter("user_name").isEmpty() && !request.getParameter("user_password").isEmpty()
 				&& !request.getParameter("user_email").isEmpty()) {
 			
-			// Wenn alle Felder gefüllt wurden, setze die Werte
 			user_name = request.getParameter("user_name");
 			user_password = request.getParameter("user_password");
 			user_email = request.getParameter("user_email");
@@ -52,11 +52,10 @@ public class ServletRegistUser extends HttpServlet {
 			//// PASSWORT UMWANDELN /////
 			
 			// Instanz von DatabaseManipulator wird erstellt
-			// Der Methode addUserToDatabase aus DatabaseManipulator werden die Nutzerdaten übergeben
 			DatabaseManipulator dmUserDatabase = new DatabaseManipulator();
 			
 			try {
-				// Überprüfe, ob die Email einmalig ist
+				// Überprüfe, ob die Email einmalig ist.
 				// Wenn Email einmalig, füge Nutzer der Datenbank hinzu
 				// Falls Email bereits vorhanden, gebe entsprechende Meldung zurück
 				if(dmUserDatabase.emailIsUnique(user_email)) {
@@ -73,6 +72,10 @@ public class ServletRegistUser extends HttpServlet {
 			request.setAttribute("message", "Please fill in all empty fields");
 		}
 		
-		request.getRequestDispatcher("registUser.jsp").forward(request, response);
+		// Setze eine Session
+		new ServletUserSession(request, user_name, user_email, "user");
+		
+		// Führe zurück zur Seite der Registrierung
+		request.getRequestDispatcher("userRegistration.jsp").forward(request, response);
 	}
 }

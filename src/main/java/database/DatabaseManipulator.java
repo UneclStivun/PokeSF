@@ -15,12 +15,11 @@ public class DatabaseManipulator {
 		this.con = DatabaseConnector.getConnection();
 	}
 	
-	// Methode zum Überprüfen, ob die Email einmalig ist
+	//==== Methode zum Überprüfen, ob die Email einmalig ist ====//
 	public boolean emailIsUnique(String user_email) throws SQLException {
-			
 		boolean emailIsUnique = false;
 			
-		// Erstelle Query um gleiche Mailszu filtern
+		// Erstelle Query, um gleiche Mails zu filtern
 		String queryGetMail = "SELECT email FROM account WHERE email ILIKE ?";
 		PreparedStatement pStmntGetMail = con.prepareStatement(queryGetMail);
 			
@@ -35,10 +34,56 @@ public class DatabaseManipulator {
 		
 		return emailIsUnique;
 	}
+	
+	//==== Methode zum Überprüfen, ob User vorhanden ist ====//
+	public boolean userExists(String user_email, String user_password) throws SQLException {
+		boolean userExists = false;
 		
-	// Methode zum Hinzufügen eines Nutzers in die Datenbank
+		// Erstelle Query, um User aus der Datenbank zu suchen
+		String queryGetUser = "SELECT email FROM account WHERE email = ? AND password = ?";	
+		PreparedStatement pStmntGetUser = con.prepareStatement(queryGetUser);
+		
+		// Der Query wird die Email und das Passwort angehängt
+		pStmntGetUser.setString(1, user_email);
+		pStmntGetUser.setString(2, user_password);
+		
+		// Query wird ausgeführt und es wird geprüft, ob ein Ergebnis zurückkommt
+		// Falls ein Ergebnis geliefert wird, ist Kombination von Email und Passwort gültig
+		if (pStmntGetUser.executeQuery().next()) {
+			userExists = true;
+		}
+		
+		return userExists;
+	}
+	
+	//==== Methode zum Einholen der Nutzerdaten ====//
+	public ArrayList<String[]> getUserData(String user_email) throws SQLException {
+		ArrayList<String[]> userData = new ArrayList<String[]>();
+		
+		// Erstelle Query, um Nutzerdaten eines Nutzers zu erhalten
+		String queryGetUserData = "SELECT username, password, email, role FROM account WHERE email = ?";
+		PreparedStatement pStmntGetUserData = con.prepareStatement(queryGetUserData);
+		
+		// Der Query wird die Email des Nutzers angehängt
+		pStmntGetUserData.setString(1, user_email);
+		
+		// Query wird ausgeführt und die Ergebnisse werden in einem Array gespeichert
+		// Das Array wird zur Rückgabe in einer ArrayList gespeichert
+		ResultSet uds = pStmntGetUserData.executeQuery();
+		
+		while(uds.next()) {
+			String[] s = {uds.getString(1), uds.getString(2), uds.getString(3), uds.getString(4)};
+			userData.add(s);
+		}
+		
+		// Datenbankverbindung wird geschlossen
+		con.close();
+		
+		return userData;
+	}
+		
+	//==== Methode zum Hinzufügen eines Nutzers in die Datenbank ====//
 	public void addUserToDatabase(String user_name, String user_password, String user_email) throws SQLException {
-		
 		// Erstelle Query zum Hinzufügen eines Nutzers in die Datenbank
 		String queryAddUser = "INSERT INTO account values (?,?,?,?)";
 		PreparedStatement pStmntAddUser = con.prepareStatement(queryAddUser);
@@ -56,7 +101,7 @@ public class DatabaseManipulator {
 		con.close();
 	}
 	
-	// Methode zum Hinzufügen von Pokemon in die Datenbank
+	//==== Methode zum Hinzufügen von Pokemon in die Datenbank ====//
 	public void addPokemonToDatabase(String pokemon_name, String pokemon_type_1, String pokemon_type_2,
 			int pokemon_hp, int pokemon_attack, int pokemon_defense, int pokemon_specialattack,
 			int pokemon_specialdefense, int pokemon_speed, String pokemon_attack_type_1,
