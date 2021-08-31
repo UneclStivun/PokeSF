@@ -5,6 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
+
+import pokemon.Pokemon;
 
 public class DatabaseManipulator {
 	// Klassenvariablen
@@ -138,5 +141,33 @@ public class DatabaseManipulator {
 		
 		// Datenbankverbindung wird geschlossen
 		con.close();
+	}
+	
+	//Method for pulling all Pokemonobjects from database
+	//returns List of pokemon
+	public List<Pokemon> getPokemonFromDatabase() {
+		List<Pokemon> pokemonList = new ArrayList<Pokemon>();
+		ResultSet rs;
+		
+		//Create Query3
+		String query = "SELECT * FROM Pokemon where validation = true";
+		
+		try {
+			PreparedStatement pstat = con.prepareStatement(query);
+			rs = pstat.executeQuery();
+			
+			if(rs.next()) {
+				//Create pokemon object from database
+				Pokemon pokemon = new Pokemon(rs.getString(0), rs.getString(1), rs.getString(2),
+						rs.getInt(3), rs.getInt(4), rs.getInt(5), rs.getInt(6), rs.getInt(7), rs.getInt(8));
+				//Add attacks to pokemon
+				pokemon.translateAttacksFromDB(rs.getString(9));
+				pokemonList.add(pokemon);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return pokemonList;
 	}
 }

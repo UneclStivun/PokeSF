@@ -1,5 +1,7 @@
 package pokemon;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +31,25 @@ public class Pokemon {
 	
 	private List<Attack> attacks;
 	
+	private String ail1;
+	
+	private String ail2;
+	
+	public Pokemon(String name, String type1, String type2,
+			int hitpoints, int attack, int defense, int spAttack,
+			int spDefense, int initiative, List<Attack> attacks) {
+		this.name = name;
+		this.type1 = type1;
+		this.type2 = type2;
+		this.hitpoints = hitpoints;
+		this.attack = attack;
+		this.defense = defense;
+		this.spDefense = spDefense;
+		this.spAttack = spAttack;
+		this.initiative = initiative;
+		this.attacks = attacks;
+	}
+	
 	public Pokemon(String name, String type1, String type2,
 			int hitpoints, int attack, int defense, int spAttack,
 			int spDefense, int initiative) {
@@ -41,6 +62,35 @@ public class Pokemon {
 		this.spDefense = spDefense;
 		this.spAttack = spAttack;
 		this.initiative = initiative;
+	}
+	
+	//translate DB result to Attacklist
+	public void translateAttacksFromDB(String attacksS) {
+		//Split all attacks into their own list entries
+		List<String> attackList = new ArrayList<>(Arrays.asList(attacksS.split(";")));
+		//Iterate through each attack to split into components of attack
+	      for(int i = 0; i < attackList.size(); i++) {
+	          List<String> att = new ArrayList<>(Arrays.asList(attackList.get(i)
+	        		  .substring(1, attackList.get(i).length() - 1).replaceAll(" ","").split(",")));
+	          //create Attack object and add to Pokemon // might be unstable further chekcs needed
+	          Attack attack = new Attack(att.get(0), att.get(1), Integer.parseInt(att.get(2)), att.get(3), att.get(4));
+	          attacks.add(attack);
+	      }
+	}
+	
+	//Transform attacklist into string for casebase and database
+	public String attackListToString() {
+		String attacksS = "";
+		for(int i = 0; i < attacks.size(); i++) {
+			attacksS += "{";
+			attacksS += attacks.get(i).getAttacktype() + ",";
+			attacksS += attacks.get(i).getStatus() + ",";
+			attacksS += attacks.get(i).getDmg() + ",";
+			attacksS += attacks.get(i).getAilment1() + ",";
+			attacksS += attacks.get(i).getAilment2() + "},";
+		}
+		//return without the last commata
+		return attacksS.substring(0, attacksS.length() -1);
 	}
 	
 	//Getter Setter methods

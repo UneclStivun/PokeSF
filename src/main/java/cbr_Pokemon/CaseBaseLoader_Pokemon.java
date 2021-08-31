@@ -1,13 +1,17 @@
 package cbr_Pokemon;
 
+import java.util.List;
+
 import database.DatabaseManipulator;
 import de.dfki.mycbr.core.DefaultCaseBase;
 import de.dfki.mycbr.core.Project;
+import de.dfki.mycbr.core.casebase.Instance;
 import de.dfki.mycbr.core.model.Concept;
 import de.dfki.mycbr.core.model.IntegerDesc;
 import de.dfki.mycbr.core.model.StringDesc;
 import de.dfki.mycbr.core.similarity.IntegerFct;
 import de.dfki.mycbr.core.similarity.config.NumberConfig;
+import pokemon.Pokemon;
 
 
 public class CaseBaseLoader_Pokemon {
@@ -72,6 +76,9 @@ public class CaseBaseLoader_Pokemon {
 			//Name of the Pokemon
 			StringDesc pkName = new StringDesc(concept, "Pokemonname");
 			
+			//Pokemonattacks
+			StringDesc pkAttacks = new StringDesc(concept, "PokemonAttacks");
+			
 			//Set all IntegerFunctions
 			hpFct = hp.addIntegerFct("HPFct", true);
 			hpFct.setFunctionTypeL(NumberConfig.POLYNOMIAL_WITH);
@@ -101,5 +108,116 @@ public class CaseBaseLoader_Pokemon {
 		}
 		
 		return success;
+	}
+	
+	public boolean loadCasesFromDb() {
+		boolean success = true;
+		//fill List via Database
+		List<Pokemon> pokemons = dbm.getPokemonFromDatabase();
+		
+		//loop through list to add Pokemon to casebase
+		for(int i = 0; i < pokemons.size(); i++) {
+			try {
+				//Pokemonname with Instance
+				Instance inst = concept.addInstance(pokemons.get(i).getName());
+				
+				//adding attributes
+				inst.addAttribute("Hitpoints", pokemons.get(i).getHitpoints());
+				inst.addAttribute("Attack", pokemons.get(i).getAttack());
+				inst.addAttribute("SpecialAttack", pokemons.get(i).getSpAttack());
+				inst.addAttribute("Defense", pokemons.get(i).getDefense());
+				inst.addAttribute("SpecialDefense", pokemons.get(i).getSpDefense());
+				inst.addAttribute("Pokemontype1", pokemons.get(i).getType1());
+				inst.addAttribute("Pokemontype2", pokemons.get(i).getType2());
+				inst.addAttribute("Pokemonname", pokemons.get(i).getName());
+				inst.addAttribute("PokemonAttacks", pokemons.get(i).attackListToString());
+				// add Instance to casebase
+				cb.addCase(inst);
+			} catch (Exception e) {
+				// TODO: handle exception
+				success = false;
+			}
+		}			
+		return success;
+	}
+
+	public Project getProject() {
+		return project;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
+	}
+
+	public Concept getConcept() {
+		return concept;
+	}
+
+	public void setConcept(Concept concept) {
+		this.concept = concept;
+	}
+
+	public DefaultCaseBase getCb() {
+		return cb;
+	}
+
+	public void setCb(DefaultCaseBase cb) {
+		this.cb = cb;
+	}
+
+	public DatabaseManipulator getDbm() {
+		return dbm;
+	}
+
+	public void setDbm(DatabaseManipulator dbm) {
+		this.dbm = dbm;
+	}
+
+	public IntegerFct getHpFct() {
+		return hpFct;
+	}
+
+	public void setHpFct(IntegerFct hpFct) {
+		this.hpFct = hpFct;
+	}
+
+	public IntegerFct getAttFct() {
+		return attFct;
+	}
+
+	public void setAttFct(IntegerFct attFct) {
+		this.attFct = attFct;
+	}
+
+	public IntegerFct getSpAttFct() {
+		return spAttFct;
+	}
+
+	public void setSpAttFct(IntegerFct spAttFct) {
+		this.spAttFct = spAttFct;
+	}
+
+	public IntegerFct getDefFct() {
+		return defFct;
+	}
+
+	public void setDefFct(IntegerFct defFct) {
+		this.defFct = defFct;
+	}
+
+	public IntegerFct getSpDefFct() {
+		return spDefFct;
+	}
+
+	public void setSpDefFct(IntegerFct spDefFct) {
+		this.spDefFct = spDefFct;
+	}
+
+	public IntegerFct getIniFct() {
+		return iniFct;
+	}
+
+	public void setIniFct(IntegerFct iniFct) {
+		this.iniFct = iniFct;
 	}
 }
