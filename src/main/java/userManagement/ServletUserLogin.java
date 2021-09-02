@@ -54,12 +54,10 @@ public class ServletUserLogin extends HttpServlet {
 					
 					ArrayList<String[]> userData = dmUserDatabase.getUserData(user_email);
 					
-					// Setze eine Session
+					// Setze eine Session und führe zurück zur Startseite
 					new ServletUserSession(request, userData.get(0)[0], userData.get(0)[2], userData.get(0)[3]);
 					
-					// Führe zurück zur Startseite
-					response.sendRedirect("index.jsp");
-					
+					response.sendRedirect("index.jsp");					
 					return;
 				} else {
 					request.setAttribute("message", "The combination of entered "

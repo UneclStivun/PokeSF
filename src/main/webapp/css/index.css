@@ -1,5 +1,15 @@
 @charset "ISO-8859-1";
 
+body {
+	margin:0;
+	padding:0;
+	/*background-image: url(https://wallup.net/wp-content/uploads/2019/10/193263-pokemon-simple-background-748x468.png);*/
+	background-image: url(https://i.pinimg.com/originals/26/b5/55/26b5551ba10f013a335e91b98f530d51.png);
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: top;
+}
+
 .footer {
   background-color: rgba(200,200,200,0.8);  
   height: 85px; /* Höhe der div-Box */

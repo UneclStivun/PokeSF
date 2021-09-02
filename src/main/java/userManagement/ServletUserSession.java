@@ -42,7 +42,7 @@ public class ServletUserSession extends HttpServlet {
             if (action != null && action.equals("logout")) {
                 session.invalidate();
                 response.sendRedirect("index.jsp");
-                //return;
+                return;
             }
         } catch (Exception e) {
             System.out.println("Error: " + e.toString());

@@ -27,7 +27,7 @@ public class ServletPokemonAdd extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		response.getWriter().append("Something went wrong: ").append(request.getContextPath());
 	}
 
 	/**
@@ -53,6 +53,10 @@ public class ServletPokemonAdd extends HttpServlet {
 		String pokemon_attack_class_2;
 		String pokemon_attack_class_3;
 		String pokemon_attack_class_4;
+		String pokemon_attack_effect_1 = "";
+		String pokemon_attack_effect_2 = "";
+		String pokemon_attack_effect_3 = "";
+		String pokemon_attack_effect_4 = "";
 		
 		// Prüfen ob alle Formularfelder ausgefüllt wurden
 		if(!request.getParameter("pokemon_name").isEmpty() && !request.getParameter("pokemon_type_1").isEmpty() && !request.getParameter("pokemon_type_2").isEmpty()
@@ -81,11 +85,32 @@ public class ServletPokemonAdd extends HttpServlet {
 			pokemon_attack_class_3 = request.getParameter("pokemon_attack_class_3");
 			pokemon_attack_class_4 = request.getParameter("pokemon_attack_class_4");
 			
+			// Wenn Attacke eine Statusattacke ist, setze Effekt-Parameter
+			if(pokemon_attack_class_1.equals("status")) {
+				pokemon_attack_effect_1 = request.getParameter("effect1");
+			}
+			if(pokemon_attack_class_2.equals("status")) {
+				pokemon_attack_effect_2 = request.getParameter("effect2");
+			}
+			if(pokemon_attack_class_3.equals("status")) {
+				pokemon_attack_effect_3 = request.getParameter("effect3");
+			}
+			if(pokemon_attack_class_4.equals("status")) {
+				pokemon_attack_effect_4 = request.getParameter("effect4");
+			}
+			
 			// Wenn zwei mal der gleiche Typ angegeben, gebe entsprechende Meldung zurück
 			if(pokemon_type_1.equals(pokemon_type_2)) {
 				request.setAttribute("message", "A pokemon can't have the same type twice.");
 				request.getRequestDispatcher("pokemonAdd.jsp").forward(request, response);
 			}
+			
+			
+			Pokemon pokemonObject = new Pokemon(pokemon_name, pokemon_type_1, pokemon_type_2, 
+					pokemon_hp, pokemon_attack, pokemon_defense, pokemon_specialattack,
+					pokemon_specialdefense, pokemon_speed);
+			
+			//Attack pokemonObjectAttack_1 = new Attack(pokemon_attack_type);
 			
 			// Instanz von DatabaseManipulator wird erstellt
 			// Der Methode addPokemonToDatabase aus DatabaseManipulator werden die Pokemondaten übergeben
@@ -98,9 +123,10 @@ public class ServletPokemonAdd extends HttpServlet {
 			} catch (SQLException e) {
 				e.printStackTrace();
 				response.sendRedirect("pokemonAdd.jsp");
+				return;
 			}
 			
-			// Gebe Nachricht mit Nutzereingaben als Besätigung zurück
+			// Gebe Nachricht mit Nutzereingaben als Bestätigung zurück
 			request.setAttribute("message", "The following pokemon was added to the database:"
 			+ "<br>Name: " + pokemon_name + "<br>Typ 1: " + pokemon_type_1 + "<br>Typ 2: " + pokemon_type_2 + "<br>Hit Points: " + pokemon_hp
 			+ "<br>Attack: " + pokemon_attack + "<br>Defense: " + pokemon_defense + "<br>Specialattack: " + pokemon_specialattack
