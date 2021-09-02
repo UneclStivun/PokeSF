@@ -1,7 +1,8 @@
 package userManagement;
 
 import java.io.IOException;
-
+import cbr_Pokemon.CaseBaseLoader_Pokemon;
+import database.DatabaseManipulator;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,6 +22,13 @@ public class ServletUserSession extends HttpServlet {
 	    session.setAttribute("user_name", user_name);
 	    session.setAttribute("user_email", user_email);
 	    session.setAttribute("user_role", user_role);
+	    
+	    //Erstelle CaseBaseLoader beim Erstellen der Session und übergebe diesen
+	    CaseBaseLoader_Pokemon cbl_p = new CaseBaseLoader_Pokemon(new DatabaseManipulator());
+	    session.setAttribute("cbl", cbl_p);
+	    session.setAttribute("cbr_p", cbl_p.getProject());
+	    session.setAttribute("cbr_c", cbl_p.getConcept());
+	    session.setAttribute("cbr_cb", cbl_p.getCb());
     }
     
     // Leerer Konstruktor für das Aufrufen aus nicht-Javaklassen
