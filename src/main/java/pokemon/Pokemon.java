@@ -37,21 +37,6 @@ public class Pokemon {
 	
 	public Pokemon(String name, String type1, String type2,
 			int hitpoints, int attack, int defense, int spAttack,
-			int spDefense, int initiative, List<Attack> attacks) {
-		this.name = name;
-		this.type1 = type1;
-		this.type2 = type2;
-		this.hitpoints = hitpoints;
-		this.attack = attack;
-		this.defense = defense;
-		this.spDefense = spDefense;
-		this.spAttack = spAttack;
-		this.initiative = initiative;
-		this.attacks = attacks;
-	}
-	
-	public Pokemon(String name, String type1, String type2,
-			int hitpoints, int attack, int defense, int spAttack,
 			int spDefense, int initiative) {
 		this.name = name;
 		this.type1 = type1;
@@ -62,6 +47,7 @@ public class Pokemon {
 		this.spDefense = spDefense;
 		this.spAttack = spAttack;
 		this.initiative = initiative;
+		this.attacks = new ArrayList<Attack>();
 	}
 	
 	//translate DB result to Attacklist
@@ -72,7 +58,7 @@ public class Pokemon {
 	      for(int i = 0; i < attackList.size(); i++) {
 	          List<String> att = new ArrayList<>(Arrays.asList(attackList.get(i)
 	        		  .substring(1, attackList.get(i).length() - 1).replaceAll(" ","").split(",")));
-	          //create Attack object and add to Pokemon // might be unstable further chekcs needed
+	          //create Attack object and add to Pokemon // might be unstable further checks needed
 	          Attack attack = new Attack(att.get(0), att.get(1), Integer.parseInt(att.get(2)), att.get(3), att.get(4));
 	          attacks.add(attack);
 	      }
@@ -87,7 +73,6 @@ public class Pokemon {
 			attacksS += attacks.get(i).getStatus() + ",";
 			attacksS += attacks.get(i).getDmg() + ",";
 			attacksS += attacks.get(i).getAilment1() + ",";
-			attacksS += attacks.get(i).getAilment2() + "},";
 		}
 		//return without the last commata
 		return attacksS.substring(0, attacksS.length() -1);

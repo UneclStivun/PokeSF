@@ -39,6 +39,11 @@ public class CaseBaseLoader_Pokemon {
 	
 	public CaseBaseLoader_Pokemon(DatabaseManipulator dbm) {
 		this.dbm = dbm;
+		
+		//if project gets created successfully load Cases from database
+		if(loadProject()) {
+			loadCasesFromDb();
+		}
 	}
 	
 	//Create a project
@@ -105,8 +110,7 @@ public class CaseBaseLoader_Pokemon {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			success = false;
-		}
-		
+		}	
 		return success;
 	}
 	

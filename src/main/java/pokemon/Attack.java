@@ -40,15 +40,11 @@ public class Attack {
 	//primary ailment
 	private String ailment1;
 	
-	//secondary ailment
-	private String ailment2;
-	
 	public Attack(String attacktype, String status, int dmg, String ailment1, String ailment2) {
 		this.attacktype = attacktype;
 		this.status = status;
 		this.dmg = dmg;
 		this.ailment1 = ailment1;
-		this.ailment2 = ailment2;
 	}
 
 	public String getAttacktype() {
@@ -81,13 +77,5 @@ public class Attack {
 
 	public void setAilment1(String ailment1) {
 		this.ailment1 = ailment1;
-	}
-
-	public String getAilment2() {
-		return ailment2;
-	}
-
-	public void setAilment2(String ailment2) {
-		this.ailment2 = ailment2;
 	}
 }
