@@ -28,4 +28,14 @@
     <servlet-name>ServletUserLogin</servlet-name>
     <url-pattern>/ServletUserLogin</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>ServletPokemonEdit</display-name>
+    <servlet-name>ServletPokemonEdit</servlet-name>
+    <servlet-class>pokemon.ServletPokemonEdit</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ServletPokemonEdit</servlet-name>
+    <url-pattern>/ServletPokemonEdit</url-pattern>
+  </servlet-mapping>
 </web-app>

@@ -20,6 +20,7 @@ public class DatabaseManipulator {
 	
 	//==== Methode zum Überprüfen, ob die Email einmalig ist ====//
 	public boolean emailIsUnique(String user_email) throws SQLException {
+		
 		boolean emailIsUnique = false;
 			
 		// Erstelle Query, um gleiche Mails zu filtern
@@ -40,6 +41,7 @@ public class DatabaseManipulator {
 	
 	//==== Methode zum Überprüfen, ob User vorhanden ist ====//
 	public boolean userExists(String user_email, String user_password) throws SQLException {
+		
 		boolean userExists = false;
 		
 		// Erstelle Query, um User aus der Datenbank zu suchen
@@ -61,6 +63,7 @@ public class DatabaseManipulator {
 	
 	//==== Methode zum Einholen der Nutzerdaten ====//
 	public ArrayList<String[]> getUserData(String user_email) throws SQLException {
+		
 		ArrayList<String[]> userData = new ArrayList<String[]>();
 		
 		// Erstelle Query, um Nutzerdaten eines Nutzers zu erhalten
@@ -87,6 +90,7 @@ public class DatabaseManipulator {
 		
 	//==== Methode zum Hinzufügen eines Nutzers in die Datenbank ====//
 	public void addUserToDatabase(String user_name, String user_password, String user_email) throws SQLException {
+		
 		// Erstelle Query zum Hinzufügen eines Nutzers in die Datenbank
 		String queryAddUser = "INSERT INTO account values (?,?,?,?)";
 		PreparedStatement pStmntAddUser = con.prepareStatement(queryAddUser);
@@ -105,36 +109,24 @@ public class DatabaseManipulator {
 	}
 	
 	//==== Methode zum Hinzufügen von Pokemon in die Datenbank ====//
-	public void addPokemonToDatabase(String pokemon_name, String pokemon_type_1, String pokemon_type_2,
-			int pokemon_hp, int pokemon_attack, int pokemon_defense, int pokemon_specialattack,
-			int pokemon_specialdefense, int pokemon_speed, String pokemon_attack_type_1,
-			String pokemon_attack_type_2, String pokemon_attack_type_3, String pokemon_attack_type_4,
-			String pokemon_attack_class_1, String pokemon_attack_class_2, String pokemon_attack_class_3,
-			String pokemon_attack_class_4) throws SQLException {
+	public void addPokemonToDatabase(Pokemon pokemonObject) throws SQLException {
 		
 		// Erstelle Query zum Hinzufügen eines Pokemons in die Datenbank
-		String queryAddPokemon = "INSERT INTO pokemon values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		String queryAddPokemon = "INSERT INTO pokemon values (?,?,?,?,?,?,?,?,?,?,?)";
 		PreparedStatement pStmntAddPokemon = con.prepareStatement(queryAddPokemon);
 		
 		// Der Query werden die Pokemon-Werte zugewiesen
-		pStmntAddPokemon.setString(1, pokemon_name);
-		pStmntAddPokemon.setString(2, pokemon_type_1);
-		pStmntAddPokemon.setString(3, pokemon_type_2);
-		pStmntAddPokemon.setInt(4, pokemon_hp);
-		pStmntAddPokemon.setInt(5, pokemon_attack);
-		pStmntAddPokemon.setInt(6, pokemon_defense);
-		pStmntAddPokemon.setInt(7, pokemon_specialattack);
-		pStmntAddPokemon.setInt(8, pokemon_specialdefense);
-		pStmntAddPokemon.setInt(9, pokemon_speed);
-		pStmntAddPokemon.setString(10, pokemon_attack_type_1);
-		pStmntAddPokemon.setString(11, pokemon_attack_type_2);
-		pStmntAddPokemon.setString(12, pokemon_attack_type_3);
-		pStmntAddPokemon.setString(13, pokemon_attack_type_4);
-		pStmntAddPokemon.setString(14, pokemon_attack_class_1);
-		pStmntAddPokemon.setString(15, pokemon_attack_class_2);
-		pStmntAddPokemon.setString(16, pokemon_attack_class_3);
-		pStmntAddPokemon.setString(17, pokemon_attack_class_4);
-		pStmntAddPokemon.setBoolean(18, false);
+		pStmntAddPokemon.setString(1, pokemonObject.getName());
+		pStmntAddPokemon.setString(2, pokemonObject.getType1());
+		pStmntAddPokemon.setString(3, pokemonObject.getType2());
+		pStmntAddPokemon.setInt(4, pokemonObject.getHitpoints());
+		pStmntAddPokemon.setInt(5, pokemonObject.getAttack());
+		pStmntAddPokemon.setInt(6, pokemonObject.getDefense());
+		pStmntAddPokemon.setInt(7, pokemonObject.getSpAttack());
+		pStmntAddPokemon.setInt(8, pokemonObject.getSpDefense());
+		pStmntAddPokemon.setInt(9, pokemonObject.getInitiative());
+		pStmntAddPokemon.setString(10, pokemonObject.attackListToString());
+		pStmntAddPokemon.setBoolean(11, false);
 		
 		// Query wird ausgeführt
 		pStmntAddPokemon.executeUpdate();
@@ -165,7 +157,6 @@ public class DatabaseManipulator {
 				pokemonList.add(pokemon);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return pokemonList;

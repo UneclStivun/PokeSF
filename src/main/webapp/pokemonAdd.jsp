@@ -108,12 +108,14 @@
 			<option disabled>Others</option>
 			<option value="heal">Healing</option>			
 			<option value="ref">Reflect</option>
-			<option value="ls">Light Screen</option>	
+			<option value="ls">Light Screen</option>
+			<option disabled>Buffs</option>	
 			<option value="ab">Attack Buff</option>
 			<option value="db">Defense Buff</option>
 			<option value="sab">Specialattack Buff</option>
 			<option value="sdb">Specialdefense Buff</option>
-			<option value="sb">Speed Boost</option>
+			<option value="sb">Speed Buff</option>
+			<option disabled>Debuffs</option>
 			<option value="ad">Attack Debuff</option>
 			<option value="dd">Defense Debuff</option>
 			<option value="sad">Specialattack Debuff</option>
@@ -160,12 +162,14 @@
 			<option disabled>Others</option>
 			<option value="heal">Healing</option>			
 			<option value="ref">Reflect</option>
-			<option value="ls">Light Screen</option>	
+			<option value="ls">Light Screen</option>
+			<option disabled>Buffs</option>	
 			<option value="ab">Attack Buff</option>
 			<option value="db">Defense Buff</option>
 			<option value="sab">Specialattack Buff</option>
 			<option value="sdb">Specialdefense Buff</option>
-			<option value="sb">Speed Boost</option>
+			<option value="sb">Speed Buff</option>
+			<option disabled>Debuffs</option>
 			<option value="ad">Attack Debuff</option>
 			<option value="dd">Defense Debuff</option>
 			<option value="sad">Specialattack Debuff</option>
@@ -212,12 +216,14 @@
 			<option disabled>Others</option>
 			<option value="heal">Healing</option>			
 			<option value="ref">Reflect</option>
-			<option value="ls">Light Screen</option>	
+			<option value="ls">Light Screen</option>
+			<option disabled>Buffs</option>	
 			<option value="ab">Attack Buff</option>
 			<option value="db">Defense Buff</option>
 			<option value="sab">Specialattack Buff</option>
 			<option value="sdb">Specialdefense Buff</option>
-			<option value="sb">Speed Boost</option>
+			<option value="sb">Speed Buff</option>
+			<option disabled>Debuffs</option>
 			<option value="ad">Attack Debuff</option>
 			<option value="dd">Defense Debuff</option>
 			<option value="sad">Specialattack Debuff</option>
@@ -264,12 +270,14 @@
 			<option disabled>Others</option>
 			<option value="heal">Healing</option>			
 			<option value="ref">Reflect</option>
-			<option value="ls">Light Screen</option>	
+			<option value="ls">Light Screen</option>
+			<option disabled>Buffs</option>	
 			<option value="ab">Attack Buff</option>
 			<option value="db">Defense Buff</option>
 			<option value="sab">Specialattack Buff</option>
 			<option value="sdb">Specialdefense Buff</option>
-			<option value="sb">Speed Boost</option>
+			<option value="sb">Speed Buff</option>
+			<option disabled>Debuffs</option>
 			<option value="ad">Attack Debuff</option>
 			<option value="dd">Defense Debuff</option>
 			<option value="sad">Specialattack Debuff</option>

@@ -53,13 +53,17 @@ public class ServletPokemonAdd extends HttpServlet {
 		String pokemon_attack_class_2;
 		String pokemon_attack_class_3;
 		String pokemon_attack_class_4;
+		int pokemon_attack_damage_1 = 100;
+		int pokemon_attack_damage_2 = 100;
+		int pokemon_attack_damage_3 = 100;
+		int pokemon_attack_damage_4 = 100;
 		String pokemon_attack_effect_1 = "";
 		String pokemon_attack_effect_2 = "";
 		String pokemon_attack_effect_3 = "";
 		String pokemon_attack_effect_4 = "";
 		
 		// Prüfen ob alle Formularfelder ausgefüllt wurden
-		if(!request.getParameter("pokemon_name").isEmpty() && !request.getParameter("pokemon_type_1").isEmpty() && !request.getParameter("pokemon_type_2").isEmpty()
+		if(!request.getParameter("pokemon_name").isEmpty() && !request.getParameter("pokemon_type_1").isEmpty()
 				&& !request.getParameter("pokemon_hp").isEmpty() && !request.getParameter("pokemon_attack").isEmpty() && !request.getParameter("pokemon_defense").isEmpty()
 				&& !request.getParameter("pokemon_specialattack").isEmpty() && !request.getParameter("pokemon_specialdefense").isEmpty() && !request.getParameter("pokemon_speed").isEmpty()
 				&& !request.getParameter("pokemon_attack_type_1").isEmpty() && !request.getParameter("pokemon_attack_type_2").isEmpty() && !request.getParameter("pokemon_attack_type_3").isEmpty()
@@ -85,17 +89,21 @@ public class ServletPokemonAdd extends HttpServlet {
 			pokemon_attack_class_3 = request.getParameter("pokemon_attack_class_3");
 			pokemon_attack_class_4 = request.getParameter("pokemon_attack_class_4");
 			
-			// Wenn Attacke eine Statusattacke ist, setze Effekt-Parameter
+			// Wenn Attacke eine Statusattacke ist, setze Effekt-Parameter und Schaden auf 0
 			if(pokemon_attack_class_1.equals("status")) {
+				pokemon_attack_damage_1 = 0;
 				pokemon_attack_effect_1 = request.getParameter("effect1");
 			}
 			if(pokemon_attack_class_2.equals("status")) {
+				pokemon_attack_damage_2 = 0;
 				pokemon_attack_effect_2 = request.getParameter("effect2");
 			}
 			if(pokemon_attack_class_3.equals("status")) {
+				pokemon_attack_damage_3 = 0;
 				pokemon_attack_effect_3 = request.getParameter("effect3");
 			}
 			if(pokemon_attack_class_4.equals("status")) {
+				pokemon_attack_damage_4 = 0;
 				pokemon_attack_effect_4 = request.getParameter("effect4");
 			}
 			
@@ -105,21 +113,26 @@ public class ServletPokemonAdd extends HttpServlet {
 				request.getRequestDispatcher("pokemonAdd.jsp").forward(request, response);
 			}
 			
+			// Erstellen von Attacken, welche dem Pokemonobjekt hinzugefügt werden
+			Attack pokemonObjectAttack_1 = new Attack(pokemon_attack_type_1, pokemon_attack_class_1, pokemon_attack_damage_1, pokemon_attack_effect_1);
+			Attack pokemonObjectAttack_2 = new Attack(pokemon_attack_type_2, pokemon_attack_class_2, pokemon_attack_damage_2, pokemon_attack_effect_2);
+			Attack pokemonObjectAttack_3 = new Attack(pokemon_attack_type_3, pokemon_attack_class_3, pokemon_attack_damage_3, pokemon_attack_effect_3);
+			Attack pokemonObjectAttack_4 = new Attack(pokemon_attack_type_4, pokemon_attack_class_4, pokemon_attack_damage_4, pokemon_attack_effect_4);
 			
-			Pokemon pokemonObject = new Pokemon(pokemon_name, pokemon_type_1, pokemon_type_2, 
+			// Erstellen eines Pokemonobjektes, welches der Datenbank hinzugefügt wird
+			Pokemon pokemonObject = new Pokemon(pokemon_name, pokemon_type_1, pokemon_type_2,
 					pokemon_hp, pokemon_attack, pokemon_defense, pokemon_specialattack,
 					pokemon_specialdefense, pokemon_speed);
 			
-			//Attack pokemonObjectAttack_1 = new Attack(pokemon_attack_type);
+			// Hinzufügen der Attackn zum Pokemonobjekt
+			pokemonObject.addAttacks(pokemonObjectAttack_1, pokemonObjectAttack_2, pokemonObjectAttack_3, pokemonObjectAttack_4);
 			
 			// Instanz von DatabaseManipulator wird erstellt
-			// Der Methode addPokemonToDatabase aus DatabaseManipulator werden die Pokemondaten übergeben
+			// Der Methode addPokemonToDatabase aus DatabaseManipulator wird das Pokemonobjekt übergeben
 			DatabaseManipulator dmPokemonDatabase = new DatabaseManipulator();
+			
 			try {
-				dmPokemonDatabase.addPokemonToDatabase(pokemon_name, pokemon_type_1, pokemon_type_2, pokemon_hp,
-						pokemon_attack, pokemon_defense, pokemon_specialattack, pokemon_specialdefense, pokemon_speed,
-						pokemon_attack_type_1,pokemon_attack_type_2, pokemon_attack_type_3, pokemon_attack_type_4,
-						pokemon_attack_class_1, pokemon_attack_class_2, pokemon_attack_class_3, pokemon_attack_class_4);
+				dmPokemonDatabase.addPokemonToDatabase(pokemonObject);
 			} catch (SQLException e) {
 				e.printStackTrace();
 				response.sendRedirect("pokemonAdd.jsp");

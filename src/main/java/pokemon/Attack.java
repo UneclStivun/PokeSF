@@ -2,7 +2,7 @@ package pokemon;
 
 //Funktion use Attack on Pokemon to calculate effects
 
-//Bei Attacken 10% Feuer, Elektro, Git, Eis
+//Bei Attacken 10% Feuer, Elektro, Gift, Eis
 	//	Paralysis 90% Wahrscheinlichkeit, Initative 1/2, 25% Chance dass Pokemon nicht angreifen kann
 	//	Frozen kann nur ausgewechselt werden ,20% Wahrscheinlichkeit Status entfernen 
 	//	Burn 1/8 Dmg bis Heilung
@@ -28,27 +28,23 @@ package pokemon;
 	//Attacken mit Debuff (Feuer, Eis, Gift, Elektro) geben mit wahrscheinlichkeit Debuff plus flat schaden
 
 public class Attack {
-	//Membervariables
+	// Membervariables
 	private String attacktype;
 	
-	//Status, Special, Physical 
-	private String status;
+	// Status, Special, Physical 
+	private String attackclass;
 	
-	//Schaden
+	// Damage
 	private int dmg;
 	
-	//primary ailment
-	private String ailment1;
+	// Effect of Attack
+	private String effect;
 	
-	//secondary ailment
-	private String ailment2;
-	
-	public Attack(String attacktype, String status, int dmg, String ailment1, String ailment2) {
+	public Attack(String attacktype, String attackclass, int dmg, String effect) {
 		this.attacktype = attacktype;
-		this.status = status;
+		this.attackclass = attackclass;
 		this.dmg = dmg;
-		this.ailment1 = ailment1;
-		this.ailment2 = ailment2;
+		this.effect = effect;
 	}
 
 	public String getAttacktype() {
@@ -59,12 +55,12 @@ public class Attack {
 		this.attacktype = attacktype;
 	}
 
-	public String getStatus() {
-		return status;
+	public String getAttackclass() {
+		return attackclass;
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
+	public void setAttackclass(String attackclass) {
+		this.attackclass = attackclass;
 	}
 
 	public int getDmg() {
@@ -74,20 +70,12 @@ public class Attack {
 	public void setDmg(int dmg) {
 		this.dmg = dmg;
 	}
-
-	public String getAilment1() {
-		return ailment1;
+	
+	public String getEffect() {
+		return effect;
 	}
 
-	public void setAilment1(String ailment1) {
-		this.ailment1 = ailment1;
-	}
-
-	public String getAilment2() {
-		return ailment2;
-	}
-
-	public void setAilment2(String ailment2) {
-		this.ailment2 = ailment2;
+	public void setEffect(String effect) {
+		this.effect = effect;
 	}
 }
