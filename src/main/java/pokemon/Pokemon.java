@@ -35,6 +35,8 @@ public class Pokemon {
 	
 	private String ail2;
 	
+	public Pokemon(){this.attacks = new ArrayList<Attack>();}
+	
 	public Pokemon(String name, String type1, String type2,
 			int hitpoints, int attack, int defense, int spAttack,
 			int spDefense, int initiative) {
@@ -66,8 +68,14 @@ public class Pokemon {
 	      for(int i = 0; i < attackList.size(); i++) {
 	          List<String> att = new ArrayList<>(Arrays.asList(attackList.get(i)
 	        		  .substring(1, attackList.get(i).length() - 1).replaceAll(" ","").split(",")));
-	          //create Attack object and add to Pokemon // might be unstable further chekcs needed
-	          Attack attack = new Attack(att.get(0), att.get(1), Integer.parseInt(att.get(2)), att.get(3));
+	          //create Attack object and add to Pokemon // might be unstable further checks needed
+	          Attack attack = new Attack();
+	          attack.setAttacktype(att.get(0));
+	          attack.setAttackclass(att.get(1));
+	          attack.setDmg(Integer.parseInt(att.get(2)));
+	          if(att.size() > 3) {
+	        	  attack.setEffect(att.get(3));
+	          }
 	          attacks.add(attack);
 	      }
 	}
@@ -75,15 +83,18 @@ public class Pokemon {
 	//Transform attacklist into string for casebase and database
 	public String attackListToString() {
 		String attacksS = "";
-		for(int i = 0; i < attacks.size(); i++) {
-			attacksS += "{";
-			attacksS += attacks.get(i).getAttacktype() + ",";
-			attacksS += attacks.get(i).getAttackclass() + ",";
-			attacksS += attacks.get(i).getDmg() + ",";
-			attacksS += attacks.get(i).getEffect() + "};";
+		if(attacks.size() > 0) {
+			for(int i = 0; i < attacks.size(); i++) {
+				attacksS += "{";
+				attacksS += attacks.get(i).getAttacktype() + ",";
+				attacksS += attacks.get(i).getAttackclass() + ",";
+				attacksS += attacks.get(i).getDmg() + ",";
+				attacksS += attacks.get(i).getEffect() + "};";
+			}
+			//return without the last commata
+			attacksS = attacksS.substring(0, attacksS.length() -1);
 		}
-		//return without the last commata
-		return attacksS.substring(0, attacksS.length() -1);
+		return attacksS;
 	}
 	
 	//Getter Setter methods

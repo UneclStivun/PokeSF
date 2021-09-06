@@ -39,7 +39,6 @@ public class CaseBaseLoader_Pokemon {
 	
 	public CaseBaseLoader_Pokemon(DatabaseManipulator dbm) {
 		this.dbm = dbm;
-		
 		//if project gets created successfully load Cases from database
 		if(loadProject()) {
 			loadCasesFromDb();
@@ -67,10 +66,13 @@ public class CaseBaseLoader_Pokemon {
 			IntegerDesc spAtt = new IntegerDesc(concept, "SpecialAttack", 1, 200);
 			
 			//Defense value
-			IntegerDesc def = new IntegerDesc(concept, "Defense", 1, 200);
+			IntegerDesc def = new IntegerDesc(concept, "Defense", 1, 250);
 			
 			//Specialdefense value
-			IntegerDesc spDef = new IntegerDesc(concept, "SpecialDefense", 1, 200);
+			IntegerDesc spDef = new IntegerDesc(concept, "SpecialDefense", 1, 250);
+			
+			//Initiative value
+			IntegerDesc ini = new IntegerDesc(concept, "Initiative", 1, 200);
 			
 			//Pokemontype 1
 			StringDesc pkType1 = new StringDesc(concept, "Pokemontype1");
@@ -105,6 +107,10 @@ public class CaseBaseLoader_Pokemon {
 			spDefFct.setFunctionTypeL(NumberConfig.POLYNOMIAL_WITH);
 			spDefFct.setFunctionTypeR(NumberConfig.POLYNOMIAL_WITH);
 			
+			iniFct = ini.addIntegerFct("InitiativeDefense", true);
+			iniFct.setFunctionTypeL(NumberConfig.POLYNOMIAL_WITH);
+			iniFct.setFunctionTypeR(NumberConfig.POLYNOMIAL_WITH);
+			
 			cb = project.createDefaultCB("PokemonCB");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -118,7 +124,6 @@ public class CaseBaseLoader_Pokemon {
 		boolean success = true;
 		//fill List via Database
 		List<Pokemon> pokemons = dbm.getPokemonFromDatabase();
-		
 		//loop through list to add Pokemon to casebase
 		for(int i = 0; i < pokemons.size(); i++) {
 			try {
@@ -131,6 +136,7 @@ public class CaseBaseLoader_Pokemon {
 				inst.addAttribute("SpecialAttack", pokemons.get(i).getSpAttack());
 				inst.addAttribute("Defense", pokemons.get(i).getDefense());
 				inst.addAttribute("SpecialDefense", pokemons.get(i).getSpDefense());
+				inst.addAttribute("Initiative", pokemons.get(i).getInitiative());
 				inst.addAttribute("Pokemontype1", pokemons.get(i).getType1());
 				inst.addAttribute("Pokemontype2", pokemons.get(i).getType2());
 				inst.addAttribute("Pokemonname", pokemons.get(i).getName());
@@ -141,7 +147,7 @@ public class CaseBaseLoader_Pokemon {
 				// TODO: handle exception
 				success = false;
 			}
-		}			
+		}
 		return success;
 	}
 

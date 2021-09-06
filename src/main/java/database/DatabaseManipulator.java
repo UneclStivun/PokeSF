@@ -142,13 +142,13 @@ public class DatabaseManipulator {
 		ResultSet rs;
 		
 		//Create Query3
-		String query = "SELECT * FROM Pokemon where validation = true";
+		//where validation = true
+		String query = "SELECT * FROM Pokemon";
 		
 		try {
 			PreparedStatement pstat = con.prepareStatement(query);
-			rs = pstat.executeQuery();
-			
-			if(rs.next()) {
+			rs = pstat.executeQuery();		
+			while(rs.next()) {
 				//Create pokemon object from database
 				Pokemon pokemon = new Pokemon(rs.getString(1), rs.getString(2), rs.getString(3),
 						rs.getInt(4), rs.getInt(5), rs.getInt(6), rs.getInt(7), rs.getInt(8), rs.getInt(9));

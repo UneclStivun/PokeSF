@@ -37,12 +37,14 @@ public class Attack {
 	// Damage
 	private int dmg;
 	
-	// Effect of Attack
+	//Effect of Attack
 	private String effect;
 	
-	public Attack(String attacktype, String attackclass, int dmg, String effect) {
+	public Attack() {}
+	
+	public Attack(String attacktype, String status, int dmg, String effect) {
 		this.attacktype = attacktype;
-		this.attackclass = attackclass;
+		this.attackclass = status;
 		this.dmg = dmg;
 		this.effect = effect;
 	}
@@ -70,7 +72,7 @@ public class Attack {
 	public void setDmg(int dmg) {
 		this.dmg = dmg;
 	}
-	
+
 	public String getEffect() {
 		return effect;
 	}
