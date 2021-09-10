@@ -10,9 +10,10 @@ public class Case_Pokemon {
 	
 	private Pokemon pokemon;
 	
-	public Case_Pokemon(String casename, double sim) {
+	public Case_Pokemon(String casename, double sim, Pokemon pokemon) {
 		this.casename = casename;
 		this.sim = sim;
+		this.pokemon = pokemon;
 	}
 	//Getter, Setter functions
 	public String getCasename() {
