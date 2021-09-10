@@ -1,9 +1,11 @@
 package pokemon;
 
 import java.io.IOException;
-import java.util.Enumeration;
+import java.util.ArrayList;
+import java.util.List;
 
 import cbr_Pokemon.CaseBaseLoader_Pokemon;
+import cbr_Pokemon.Case_Pokemon;
 import cbr_Pokemon.Retrieval_Pokemon;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -18,7 +20,8 @@ import jakarta.servlet.http.HttpSession;
 @WebServlet("/ServletPokemonSimilarityFinder")
 public class ServletPokemonSimilarityFinder extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+	
+	private static List<Case_Pokemon> resultCases = new ArrayList<Case_Pokemon>();
     /**
      * Default constructor. 
      */
@@ -37,28 +40,7 @@ public class ServletPokemonSimilarityFinder extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
-
-		String pokemon_name;
-		String pokemon_type_1;
-		String pokemon_type_2;
-		int pokemon_hp;
-		int pokemon_attack;
-		int pokemon_defense;
-		int pokemon_specialattack;
-		int pokemon_specialdefense;
-		int pokemon_speed;
-		String pokemon_attack_type_1;
-		String pokemon_attack_type_2;
-		String pokemon_attack_type_3;
-		String pokemon_attack_type_4;
-		String pokemon_attack_class_1;
-		String pokemon_attack_class_2;
-		String pokemon_attack_class_3;
-		String pokemon_attack_class_4;
-		String effect1;
-		String effect2;
-		String effect3;
-		String effect4;
+		HttpSession session = request.getSession();
 		Pokemon poke = new Pokemon();
 		boolean minimum = false;
 		
@@ -108,58 +90,64 @@ public class ServletPokemonSimilarityFinder extends HttpServlet {
 		}
 		
 		//Create Attack 1
-		if(!request.getParameter("pokemon_attack_type_1").isEmpty()) {
+		if(request.getParameter("cb_att1") != null) {
 			Attack att = new Attack();
 			att.setAttacktype(request.getParameter("pokemon_attack_type_1"));
+			att.setAttackclass(request.getParameter("pokemon_attack_class_1"));
+			if(att.getAttackclass().equals("status")) {
+				att.setEffect(request.getParameter("effect1"));
+			}
+			poke.getAttacks().add(att);
+			minimum = true;	
+		}
+
+		//Create Attack 2
+		if(request.getParameter("cb_att2") != null) {
+			Attack att = new Attack();
+			att.setAttacktype(request.getParameter("pokemon_attack_type_2"));
+			att.setAttackclass(request.getParameter("pokemon_attack_class_2"));
+			if(att.getAttackclass().equals("status")) {
+				att.setEffect(request.getParameter("effect2"));
+			}
+			poke.getAttacks().add(att);
 			minimum = true;	
 		}
 		
-		if(!request.getParameter("pokemon_attack_class_1").isEmpty()) {
-			pokemon_attack_class_1 = request.getParameter("pokemon_attack_class_1");
-			minimum = true;
-		}
-		//Create Attack 2
-		if(!request.getParameter("pokemon_attack_type_2").isEmpty()) {
-			pokemon_attack_type_2 = request.getParameter("pokemon_attack_type_2");
-			minimum = true;
-		}
-		
-		if(!request.getParameter("pokemon_attack_class_2").isEmpty()) {
-			pokemon_attack_class_2 = request.getParameter("pokemon_attack_class_2");
-			minimum = true;
-		}
-		
 		//Create Attack 3
-		if(!request.getParameter("pokemon_attack_type_3").isEmpty()) {
-			pokemon_attack_type_3 = request.getParameter("pokemon_attack_type_3");
-			minimum = true;
-		}
-		
-		if(!request.getParameter("pokemon_attack_class_3").isEmpty()) {
-			pokemon_attack_class_3 = request.getParameter("pokemon_attack_class_3");
-			minimum = true;
+		if(request.getParameter("cb_att3") != null) {
+			Attack att = new Attack();
+			att.setAttacktype(request.getParameter("pokemon_attack_type_3"));
+			att.setAttackclass(request.getParameter("pokemon_attack_class_3"));
+			if(att.getAttackclass().equals("status")) {
+				att.setEffect(request.getParameter("effect3"));
+			}
+			poke.getAttacks().add(att);
+			minimum = true;	
 		}
 		
 		//Create Attack 4
-		if(!request.getParameter("pokemon_attack_type_4").isEmpty()) {
-			pokemon_attack_type_4 = request.getParameter("pokemon_attack_type_4");
-			minimum = true;
-		}
-		
-		if(!request.getParameter("pokemon_attack_class_4").isEmpty()) {
-			pokemon_attack_class_4 = request.getParameter("pokemon_attack_class_4");
-			minimum = true;
+		if(request.getParameter("cb_att4") != null) {
+			Attack att = new Attack();
+			att.setAttacktype(request.getParameter("pokemon_attack_type_4"));
+			att.setAttackclass(request.getParameter("pokemon_attack_class_4"));
+			if(att.getAttackclass().equals("status")) {
+				att.setEffect(request.getParameter("effect4"));
+			}
+			poke.getAttacks().add(att);
+			minimum = true;	
 		}
 		if(minimum) {
 			// Suche ähnliche Pokemon aus der Fallbasis
-			retrieveSimilarPokemon(poke, request.getSession());
+			retrieveSimilarPokemon(poke, session);
 		} else {
 			request.setAttribute("message", "Please fill in all empty fields");
 		}
+		session.setAttribute("resultCases", resultCases);
+		request.getRequestDispatcher("pokemonSimilarityFinder.jsp").forward(request, response);
 	}
 	
 	// Methode um mit den erhaltenen Daten die ähnlichstens Pokemon aus der Fallbasis abzurufen
 	private void retrieveSimilarPokemon(Pokemon poke, HttpSession session) {
-		Retrieval_Pokemon.retrieveSimCases((CaseBaseLoader_Pokemon) session.getAttribute("cbl"), poke);
+		resultCases = Retrieval_Pokemon.retrieveSimCases((CaseBaseLoader_Pokemon) session.getAttribute("cbl"), poke);
 	}
 }

@@ -2,9 +2,11 @@ package cbr_Pokemon;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import de.dfki.mycbr.core.casebase.Attribute;
+import cbr_utility.ExplanationManager;
 import de.dfki.mycbr.core.casebase.Instance;
 import de.dfki.mycbr.core.model.IntegerDesc;
 import de.dfki.mycbr.core.model.StringDesc;
@@ -12,7 +14,9 @@ import de.dfki.mycbr.core.retrieval.Retrieval;
 import de.dfki.mycbr.core.retrieval.Retrieval.RetrievalMethod;
 import de.dfki.mycbr.core.similarity.Similarity;
 import de.dfki.mycbr.util.Pair;
+import pokemon.Attack;
 import pokemon.Pokemon;
+import pokemon.TypeTableSupport;
 
 public class Retrieval_Pokemon {
 	
@@ -80,20 +84,83 @@ public class Retrieval_Pokemon {
 				}
 				
 				//Check if there are any results and then get the similarity from all cases
+				//Create new ExplanationManager object and save each calculated similarity 
+				//in order to create more explanations
 				if(result.size() > 0) {
 					for(int i = 0; i < pokemonList.size();i++) {					
 						//sum up similarities from functions with self written String functions
-						double currSim = result.get(i).getSecond().getValue();
-						//similarity Attacks
-						double simA = compareAttacks(pokemon.attackListToString(), result.get(i).getFirst().getAttForDesc(pkAttacks).getValueAsString());
-						//similarity Name
-						double simN = compareNames(pokemon.getName(), result.get(i).getFirst().getAttForDesc(pkName).getValueAsString());
-						//similarityTypes
-						double simT = compareTypes(pokemon.getType1(), pokemon.getType2(), 
-								result.get(i).getFirst().getAttForDesc(pkType1), result.get(i).getFirst().getAttForDesc(pkType2));
+						ExplanationManager expMan = new ExplanationManager();
 						
+						//check if HP Similarity is lower than 0
+						if(cbl.getHpFct()
+								.calculateSimilarity(pokemon.getHitpoints(), pokemonList.get(i).getHitpoints()).getValue() >= 0) {
+							expMan.setHpSim(cbl.getHpFct()
+									.calculateSimilarity(pokemon.getHitpoints(), pokemonList.get(i).getHitpoints()).getValue() / 9.0);
+						} else {
+							expMan.setHpSim(0.0);
+						}
+						
+						//check if Attack Similarity is lower than 0
+						if(cbl.getAttFct()
+								.calculateSimilarity(pokemon.getAttack(), pokemonList.get(i).getAttack()).getValue() >= 0) {
+							expMan.setAttSim(cbl.getAttFct()
+									.calculateSimilarity(pokemon.getAttack(), pokemonList.get(i).getAttack()).getValue() / 9.0);
+						}else {
+							expMan.setAttSim(0.0);
+						}
+						
+						//check if Special Attack Similarity is lower than 0
+						if(cbl.getSpAttFct()
+								.calculateSimilarity(pokemon.getSpAttack(), pokemonList.get(i).getSpAttack()).getValue() >= 0) {
+							expMan.setSpAttSim(cbl.getSpAttFct()
+									.calculateSimilarity(pokemon.getSpAttack(), pokemonList.get(i).getSpAttack()).getValue() / 9.0);
+						} else {
+							expMan.setSpAttSim(0.0);
+						}
+						
+						
+						//check if Defense Similarity is lower than 0
+						if(cbl.getDefFct()
+								.calculateSimilarity(pokemon.getDefense(), pokemonList.get(i).getDefense()).getValue() >= 0) {
+							expMan.setDefSim(cbl.getDefFct()
+									.calculateSimilarity(pokemon.getDefense(), pokemonList.get(i).getDefense()).getValue() / 9.0);
+						} else {
+							expMan.setDefSim(0.0);
+						}
+						
+						//check if Special Defense Similarity is lower than 0
+						if(cbl.getSpDefFct()
+								.calculateSimilarity(pokemon.getSpDefense(), pokemonList.get(i).getSpDefense()).getValue() >= 0) {
+							expMan.setSpDefSim(cbl.getSpDefFct()
+									.calculateSimilarity(pokemon.getSpDefense(), pokemonList.get(i).getSpDefense()).getValue() / 9.0);
+						} else {
+							expMan.setSpDefSim(0.0);
+						}
+						
+						//check if Initiative Similarity is lower than 0
+						if(cbl.getIniFct()
+								.calculateSimilarity(pokemon.getInitiative(), pokemonList.get(i).getInitiative()).getValue() >= 0) {
+							expMan.setIniSim(cbl.getIniFct()
+									.calculateSimilarity(pokemon.getInitiative(), pokemonList.get(i).getInitiative()).getValue() / 9.0);
+						} else {
+							expMan.setIniSim(0.0);
+						}
+						
+						//selfwritten Similarity functions
+						//Attacks
+						expMan.setAttacksSim(compareAttacks(pokemon, pokemonList.get(i)) / 9.0);
+						//Pokemonname
+						if(pokemon.getName() != null) {
+							expMan.setNameSim(compareNames(pokemon.getName(), pokemonList.get(i).getName()) / 9.0);
+						} else {
+							expMan.setNameSim(0.0);
+						}
+						//Pokemontype
+						expMan.setTypeSim(compareTypes(pokemon, pokemonList.get(i)) / 9.0);
 						//Then add result to case instance and save as ArrayList
-						Case_Pokemon cp = new Case_Pokemon(pokemonList.get(i).getName(), result.get(i).getSecond().getValue());
+						expMan.calculateHighestSim();
+						//System.out.println("The current Similarity for Case " + (i+1) + " is: " + currSim);
+						Case_Pokemon cp = new Case_Pokemon(pokemonList.get(i).getName(), expMan.sumSimilarities(), pokemonList.get(i));
 						cp.setPokemon(pokemonList.get(i));
 						resultCasesPokemon.add(cp);
 					}
@@ -110,27 +177,83 @@ public class Retrieval_Pokemon {
 		//Return value
 		return resultCasesPokemon;
 	}
-	
-	//sum up all similarities in their specific weights
-	private static double weightSum(double currSim, double simA, double simN, double simT) {
-		return currSim + simA + simN + simT;
-	}
 
 	//compare Pokemonattacks
-	public static double compareAttacks(String attackListToString, String valueAsString) {
-		// TODO Auto-generated method stub
-		return 0;
+	public static double compareAttacks(Pokemon userP, Pokemon cbrP) {
+		double sim = 0.0;
+		//if attacks are not empty get attacks with highest sim and summarize it
+		if(userP.getAttacks().size() > 0) {
+			for(int i = 0; i < userP.getAttacks().size(); i++) {
+				sim += getMostSimilarAttack(userP.getAttacks().get(i), cbrP.getAttacks());
+			}
+			//divide all sim points with the amount of searched attacks multiplied by 4
+			sim = sim / (userP.getAttacks().size() * 4);
+		}
+		return sim;
+	}
+	
+	public static double getMostSimilarAttack(Attack userAtt, List<Attack> cbrPList) {
+		double sim = 0.0;
+		double highestSim = 0.0;
+		Map<Double, Integer> simAttList = new HashMap<Double, Integer>();
+		for(int i = 0; i < cbrPList.size(); i++) {
+			sim = 0.0;
+			if(userAtt.getAttacktype().equals(cbrPList.get(i).getAttacktype())) {
+				sim+= 2;
+			}
+			if(userAtt.getAttackclass().equals(cbrPList.get(i).getAttackclass())) {
+				sim+= 1;
+			}
+			try {
+				if(userAtt.getEffect().equals(cbrPList.get(i).getEffect())) {
+					sim+= 1;
+				}
+			} catch (Exception e) {
+				//Either UserAttack has no Effect or CBRPokemonAttack
+			}
+			simAttList.put(sim, i);
+			if(highestSim < sim) {
+				highestSim = sim;
+			}
+		}	
+		return highestSim;
 	}
 	
 	//compare Pokemonnames with a simple Check
 	public static double compareNames(String name, String valueAsString) {
-		// TODO Auto-generated method stub
-		return 0;
+		return name.equals(valueAsString) ? 1.0 : 0.0;
 	}
 	
 	//compare Pokemontypes via the TypeSupport Class
-	private static double compareTypes(String type1, String type2, Attribute attForDesc, Attribute attForDesc2) {
-		// TODO Auto-generated method stub
-		return 0;
+	//compare both their attack and their defense affinities
+	private static double compareTypes(Pokemon userP, Pokemon cbrP) {
+		Double sim = 0.0;
+		Map<String, Double> defUserP =	TypeTableSupport.checkDefenseAffinities(userP);
+		Map<String, Double> attUserP =	TypeTableSupport.checkAttackAffinities(userP);
+		Map<String, Double> defCBRP =	TypeTableSupport.checkDefenseAffinities(cbrP);
+		Map<String, Double> attCBRP =	TypeTableSupport.checkAttackAffinities(cbrP);
+		
+		List<String> typeKeys = new ArrayList<String>();
+		//UserPokemon type values
+		for (Map.Entry<String, Double> entry : attCBRP.entrySet()) {
+			typeKeys.add(entry.getKey());
+		}
+		
+		//Comparing both attack and defense values 
+		//1.0 if match else its 0.0 for all 30 values
+		for(int i = 0; i < typeKeys.size(); i++) {
+			Double c1 = defUserP.get(typeKeys.get(i));
+			Double c2 = defCBRP.get(typeKeys.get(i));
+			if(Double.compare(c1, c2) == 0) {
+				sim++;
+			}
+			c1 = attUserP.get(typeKeys.get(i));
+			c2 = attCBRP.get(typeKeys.get(i));		
+			if(Double.compare(c1, c2) == 0) {
+				sim++;
+			}
+		}
+		sim = sim/30.0;
+		return sim;
 	}
 }

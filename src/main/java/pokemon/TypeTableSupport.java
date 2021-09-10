@@ -7,38 +7,38 @@ import java.util.Map;
 
 public final class TypeTableSupport {
 	//Links für Angriff / Oben für Abwehr
-	static String[][] typeArray = { {"", "Normal", "Fire", "Water", "Electro", "Grass",
-		"Ice", "Figthing", "Poison", "Ground", "Flying", "Psycho", "Bug",
-		"Rock", "Ghost", "Dragon"},
-			{"Normal", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1",
+	static String[][] typeArray = { {"", "normal", "fire", "water", "electric", "grass",
+		"ice", "figthing", "poison", "ground", "flying", "psycho", "bug",
+		"rock", "ghost", "dragon"},
+			{"normal", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1",
 			"1", "1", "0.5", "0", "1"},
-			{"Fire", "1", "0.5", "0.5", "1", "2", "2", "1", "1", "1", "1",
+			{"fire", "1", "0.5", "0.5", "1", "2", "2", "1", "1", "1", "1",
 				"1", "2", "0.5", "1", "0.5"},
-			{"Water", "1", "2", "0.5", "1", "0.5", "1", "1", "1", "2", "1",
+			{"water", "1", "2", "0.5", "1", "0.5", "1", "1", "1", "2", "1",
 					"1", "1", "2", "1", "0.5"},
-			{"Electric", "1", "1", "2", "0.5", "0.5", "1", "1", "1", "0", "2",
+			{"electric", "1", "1", "2", "0.5", "0.5", "1", "1", "1", "0", "2",
 						"1", "1", "1", "1", "0.5"},
-			{"Grass", "1", "0.5", "2", "1", "0.5", "1", "1", "0.5", "2", "0.5",
+			{"grass", "1", "0.5", "2", "1", "0.5", "1", "1", "0.5", "2", "0.5",
 							"1", "0.5", "2", "1", "0.5"},
-			{"Ice", "1", "0.5", "0.5", "1", "2", "0.5", "1", "1", "2", "2",
+			{"ice", "1", "0.5", "0.5", "1", "2", "0.5", "1", "1", "2", "2",
 								"1", "1", "1", "1", "2"},
-			{"Fighting", "2", "1", "1", "1", "1", "2", "1", "0.5", "1", "0.5",
+			{"fighting", "2", "1", "1", "1", "1", "2", "1", "0.5", "1", "0.5",
 									"0.5", "0.5", "2", "0", "1"},
-			{"Poison", "1", "1", "1", "1", "2", "1", "1", "0.5", "0.5", "1",
+			{"poison", "1", "1", "1", "1", "2", "1", "1", "0.5", "0.5", "1",
 									"1", "1", "0.5", "0.5", "1"},
-			{"Ground", "1", "2", "1", "2", "0.5", "1", "1", "2", "1", "0",
+			{"ground", "1", "2", "1", "2", "0.5", "1", "1", "2", "1", "0",
 									"1", "0.5", "2", "1", "1"},
-			{"Flying", "1", "1", "1", "0.5", "2", "1", "2", "1", "1", "1",
+			{"flying", "1", "1", "1", "0.5", "2", "1", "2", "1", "1", "1",
 									"1", "2", "0.5", "1", "1"},
-			{"Psychic", "1", "1", "1", "1", "1", "1", "2", "2", "1", "1",
+			{"psychic", "1", "1", "1", "1", "1", "1", "2", "2", "1", "1",
 									"0.5", "1", "1", "1", "1"},
-			{"Bug", "1", "0.5", "1", "1", "2", "1", "0.5", "0.5", "1", "0.5",
+			{"bug", "1", "0.5", "1", "1", "2", "1", "0.5", "0.5", "1", "0.5",
 									"2", "1", "1", "0.5", "1"},
-			{"Rock", "1", "2", "1", "1", "1", "2", "0.5", "1", "0.5", "2",
+			{"rock", "1", "2", "1", "1", "1", "2", "0.5", "1", "0.5", "2",
 									"1", "2", "1", "1", "1"},
-			{"Ghost", "0", "1", "1", "1", "1", "1", "1", "1", "1", "1",
+			{"ghost", "0", "1", "1", "1", "1", "1", "1", "1", "1", "1",
 									"2", "1", "1", "2", "1"},
-			{"Dragon", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1",
+			{"dragon", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1",
 									"1", "1", "1", "1", "2"}};
 	
 	//Returns all values of both types regarding defense
@@ -59,14 +59,20 @@ public final class TypeTableSupport {
 				}
 			}
 			//Iteration within first row to find type 2
-			if(typeArray[0][i].equals(pokemon.getType2())) {
+			if(typeArray[0][i].equals(pokemon.getType2()) && !pokemon.getType2().isEmpty() && !pokemon.getType1().equals(pokemon.getType2())) {
 				for(int j = 1; j < 16; j++) {
 					defenseValuesT2.add(Double.parseDouble(typeArray[j][i]));
 				}
 			}
 		}
-		for (int i = 0; i < defenseNames.size(); i++) {
-			mapTypesValuesDef.put(defenseNames.get(i), defenseValuesT1.get(i) * defenseValuesT2.get(i));
+		if(defenseValuesT2.size() > 0) {
+			for (int i = 0; i < defenseNames.size(); i++) {
+				mapTypesValuesDef.put(defenseNames.get(i), defenseValuesT1.get(i) * defenseValuesT2.get(i));
+			}
+		} else {
+			for (int i = 0; i < defenseNames.size(); i++) {
+				mapTypesValuesDef.put(defenseNames.get(i), defenseValuesT1.get(i));
+			}
 		}
 		return mapTypesValuesDef;
 	}
@@ -88,14 +94,20 @@ public final class TypeTableSupport {
 						}
 					}
 					//Iteration within first row to find type 2
-					if(typeArray[0][i].equals(pokemon.getType2())) {
+					if(typeArray[0][i].equals(pokemon.getType2()) && !pokemon.getType2().isEmpty() && !pokemon.getType1().equals(pokemon.getType2())) {
 						for(int j = 1; j < 16; j++) {
 							attackValuesT2.add(Double.parseDouble(typeArray[j][i]));
 						}
 					}
 				}
-				for (int i = 0; i < attackNames.size(); i++) {
-					mapTypesValuesAtt.put(attackNames.get(i), attackValuesT1.get(i) * attackValuesT2.get(i));
+				if(attackValuesT2.size() > 0) {
+					for (int i = 0; i < attackNames.size(); i++) {
+						mapTypesValuesAtt.put(attackNames.get(i), attackValuesT1.get(i) * attackValuesT2.get(i));
+					}
+				} else {
+					for (int i = 0; i < attackNames.size(); i++) {
+						mapTypesValuesAtt.put(attackNames.get(i), attackValuesT1.get(i));
+					}
 				}
 				return mapTypesValuesAtt;
 	}

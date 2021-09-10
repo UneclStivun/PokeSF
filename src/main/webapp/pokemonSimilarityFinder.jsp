@@ -64,6 +64,9 @@
 		<input type="number" min="1" max="200" class="form-control" placeholder="Pokemon Speed Value (min:1 max:200)" name="pokemon_speed">
 		<br>
 		
+		<input class="form-check-input" type="checkbox" value="use_att1" name="cb_att1" checked>
+  		<label class="form-check-label" for="flexCheckChecked" style="margin-left: 2.em">
+  		</label>
 		<label>Pokemon Attack Type 1</label>
 		<select name="pokemon_attack_type_1">
 			<option value="normal">Normal</option>
@@ -113,9 +116,12 @@
 			<option value="sad">Specialattack Debuff</option>
 			<option value="sdd">Specialdefense Debuff</option>
 			<option value="ss">Speed Debuff</option>
-		</select>
+		</select>		
 		<br>
 		
+		<input class="form-check-input" type="checkbox" value="use_att2" name="cb_att2" checked>
+  		<label class="form-check-label" for="flexCheckChecked" style="margin-left: 2.em">
+  		</label>
 		<label>Pokemon Attack Type 2</label>
 		<select name="pokemon_attack_type_2">
 			<option value="normal">Normal</option>
@@ -168,6 +174,9 @@
 		</select>
 		<br>
 		
+		<input class="form-check-input" type="checkbox" value="use_att3" name="cb_att3" checked>
+  		<label class="form-check-label" for="flexCheckChecked" style="margin-left: 2.em">
+  		</label>
 		<label>Pokemon Attack Type 3</label>
 		<select name="pokemon_attack_type_3">
 			<option value="normal">Normal</option>
@@ -220,6 +229,9 @@
 		</select>
 		<br>
 		
+		<input class="form-check-input" type="checkbox" value="use_att4" name="cb_att4" checked>
+  		<label class="form-check-label" for="flexCheckChecked" style="margin-left: 2.em">
+  		</label>
 		<label>Pokemon Attack Type 4</label>
 		<select name="pokemon_attack_type_4">
 			<option value="normal">Normal</option>
