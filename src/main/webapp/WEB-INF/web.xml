@@ -38,4 +38,14 @@
     <servlet-name>ServletPokemonEdit</servlet-name>
     <url-pattern>/ServletPokemonEdit</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>ServletAgentLauncher</display-name>
+    <servlet-name>ServletAgentLauncher</servlet-name>
+    <servlet-class>agents.ServletAgentLauncher</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ServletAgentLauncher</servlet-name>
+    <url-pattern>/ServletAgentLauncher</url-pattern>
+  </servlet-mapping>
 </web-app>

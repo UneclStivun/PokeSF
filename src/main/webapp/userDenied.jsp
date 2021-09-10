@@ -5,6 +5,8 @@
 <html>
 <head>
 	<meta charset="ISO-8859-1">
+	<link rel="stylesheet" href="css/failure.css" type="text/css">
+	
 	<title>Not registrated!</title>
 </head>
 <body>

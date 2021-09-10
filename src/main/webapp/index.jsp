@@ -17,7 +17,7 @@
 	<c:choose>
 		<c:when test="${sessionScope.user_email == null}">
 			<button type="button" class="btn btn-info" onclick="window.open('userRegistration.jsp')">Register</button>
-			<button type="button" class="btn btn-info" onclick="window.open('userLogin.jsp')">Login</button> 
+			<button type="button" class="btn btn-info" onclick="window.location.href='userLogin.jsp'">Login</button> 
 		</c:when>
 		<c:otherwise>
 			<button type="button" class="btn btn-info" onclick="window.location.href='ServletUserSession?action=logout'">Logout</button> 

@@ -141,8 +141,7 @@ public class DatabaseManipulator {
 		List<Pokemon> pokemonList = new ArrayList<Pokemon>();
 		ResultSet rs;
 		
-		//Create Query3
-		//where validation = true
+		//Create Query
 		String query = "SELECT * FROM Pokemon";
 		
 		try {
@@ -152,6 +151,8 @@ public class DatabaseManipulator {
 				//Create pokemon object from database
 				Pokemon pokemon = new Pokemon(rs.getString(1), rs.getString(2), rs.getString(3),
 						rs.getInt(4), rs.getInt(5), rs.getInt(6), rs.getInt(7), rs.getInt(8), rs.getInt(9));
+				pokemon.setDatabaseID(rs.getInt(12));
+				
 				//Add attacks to pokemon
 				pokemon.translateAttacksFromDB(rs.getString(10));
 				pokemonList.add(pokemon);
@@ -160,5 +161,76 @@ public class DatabaseManipulator {
 			e.printStackTrace();
 		}
 		return pokemonList;
+	}
+	
+	//Method for pulling all (in)validated Pokemonobjects from database
+	//returns List of pokemon
+	public List<Pokemon> getValidatedPokemonFromDatabase(boolean setValidation) {
+		List<Pokemon> pokemonList = new ArrayList<Pokemon>();
+		ResultSet rs;
+			
+		//Create Query where validation = true
+		String query = "SELECT * FROM pokemon WHERE validation = ?";
+			
+		try {
+			PreparedStatement pstat = con.prepareStatement(query);
+			pstat.setBoolean(1, setValidation);
+			rs = pstat.executeQuery();
+			
+			while(rs.next()) {
+				//Create pokemon object from database
+				Pokemon pokemon = new Pokemon(rs.getString(1), rs.getString(2), rs.getString(3),
+						rs.getInt(4), rs.getInt(5), rs.getInt(6), rs.getInt(7), rs.getInt(8), rs.getInt(9));
+				pokemon.setDatabaseID(rs.getInt(12));
+					
+				//Add attacks to pokemon
+				pokemon.translateAttacksFromDB(rs.getString(10));
+				pokemonList.add(pokemon);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return pokemonList;
+	}
+	
+	//Methode zum Validieren oder Invalidieren eines Pokemons
+	public void validatePokemon(boolean setValidation, int pokemon_id) {
+		
+		String queryValidate = "UPDATE pokemon SET validation = ? WHERE pokeid = ?";
+				
+		try {
+			PreparedStatement pStmntValidate = con.prepareStatement(queryValidate);
+			
+			pStmntValidate.setBoolean(1, setValidation);
+			pStmntValidate.setInt(2, pokemon_id);
+			
+			pStmntValidate.executeQuery();
+			
+			// Datenbankverbindung schließen
+			con.close();
+				
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	// Methode zumLöschen von Pokemon anhand der Pokemon-ID
+	public void deletePokemon(int pokemon_id) {
+		
+		String queryValidate = "DELETE FROM pokemon WHERE pokeid = ?";
+		
+		try {
+			PreparedStatement pStmntValidate = con.prepareStatement(queryValidate);
+			
+			pStmntValidate.setInt(1, pokemon_id);
+			
+			pStmntValidate.executeQuery();
+			
+			// Datenbankverbindung schließen
+			con.close();
+				
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

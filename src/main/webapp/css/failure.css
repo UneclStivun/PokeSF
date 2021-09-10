@@ -1,0 +1,10 @@
+@charset "ISO-8859-1";
+
+body {
+	margin:0;
+	padding:0;
+    background-image: url(https://wallup.net/wp-content/uploads/2019/10/193263-pokemon-simple-background-748x468.png);
+ 	background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: top;
+}

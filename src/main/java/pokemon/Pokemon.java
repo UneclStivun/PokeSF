@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Pokemon {
-	//Membervariables
+	// Membervariables
 	private String name;
 	
 	private String type1;
@@ -29,13 +29,17 @@ public class Pokemon {
 	
 	private int initiative;
 	
+	private int databaseID;
+	
 	private List<Attack> attacks;
 	
 	private String ail1;
 	
 	private String ail2;
 	
-	public Pokemon(){this.attacks = new ArrayList<Attack>();}
+	
+	// Constructor
+	public Pokemon() {this.attacks = new ArrayList<Attack>();}
 	
 	public Pokemon(String name, String type1, String type2,
 			int hitpoints, int attack, int defense, int spAttack,
@@ -186,6 +190,30 @@ public class Pokemon {
 		this.initiative = initiative;
 	}
 
+	public int getDatabaseID() {
+		return databaseID;
+	}
+
+	public void setDatabaseID(int databaseID) {
+		this.databaseID = databaseID;
+	}
+
+	public String getAil1() {
+		return ail1;
+	}
+
+	public void setAil1(String ail1) {
+		this.ail1 = ail1;
+	}
+
+	public String getAil2() {
+		return ail2;
+	}
+
+	public void setAil2(String ail2) {
+		this.ail2 = ail2;
+	}
+	
 	public List<Attack> getAttacks() {
 		return attacks;
 	}
