@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%-- <%@ include file = "header/checkAdmin.jsp" %> --%>
+<%@ include file = "header/checkAdmin.jsp" %>
 
 <!DOCTYPE html>
 <html>
@@ -17,7 +17,6 @@
 	<br>
 	
 	<c:if test="${sessionScope.pokemonList != null && !sessionScope.pokemonList.isEmpty()}">
-	<% int number = 0; %>
 	<table border=1>
 			<!-- Table Header -->
 			<tr>
@@ -28,7 +27,7 @@
 			<!-- Table Content -->
 			<c:forEach items="${sessionScope.pokemonList}" var="result">
 				<tr>
-					<td>${result.getName()}</td>
+					<td><button type="button" class="btn btn-link" onclick="showAttacks('${result.getDatabaseID()}')">${result.getName()}</button></td>
 					<td>${result.getType1()}</td>
 					<td>${result.getType2()}</td>
 					<td>${result.getHitpoints()}</td>
@@ -44,9 +43,15 @@
 					<td><form action="ServletPokemonEdit" method="post"><input type="hidden" value="${result.getDatabaseID()}" name="delete">
 						<button type="submit" class="btn btn-danger" onclick="return deletePokemon('${result.getName()}','${result.getDatabaseID()}')">X</button></form></td>
 				</tr>
-				<%number++; %>
+				<tr id="${result.getDatabaseID()}" style="display: none">
+					<td>${result.attackListToString()}</td>
+				</tr>
 			</c:forEach>
 		</table>
+	</c:if>
+	
+	<c:if test="${sessionScope.pokemonList == null || sessionScope.pokemonList.isEmpty()}">
+		<p>No entries available.</p>
 	</c:if>
 	
 	<script>
@@ -59,7 +64,18 @@
 				return false;
 			}
 		}
+		
+		/* Show or hide pokemon attacks */
+		function showAttacks(pokemon_id){
+			if(document.getElementById(pokemon_id).style.display === "none") {
+				document.getElementById(pokemon_id).style.display = "block";
+			} else {
+				document.getElementById(pokemon_id).style.display = "none";
+			}
+		}
 	</script>
 	
+	<br><br>
+	<a href="index.jsp">Back to main page</a>
 </body>
 </html>

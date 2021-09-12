@@ -21,5 +21,8 @@
 	</form>
 	<br>
 	<p class="font-weight-italic" style="color:red;">${message }</p>
+	
+	<br><br>
+	<a href="index.jsp">Back to main page</a>
 </body>
 </html>

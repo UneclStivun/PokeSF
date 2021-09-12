@@ -13,8 +13,8 @@
 	You are not logged in. You need to be logged in to continue.<br>
 	You can sign up <a href="userLogin.jsp">here</a> or registrate <a href="userRegistration.jsp">here</a>, 
 	if you have no account.
-	<br>
-	<br>
-	Back to <a href="index.jsp">index</a>.
+	
+	<br><br>
+	Back to <a href="index.jsp">main page</a>.
 </body>
 </html>

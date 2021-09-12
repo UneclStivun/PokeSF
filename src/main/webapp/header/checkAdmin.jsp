@@ -10,7 +10,7 @@
 <body>
 	<!-- Wenn Nutzer keine Adminrolle hat, wird auf die Index zurückgeleitet -->
 	<c:if test="${sessionScope.user_role != 'admin' && sessionScope.user_role != 'origin' }">
-		<c:redirect url="index.jsp"></c:redirect>
+		<c:redirect url="userDenied.jsp"></c:redirect>
 	</c:if>
 </body>
 </html>

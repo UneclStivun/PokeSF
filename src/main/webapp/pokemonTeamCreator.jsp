@@ -9,6 +9,9 @@
 	<title>Pokemon Team Finder</title>
 </head>
 <body>
+	<a href="pokemonFight.jsp">Start fight!</a>
 
+	<br><br>
+	<a href="index.jsp">Back to main page</a>
 </body>
 </html>

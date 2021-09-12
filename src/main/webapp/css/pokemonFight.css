@@ -1,0 +1,25 @@
+@charset "ISO-8859-1";
+
+body{
+	background-image: url('http://bit.ly/pokemonbg');
+  	background-size: 100%;
+ 	background-repeat: no-repeat;
+}
+.display {
+	margin: auto;
+	width: 40%;
+	border: 5px solid #FFFF00;
+	padding: 10px;
+}
+
+.user_options {
+	background-color: #333;
+	margin: auto;
+	width: 40%;
+	border: 5px solid #33bbff;
+	padding: 10px;
+}
+
+.explanation_box {
+	background-color: #333;
+}

@@ -277,45 +277,48 @@
 	
 	<br>
 	<p class="font-weight-italic" style="color:red;">${message }</p>
-	
+
 	<script> 
-			// Zeige Effekt-Optionen nur, wenn die Attacke als Status-Attacke gewählt wurde
-			function showEffect1() {
-				if(document.getElementById("status1").selected) {
-					document.getElementById("effect1_label").style.visibility = "visible";
-					document.getElementById("effect1_selection").style.visibility = "visible";
-				} else {
-					document.getElementById("effect1_label").style.visibility = "hidden";
-					document.getElementById("effect1_selection").style.visibility = "hidden";
-				}
+		// Zeige Effekt-Optionen nur, wenn die Attacke als Status-Attacke gewählt wurde
+		function showEffect1() {
+			if (document.getElementById("status1").selected) {
+				document.getElementById("effect1_label").style.visibility = "visible";
+				document.getElementById("effect1_selection").style.visibility = "visible";
+			} else {
+				document.getElementById("effect1_label").style.visibility = "hidden";
+				document.getElementById("effect1_selection").style.visibility = "hidden";
 			}
-			function showEffect2() {
-				if(document.getElementById("status2").selected) {
-					document.getElementById("effect2_label").style.visibility = "visible";
-					document.getElementById("effect2_selection").style.visibility = "visible";
-				} else {
-					document.getElementById("effect2_label").style.visibility = "hidden";
-					document.getElementById("effect2_selection").style.visibility = "hidden";
-				}
+		}
+		function showEffect2() {
+			if (document.getElementById("status2").selected) {
+				document.getElementById("effect2_label").style.visibility = "visible";
+				document.getElementById("effect2_selection").style.visibility = "visible";
+			} else {
+				document.getElementById("effect2_label").style.visibility = "hidden";
+				document.getElementById("effect2_selection").style.visibility = "hidden";
 			}
-			function showEffect3() {
-				if(document.getElementById("status3").selected) {
-					document.getElementById("effect3_label").style.visibility = "visible";
-					document.getElementById("effect3_selection").style.visibility = "visible";
-				} else {
-					document.getElementById("effect3_label").style.visibility = "hidden";
-					document.getElementById("effect3_selection").style.visibility = "hidden";
-				}
+		}
+		function showEffect3() {
+			if (document.getElementById("status3").selected) {
+				document.getElementById("effect3_label").style.visibility = "visible";
+				document.getElementById("effect3_selection").style.visibility = "visible";
+			} else {
+				document.getElementById("effect3_label").style.visibility = "hidden";
+				document.getElementById("effect3_selection").style.visibility = "hidden";
 			}
-			function showEffect4() {
-				if(document.getElementById("status4").selected) {
-					document.getElementById("effect4_label").style.visibility = "visible";
-					document.getElementById("effect4_selection").style.visibility = "visible";
-				} else {
-					document.getElementById("effect4_label").style.visibility = "hidden";
-					document.getElementById("effect4_selection").style.visibility = "hidden";
-				}
+		}
+		function showEffect4() {
+			if (document.getElementById("status4").selected) {
+				document.getElementById("effect4_label").style.visibility = "visible";
+				document.getElementById("effect4_selection").style.visibility = "visible";
+			} else {
+				document.getElementById("effect4_label").style.visibility = "hidden";
+				document.getElementById("effect4_selection").style.visibility = "hidden";
 			}
-		</script>
+		}
+	</script>
+	
+	<br><br>
+	<a href="index.jsp">Back to main page</a>
 </body>
 </html>

@@ -142,7 +142,7 @@ public class DatabaseManipulator {
 		ResultSet rs;
 		
 		//Create Query
-		String query = "SELECT * FROM Pokemon";
+		String query = "SELECT * FROM Pokemon ORDER BY pokeid";
 		
 		try {
 			PreparedStatement pstat = con.prepareStatement(query);
@@ -170,7 +170,7 @@ public class DatabaseManipulator {
 		ResultSet rs;
 			
 		//Create Query where validation = true
-		String query = "SELECT * FROM pokemon WHERE validation = ?";
+		String query = "SELECT * FROM pokemon WHERE validation = ? ORDER BY pokeid";
 			
 		try {
 			PreparedStatement pstat = con.prepareStatement(query);
@@ -204,7 +204,7 @@ public class DatabaseManipulator {
 			pStmntValidate.setBoolean(1, setValidation);
 			pStmntValidate.setInt(2, pokemon_id);
 			
-			pStmntValidate.executeQuery();
+			pStmntValidate.executeUpdate();
 			
 			// Datenbankverbindung schlieﬂen
 			con.close();
@@ -224,7 +224,7 @@ public class DatabaseManipulator {
 			
 			pStmntValidate.setInt(1, pokemon_id);
 			
-			pStmntValidate.executeQuery();
+			pStmntValidate.executeUpdate();
 			
 			// Datenbankverbindung schlieﬂen
 			con.close();
