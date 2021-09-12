@@ -2,6 +2,8 @@ package cbr_Pokemon;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +61,8 @@ public class Retrieval_Pokemon {
 			
 			StringDesc pkAttacks = (StringDesc) cbl.getConcept().getAllAttributeDescs().get("PokemonAttacks");
 			
+			StringDesc pkDBID = (StringDesc) cbl.getConcept().getAllAttributeDescs().get("DatabaseID");
+			
 			//calculate similarity for already defined similarity functions to current Pokemon
 			List<Pair<Instance, Similarity>> result;
 			try {
@@ -80,6 +84,7 @@ public class Retrieval_Pokemon {
 					poke.setSpDefense(Integer.parseInt(i.getAttributes().get(spDef).getValueAsString()));
 					poke.setInitiative(Integer.parseInt(i.getAttributes().get(ini).getValueAsString()));
 					poke.translateAttacksFromDB(i.getAttributes().get(pkAttacks).getValueAsString());
+					poke.setDatabaseID(Integer.parseInt(i.getAttributes().get(pkDBID).getValueAsString()));
 					pokemonList.add(poke);
 				}
 				
@@ -95,7 +100,7 @@ public class Retrieval_Pokemon {
 						if(cbl.getHpFct()
 								.calculateSimilarity(pokemon.getHitpoints(), pokemonList.get(i).getHitpoints()).getValue() >= 0) {
 							expMan.setHpSim(cbl.getHpFct()
-									.calculateSimilarity(pokemon.getHitpoints(), pokemonList.get(i).getHitpoints()).getValue() / 9.0);
+									.calculateSimilarity(pokemon.getHitpoints(), pokemonList.get(i).getHitpoints()).getValue());
 						} else {
 							expMan.setHpSim(0.0);
 						}
@@ -104,7 +109,7 @@ public class Retrieval_Pokemon {
 						if(cbl.getAttFct()
 								.calculateSimilarity(pokemon.getAttack(), pokemonList.get(i).getAttack()).getValue() >= 0) {
 							expMan.setAttSim(cbl.getAttFct()
-									.calculateSimilarity(pokemon.getAttack(), pokemonList.get(i).getAttack()).getValue() / 9.0);
+									.calculateSimilarity(pokemon.getAttack(), pokemonList.get(i).getAttack()).getValue());
 						}else {
 							expMan.setAttSim(0.0);
 						}
@@ -113,7 +118,7 @@ public class Retrieval_Pokemon {
 						if(cbl.getSpAttFct()
 								.calculateSimilarity(pokemon.getSpAttack(), pokemonList.get(i).getSpAttack()).getValue() >= 0) {
 							expMan.setSpAttSim(cbl.getSpAttFct()
-									.calculateSimilarity(pokemon.getSpAttack(), pokemonList.get(i).getSpAttack()).getValue() / 9.0);
+									.calculateSimilarity(pokemon.getSpAttack(), pokemonList.get(i).getSpAttack()).getValue());
 						} else {
 							expMan.setSpAttSim(0.0);
 						}
@@ -123,7 +128,7 @@ public class Retrieval_Pokemon {
 						if(cbl.getDefFct()
 								.calculateSimilarity(pokemon.getDefense(), pokemonList.get(i).getDefense()).getValue() >= 0) {
 							expMan.setDefSim(cbl.getDefFct()
-									.calculateSimilarity(pokemon.getDefense(), pokemonList.get(i).getDefense()).getValue() / 9.0);
+									.calculateSimilarity(pokemon.getDefense(), pokemonList.get(i).getDefense()).getValue());
 						} else {
 							expMan.setDefSim(0.0);
 						}
@@ -132,7 +137,7 @@ public class Retrieval_Pokemon {
 						if(cbl.getSpDefFct()
 								.calculateSimilarity(pokemon.getSpDefense(), pokemonList.get(i).getSpDefense()).getValue() >= 0) {
 							expMan.setSpDefSim(cbl.getSpDefFct()
-									.calculateSimilarity(pokemon.getSpDefense(), pokemonList.get(i).getSpDefense()).getValue() / 9.0);
+									.calculateSimilarity(pokemon.getSpDefense(), pokemonList.get(i).getSpDefense()).getValue());
 						} else {
 							expMan.setSpDefSim(0.0);
 						}
@@ -141,7 +146,7 @@ public class Retrieval_Pokemon {
 						if(cbl.getIniFct()
 								.calculateSimilarity(pokemon.getInitiative(), pokemonList.get(i).getInitiative()).getValue() >= 0) {
 							expMan.setIniSim(cbl.getIniFct()
-									.calculateSimilarity(pokemon.getInitiative(), pokemonList.get(i).getInitiative()).getValue() / 9.0);
+									.calculateSimilarity(pokemon.getInitiative(), pokemonList.get(i).getInitiative()).getValue());
 						} else {
 							expMan.setIniSim(0.0);
 						}
@@ -151,12 +156,12 @@ public class Retrieval_Pokemon {
 						expMan.setAttacksSim(compareAttacks(pokemon, pokemonList.get(i)) / 9.0);
 						//Pokemonname
 						if(pokemon.getName() != null) {
-							expMan.setNameSim(compareNames(pokemon.getName(), pokemonList.get(i).getName()) / 9.0);
+							expMan.setNameSim(compareNames(pokemon.getName(), pokemonList.get(i).getName()));
 						} else {
 							expMan.setNameSim(0.0);
 						}
 						//Pokemontype
-						expMan.setTypeSim(compareTypes(pokemon, pokemonList.get(i)) / 9.0);
+						expMan.setTypeSim(compareTypes(pokemon, pokemonList.get(i)));
 						//Then add result to case instance and save as ArrayList
 						expMan.calculateHighestSim();
 						//System.out.println("The current Similarity for Case " + (i+1) + " is: " + currSim);
@@ -174,6 +179,8 @@ public class Retrieval_Pokemon {
 			// TODO: handle exception
 			System.out.println("Fail2 " + e.getMessage());
 		}
+		//sort List descending by Similarity
+		sortResultCases(resultCasesPokemon);
 		//Return value
 		return resultCasesPokemon;
 	}
@@ -187,7 +194,7 @@ public class Retrieval_Pokemon {
 				sim += getMostSimilarAttack(userP.getAttacks().get(i), cbrP.getAttacks());
 			}
 			//divide all sim points with the amount of searched attacks multiplied by 4
-			sim = sim / (userP.getAttacks().size() * 4);
+			sim = sim / (userP.getAttacks().size() * 4) + 0.01;
 		}
 		return sim;
 	}
@@ -255,5 +262,15 @@ public class Retrieval_Pokemon {
 		}
 		sim = sim/30.0;
 		return sim;
+	}
+	
+	public static void sortResultCases(ArrayList<Case_Pokemon> resultCases) {
+		Collections.sort(resultCases, new Comparator<Case_Pokemon>() {
+			@Override
+			public int compare(Case_Pokemon case1, Case_Pokemon case2) {
+				// TODO Auto-generated method stub
+				return (case1.getSim() > case2.getSim()) ? -1 : (case1.getSim() < case2.getSim()) ? 1 : 0;
+			}
+		});
 	}
 }

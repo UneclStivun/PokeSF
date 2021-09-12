@@ -13,7 +13,7 @@ public class ExplanationManager {
 	
 	private double defSim;
 	
-	private double SpDefSim;
+	private double spDefSim;
 	
 	private double iniSim;
 	
@@ -31,7 +31,45 @@ public class ExplanationManager {
 	
 	//Summarize all similarities
 	public double sumSimilarities() {
-		return hpSim + attSim + spAttSim + defSim + iniSim + typeSim + nameSim + attacksSim;
+		double sim = 0.0;
+		double validAtts = 0.0;
+		if(Double.compare(hpSim, 0.0) != 0) {
+			sim += hpSim;
+			validAtts++;
+		}
+		if(Double.compare(attSim, 0.0) != 0) {
+			sim += attSim;
+			validAtts++;
+		}
+		if(Double.compare(spAttSim, 0.0) != 0) {
+			sim += spAttSim;
+			validAtts++;
+		}
+		if(Double.compare(defSim, 0.0) != 0) {
+			sim += defSim;
+			validAtts++;
+		}
+		if(Double.compare(spDefSim, 0.0) != 0) {
+			sim += spDefSim;
+			validAtts++;
+		}
+		if(Double.compare(iniSim, 0.0) != 0) {
+			sim += iniSim;
+			validAtts++;
+		}
+		if(Double.compare(typeSim, 0.0) != 0) {
+			sim += typeSim;
+			validAtts++;
+		}
+		if(Double.compare(nameSim, 0.0) != 0) {
+			sim += nameSim;
+			validAtts++;
+		}
+		if(Double.compare(attacksSim, 0.0) != 0) {
+			sim += attacksSim;
+			validAtts++;
+		}
+		return sim/validAtts;
 	}
 	
 	//sorting the attributes after highest similarity
@@ -40,7 +78,7 @@ public class ExplanationManager {
 		SimPair s2 = new SimPair("Attack: ", attSim);
 		SimPair s3 = new SimPair("Special Attack: ", spAttSim);
 		SimPair s4 = new SimPair("Defense: ", defSim);
-		SimPair s5 = new SimPair("Special Defense: ", SpDefSim);
+		SimPair s5 = new SimPair("Special Defense: ", spDefSim);
 		SimPair s6 = new SimPair("Initiative: ", iniSim);
 		SimPair s7 = new SimPair("Type: ", typeSim);
 		SimPair s8 = new SimPair("Name: ", nameSim);
@@ -96,11 +134,11 @@ public class ExplanationManager {
 	}
 
 	public double getSpDefSim() {
-		return SpDefSim;
+		return spDefSim;
 	}
 
 	public void setSpDefSim(double spDefSim) {
-		SpDefSim = spDefSim;
+		spDefSim = spDefSim;
 	}
 
 	public double getIniSim() {

@@ -48,4 +48,14 @@
     <servlet-name>ServletAgentLauncher</servlet-name>
     <url-pattern>/ServletAgentLauncher</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>ServletQuickList</display-name>
+    <servlet-name>ServletQuickList</servlet-name>
+    <servlet-class>pokemon.ServletQuickList</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ServletQuickList</servlet-name>
+    <url-pattern>/ServletQuickList</url-pattern>
+  </servlet-mapping>
 </web-app>

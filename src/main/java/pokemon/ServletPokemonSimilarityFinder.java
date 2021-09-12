@@ -22,6 +22,7 @@ public class ServletPokemonSimilarityFinder extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	private static List<Case_Pokemon> resultCases = new ArrayList<Case_Pokemon>();
+	private static List<Case_Pokemon> allCases = new ArrayList<Case_Pokemon>();
     /**
      * Default constructor. 
      */
@@ -40,6 +41,7 @@ public class ServletPokemonSimilarityFinder extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
+		resultCases.clear();
 		HttpSession session = request.getSession();
 		Pokemon poke = new Pokemon();
 		boolean minimum = false;
@@ -142,12 +144,20 @@ public class ServletPokemonSimilarityFinder extends HttpServlet {
 		} else {
 			request.setAttribute("message", "Please fill in all empty fields");
 		}
+		// Spaltennamen übergeben
+		request.setAttribute("columnNames", new String[] { "Name", "Type 1", "Type 2", "Hitpoints", "Attack", "Defense", "Sp.Attack", "Sp.Defense", "Speed", "Similarity", "Add to Quicklist"});
 		session.setAttribute("resultCases", resultCases);
 		request.getRequestDispatcher("pokemonSimilarityFinder.jsp").forward(request, response);
 	}
 	
 	// Methode um mit den erhaltenen Daten die ähnlichstens Pokemon aus der Fallbasis abzurufen
 	private void retrieveSimilarPokemon(Pokemon poke, HttpSession session) {
-		resultCases = Retrieval_Pokemon.retrieveSimCases((CaseBaseLoader_Pokemon) session.getAttribute("cbl"), poke);
+		allCases = Retrieval_Pokemon.retrieveSimCases((CaseBaseLoader_Pokemon) session.getAttribute("cbl"), poke);
+		//decrease number of cases to best 10
+		if(allCases.size() > 0) {
+			for(int i = 0; i < 9; i++) {
+				resultCases.add(allCases.get(i));
+			}
+		}
 	}
 }

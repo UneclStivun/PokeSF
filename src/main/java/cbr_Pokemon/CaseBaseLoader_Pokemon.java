@@ -86,6 +86,9 @@ public class CaseBaseLoader_Pokemon {
 			//Pokemonattacks
 			StringDesc pkAttacks = new StringDesc(concept, "PokemonAttacks");
 			
+			//DatabaseID not for Retrieval but identification
+			StringDesc pkDBID = new StringDesc(concept, "DatabaseID");
+			
 			//Set all IntegerFunctions
 			hpFct = hp.addIntegerFct("HPFct", true);
 			hpFct.setFunctionTypeL(NumberConfig.POLYNOMIAL_WITH);
@@ -141,6 +144,7 @@ public class CaseBaseLoader_Pokemon {
 				inst.addAttribute("Pokemontype2", pokemons.get(i).getType2());
 				inst.addAttribute("Pokemonname", pokemons.get(i).getName());
 				inst.addAttribute("PokemonAttacks", pokemons.get(i).attackListToString());
+				inst.addAttribute("DatabaseID", String.valueOf(pokemons.get(i).getDatabaseID()));
 				// add Instance to casebase
 				cb.addCase(inst);
 			} catch (Exception e) {
