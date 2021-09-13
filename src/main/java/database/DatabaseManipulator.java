@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pokemon.Pokemon;
+import pokemon.Pokemonteam;
 
 public class DatabaseManipulator {
 	// Klassenvariablen
@@ -142,7 +143,7 @@ public class DatabaseManipulator {
 		ResultSet rs;
 		
 		//Create Query
-		String query = "SELECT * FROM Pokemon ORDER BY pokeid";
+		String query = "SELECT * FROM Pokemon WHERE validation = true ORDER BY pokeid";
 		
 		try {
 			PreparedStatement pstat = con.prepareStatement(query);
@@ -232,5 +233,26 @@ public class DatabaseManipulator {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void addPokemonteamToDatabase(Pokemonteam team) throws SQLException {
+		// Erstelle Query zum Hinzufügen eines Pokemons in die Datenbank
+				String queryAddPokemon = "INSERT INTO pokemonteam values (?,?,?,?,?,?,?)";
+				PreparedStatement pStmntAddPokemon = con.prepareStatement(queryAddPokemon);
+				
+				// Der Query werden die Pokemon-Werte zugewiesen
+				pStmntAddPokemon.setInt(1, team.getPokemon().get(0).getDatabaseID());
+				pStmntAddPokemon.setInt(2, team.getPokemon().get(1).getDatabaseID());
+				pStmntAddPokemon.setInt(3, team.getPokemon().get(2).getDatabaseID());
+				pStmntAddPokemon.setInt(4, team.getPokemon().get(3).getDatabaseID());
+				pStmntAddPokemon.setInt(5, team.getPokemon().get(4).getDatabaseID());
+				pStmntAddPokemon.setInt(6, team.getPokemon().get(5).getDatabaseID());
+				pStmntAddPokemon.setString(7, team.getTeamname());
+				
+				// Query wird ausgeführt
+				pStmntAddPokemon.executeUpdate();
+				
+				// Datenbankverbindung wird geschlossen
+				con.close();
 	}
 }

@@ -251,9 +251,11 @@ public class Retrieval_Pokemon {
 		for(int i = 0; i < typeKeys.size(); i++) {
 			Double c1 = defUserP.get(typeKeys.get(i));
 			Double c2 = defCBRP.get(typeKeys.get(i));
+			
 			if(Double.compare(c1, c2) == 0) {
 				sim++;
 			}
+			//System.out.println("Attack!");
 			c1 = attUserP.get(typeKeys.get(i));
 			c2 = attCBRP.get(typeKeys.get(i));		
 			if(Double.compare(c1, c2) == 0) {

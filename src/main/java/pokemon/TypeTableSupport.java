@@ -8,7 +8,7 @@ import java.util.Map;
 public final class TypeTableSupport {
 	//Links für Angriff / Oben für Abwehr
 	static String[][] typeArray = { {"", "normal", "fire", "water", "electric", "grass",
-		"ice", "figthing", "poison", "ground", "flying", "psycho", "bug",
+		"ice", "fighting", "poison", "ground", "flying", "psycho", "bug",
 		"rock", "ghost", "dragon"},
 			{"normal", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1",
 			"1", "1", "0.5", "0", "1"},
@@ -49,7 +49,7 @@ public final class TypeTableSupport {
 		List<Double> defenseValuesT2 = new ArrayList<Double>();
 		Map<String, Double> mapTypesValuesDef = new HashMap<String, Double>();
 		//Iteration within first row to find type 1
-		for(int i = 0; i < 16; i ++) {
+		for(int i = 0; i < 16; i ++) {	
 			if(typeArray[0][i].equals(pokemon.getType1())) {
 				for(int j = 1; j < 16; j++) {
 					//add all occuring types to List

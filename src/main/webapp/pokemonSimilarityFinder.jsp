@@ -294,7 +294,7 @@
 			<!-- Table Content -->
 			<c:forEach items="${sessionScope.resultCases}" var="result">
 				<tr>
-					<td>${result.getPokemon().getName()}</td>
+					<td><button type="button" class="btn btn-link" onclick="showAttacks('${result.getPokemon().getDatabaseID()}')">${result.getPokemon().getName()}</button></td>
 					<td>${result.getPokemon().getType1()}</td>
 					<td>${result.getPokemon().getType2()}</td>
 					<td>${result.getPokemon().getHitpoints()}</td>
@@ -308,6 +308,14 @@
 						<input class="form-check-input" type="checkbox" value="<%=number%>" name="add<%=number%>" checked> 
 						<label class="form-check-label"	for="flexCheckChecked" style="margin-left: 2.em"> </label>
 					</td>
+				</tr>
+				<tr id="${result.getPokemon().getDatabaseID()}" style="display: none">
+					<c:forEach items="${result.getPokemon().getAttacks()}" var="attack">
+					<td width=20>${attack.getAttacktype()}</td>
+					<td width=30>${attack.getAttackclass()}</td>
+					<td width=40>${attack.getDmg()}</td>
+					<td width=50>${attack.getEffect()}</td>
+					</c:forEach>
 				</tr>
 				<%number++; %>
 			</c:forEach>
@@ -353,6 +361,14 @@
 			} else {
 				document.getElementById("effect4_label").style.visibility = "hidden";
 				document.getElementById("effect4_selection").style.visibility = "hidden";
+			}
+		}
+		/* Show or hide pokemon attacks */
+		function showAttacks(pokemon_id){
+			if(document.getElementById(pokemon_id).style.display === "none") {
+				document.getElementById(pokemon_id).style.display = "block";
+			} else {
+				document.getElementById(pokemon_id).style.display = "none";
 			}
 		}
 	</script>

@@ -67,5 +67,14 @@
   <servlet-mapping>
     <servlet-name>ServletAgentListener</servlet-name>
     <url-pattern>/ServletAgentListener</url-pattern>
+  </servlet-mapping>  
+  <servlet>
+    <display-name>ServletCreateTeam</display-name>
+    <servlet-name>ServletCreateTeam</servlet-name>
+    <servlet-class>cbr_Pokemonteam.ServletCreateTeam</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ServletCreateTeam</servlet-name>
+    <url-pattern>/ServletCreateTeam</url-pattern>
   </servlet-mapping>
 </web-app>
