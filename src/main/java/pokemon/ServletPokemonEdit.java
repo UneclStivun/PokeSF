@@ -82,7 +82,7 @@ public class ServletPokemonEdit extends HttpServlet {
 		
 		// Übergebe Liste der Pokemonobjekte in die Session
 		session.setAttribute("pokemonList", pokemonList);
-			
+		
 		// Spaltennamen übergeben
 		request.setAttribute("columnNames", new String[] { "Name", "Type 1", "Type 2", "Hitpoints", "Attack", "Defense", "Sp.Attack", "Sp.Defense", "Speed"});
 			

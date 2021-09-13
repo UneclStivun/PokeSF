@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * Servlet implementation class ServletAgentLauncher
@@ -23,13 +24,11 @@ public class ServletAgentLauncher extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-		// Rufe AgentLauncher auf, um Agenten dort zu initialisieren
-		AgentLauncher startAgents = new AgentLauncher();
-		startAgents.launchAgents();
 		
-		// Führe zurück zur Seite
-		response.sendRedirect("pokemonFight.jsp");
+		// Agenten terminieren
+		new AgentLauncher().terminateAgents();
+		
+		response.sendRedirect("pokemonTeamCreator.jsp");
 		return;
 	}
 
@@ -37,7 +36,15 @@ public class ServletAgentLauncher extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doGet(request, response);
-	}
+		
+		// Rufe AgentLauncher auf, um Agenten dort zu initialisieren
+		new AgentLauncher().launchAgents();
+		
+		String pokemonTeam = request.getParameter("pokemonTeam");
+		
+		request.setAttribute("pokemonTeam", pokemonTeam);
 
+		// Weiterleitung für die Kampfsimulation
+		request.getRequestDispatcher("pokemonFight.jsp").forward(request, response);
+	}
 }

@@ -58,4 +58,14 @@
     <servlet-name>ServletQuickList</servlet-name>
     <url-pattern>/ServletQuickList</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>ServletAgentListener</display-name>
+    <servlet-name>ServletAgentListener</servlet-name>
+    <servlet-class>agents.ServletAgentListener</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ServletAgentListener</servlet-name>
+    <url-pattern>/ServletAgentListener</url-pattern>
+  </servlet-mapping>
 </web-app>

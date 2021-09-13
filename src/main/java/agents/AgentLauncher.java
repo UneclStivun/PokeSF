@@ -6,49 +6,61 @@ import jade.core.ProfileImpl;
 import jade.core.Runtime;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
+import jade.wrapper.ControllerException;
 import jade.wrapper.StaleProxyException;
 
 public class AgentLauncher extends Agent {
 
-	public void launchAgents() {
+	private Runtime rt;
+	private Profile profile;
+	private AgentContainer mainContainer;
+	private ProfileImpl pContainer;
+	
+	public AgentLauncher() {
 		// Get a hold on JADE runtime
-		Runtime rt = Runtime.instance();
-
+		this.rt = Runtime.instance();
+		
 		// Exit the JVM when there are no more containers around
-		rt.setCloseVM(true);
-
+		this.rt.setCloseVM(true);
+		
 		// Create a default profile
-		Profile profile = new ProfileImpl(null, 1099, null);
-
-		AgentContainer mainContainer = rt.createMainContainer(profile);
-		//Properties secondaryContainerProperties = new Properties();
-
+		this.profile = new ProfileImpl(null, 1099, null);
+		
+		this.mainContainer = rt.createMainContainer(profile);
+		
 		// Set the default Profile to start a container
-		ProfileImpl pContainer = new ProfileImpl(null, 1099, null);
-
-		// Other Container
-		// AgentContainer cont = rt.createAgentContainer(pContainer);
-		//JadeGateway.init(Agent.class.getName(), null, secondaryContainerProperties);
-
+		this.pContainer = new ProfileImpl(null, 1099, null);
+	}
+	
+	// Method to initialize agents
+	public void launchAgents() {
+		
 		// Launching the agents on the main container
-		AgentController rma;
-		AgentController communicationAgent;
 		AgentController planAgent;
 		AgentController fightAgent;
+		AgentController rma;
 
 		try {
 			// Create agents
-			communicationAgent = mainContainer.acceptNewAgent("Communicator", new UpdateAgent());
-			planAgent = mainContainer.acceptNewAgent("Planer", new PlanAgent());
-			fightAgent = mainContainer.acceptNewAgent("Fighter", new FightAgent());
+			planAgent = mainContainer.acceptNewAgent("Planer", new AgentPlaner());
+			fightAgent = mainContainer.acceptNewAgent("Fighter", new AgentFighter());
 			rma = mainContainer.createNewAgent("rma", "jade.tools.rma.rma", new Object[0]);
 			
 			// Start agents
-			communicationAgent.start();
 			planAgent.start();
 			fightAgent.start();
-			//rma.start(); //starting JADE GUI
+				//rma.start(); //starting JADE GUI
 		} catch (StaleProxyException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	// Method to end agents
+	public void terminateAgents() {
+		try {
+			mainContainer.suspend();
+			mainContainer.kill();
+		} catch (ControllerException e) {
 			e.printStackTrace();
 		}
 	}
