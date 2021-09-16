@@ -11,7 +11,7 @@
 </head>
 <body>
 <form action="ServletAgentLauncher" method="post">
-	<button class="btn btn-primary" type="submit" value="start" name="fight">Start fight!</button>
+	<button class="btn btn-danger" type="submit" value="start" name="fight">Start fight!</button>
 </form>
 	<div class="d-flex p-2">
 		<div class="d-inline-flex p-2">
@@ -51,10 +51,10 @@
 				</tr>
 				<tr id="${result.getDatabaseID()}" style="display: none">
 					<c:forEach items="${result.getAttacks()}" var="attack">
-					<td width=20>${attack.getAttacktype()}</td>
-					<td width=30>${attack.getAttackclass()}</td>
-					<td width=40>${attack.getDmg()}</td>
-					<td width=50>${attack.getEffect()}</td>
+						<td width=20>${attack.getAttacktype()}</td>
+						<td width=30>${attack.getAttackclass()}</td>
+						<td width=40>${attack.getDmg()}</td>
+						<td width=50>${attack.getEffect()}</td>
 					</c:forEach>
 				</tr>
 				<%number++; %>

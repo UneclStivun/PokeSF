@@ -67,7 +67,7 @@
   <servlet-mapping>
     <servlet-name>ServletAgentListener</servlet-name>
     <url-pattern>/ServletAgentListener</url-pattern>
-  </servlet-mapping>  
+  </servlet-mapping>
   <servlet>
     <display-name>ServletCreateTeam</display-name>
     <servlet-name>ServletCreateTeam</servlet-name>
@@ -76,5 +76,15 @@
   <servlet-mapping>
     <servlet-name>ServletCreateTeam</servlet-name>
     <url-pattern>/ServletCreateTeam</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>ServletPokemonFight</display-name>
+    <servlet-name>ServletPokemonFight</servlet-name>
+    <servlet-class>pokemon.ServletPokemonFight</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ServletPokemonFight</servlet-name>
+    <url-pattern>/ServletPokemonFight</url-pattern>
   </servlet-mapping>
 </web-app>

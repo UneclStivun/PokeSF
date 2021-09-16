@@ -28,6 +28,7 @@ private static Session session;
 	@OnError
 	public void onError(Throwable e){
 		e.printStackTrace();
+		System.out.println("websocket error\nCheck if websocket refers to project name in websocket.js.");
 	}
 	
 	@OnOpen

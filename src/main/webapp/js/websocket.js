@@ -6,6 +6,7 @@ webSocket.onmessage = function(message){ wsGetMessage(message);};
 webSocket.onerror = function(){ wsError();};
 	
 function wsOpen(){
+	out.println("websocket error\nCheck if websocket refers to project name in websocket.js.");
 }
 
 function wsClose(){
@@ -23,5 +24,4 @@ function wsGetMessage(message){
 }
 
 function wsError(){
-	alert("websocket error\nCheck if websocket refers to project name.");
 }

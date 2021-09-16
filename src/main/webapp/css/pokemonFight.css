@@ -8,20 +8,22 @@ body{
 .display {
 	margin: auto;
 	width: 40%;
-	border: 5px solid #FFFF00;
 	padding: 10px;
+	border: 5px solid #FFFF00;
 }
 
 .user_options {
-	background-color: #333;
 	margin: auto;
 	width: 40%;
-	border: 5px solid #33bbff;
 	padding: 10px;
+	border: 5px solid #33bbff;
+	background-color: #333;
 }
 
 .explanation_box {
 	margin: auto;
-	border: 5px solid #FFFF00;
-	background-color: rgb(128, 0, 255);
+	width: 40%;
+	padding: 10px;
+	border: 5px solid rgb(128, 128, 128);
+	background-color: rgb(192, 192, 192);
 }
