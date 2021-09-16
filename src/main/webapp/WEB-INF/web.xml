@@ -71,7 +71,7 @@
   <servlet>
     <display-name>ServletCreateTeam</display-name>
     <servlet-name>ServletCreateTeam</servlet-name>
-    <servlet-class>cbr_Pokemonteam.ServletCreateTeam</servlet-class>
+    <servlet-class>pokemon.ServletCreateTeam</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>ServletCreateTeam</servlet-name>
@@ -86,5 +86,15 @@
   <servlet-mapping>
     <servlet-name>ServletPokemonFight</servlet-name>
     <url-pattern>/ServletPokemonFight</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>prepareTeamServlet</display-name>
+    <servlet-name>prepareTeamServlet</servlet-name>
+    <servlet-class>pokemon.prepareTeamServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>prepareTeamServlet</servlet-name>
+    <url-pattern>/prepareTeamServlet</url-pattern>
   </servlet-mapping>
 </web-app>

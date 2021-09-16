@@ -274,6 +274,7 @@
 		</select> <br>
 		<br>
 		<button class="btn btn-primary" type="submit">Search for similar Pokemon</button>
+		<a href="pokemonTeamCreator.jsp" class="btn btn-primary">Go to Teamcreator</a>
 	</form>
 
 	<br>
@@ -281,9 +282,7 @@
 	<form action="ServletQuickList" method="post">
 	<c:if
 		test="${sessionScope.resultCases != null && !sessionScope.resultCases.isEmpty()}">
-		<%
-		int number = 0;
-		%>
+		<%int number = 0;%>
 		<table border=1>
 			<!-- Table Header -->
 			<tr>

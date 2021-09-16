@@ -255,7 +255,6 @@ public class Retrieval_Pokemon {
 			if(Double.compare(c1, c2) == 0) {
 				sim++;
 			}
-			//System.out.println("Attack!");
 			c1 = attUserP.get(typeKeys.get(i));
 			c2 = attCBRP.get(typeKeys.get(i));		
 			if(Double.compare(c1, c2) == 0) {

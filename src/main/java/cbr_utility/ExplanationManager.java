@@ -69,7 +69,11 @@ public class ExplanationManager {
 			sim += attacksSim;
 			validAtts++;
 		}
-		return sim/validAtts;
+		sim = sim/validAtts;
+		if (Double.isNaN(sim)) {
+			sim = 0.0;
+		}
+		return sim;
 	}
 	
 	//sorting the attributes after highest similarity

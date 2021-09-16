@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import pokemon.Pokemon;
 import pokemon.Pokemonteam;
 
@@ -236,23 +237,71 @@ public class DatabaseManipulator {
 	}
 
 	public void addPokemonteamToDatabase(Pokemonteam team) throws SQLException {
+		//Establish Team_id Poketeam reference
+		String queryAddPokemon = "INSERT INTO pokemonteam_ref VALUES (?) RETURNING \"teamId\";";
+		PreparedStatement pStmntAddPokemon = con.prepareStatement(queryAddPokemon);
+		pStmntAddPokemon.setString(1, team.getTeamname());
+		ResultSet rs = pStmntAddPokemon.executeQuery();
+		
+		//Get highest Team_id from next Resultset
+		int maxId = 0;
+		if(rs.next()) {
+			maxId = rs.getInt(1);
+		}
+		
 		// Erstelle Query zum Hinzufügen eines Pokemons in die Datenbank
-				String queryAddPokemon = "INSERT INTO pokemonteam values (?,?,?,?,?,?,?)";
-				PreparedStatement pStmntAddPokemon = con.prepareStatement(queryAddPokemon);
-				
-				// Der Query werden die Pokemon-Werte zugewiesen
-				pStmntAddPokemon.setInt(1, team.getPokemon().get(0).getDatabaseID());
-				pStmntAddPokemon.setInt(2, team.getPokemon().get(1).getDatabaseID());
-				pStmntAddPokemon.setInt(3, team.getPokemon().get(2).getDatabaseID());
-				pStmntAddPokemon.setInt(4, team.getPokemon().get(3).getDatabaseID());
-				pStmntAddPokemon.setInt(5, team.getPokemon().get(4).getDatabaseID());
-				pStmntAddPokemon.setInt(6, team.getPokemon().get(5).getDatabaseID());
-				pStmntAddPokemon.setString(7, team.getTeamname());
-				
-				// Query wird ausgeführt
+		queryAddPokemon = "INSERT INTO pokemonteam values (?,?)";
+		pStmntAddPokemon = con.prepareStatement(queryAddPokemon);
+		if(maxId > 0) {
+			for(int i = 0; i < team.getPokemon().size(); i++) {
+				pStmntAddPokemon.setInt(1 ,team.getPokemon().get(i).getDatabaseID());
+				pStmntAddPokemon.setInt(2, maxId);
 				pStmntAddPokemon.executeUpdate();
+			}
+		}
+		// Datenbankverbindung wird geschlossen
+		//con.close();
+	}
+	
+	public List<Pokemonteam> getAllPokemonTeamsFromDatabase() {
+		String query = "SELECT p.*, pr.\"teamId\", pr.\"teamname\" FROM Pokemon p\r\n"
+				+ "JOIN pokemonteam pt on \"pokeRef\" = p.pokeId\r\n"
+				+ "JOIN pokemonteam_ref pr on pr.\"teamId\" = pt.\"teamId\"\r\n"
+				+ "Order by pr.\"teamId\"";
+		ResultSet rs;
+		List<Pokemonteam> teamList = new ArrayList<Pokemonteam>();
+		try {
+			PreparedStatement pstmnt = con.prepareStatement(query);
+			rs = pstmnt.executeQuery();
+			Pokemonteam team = new Pokemonteam();
+			while(rs.next()) {
+				if(team.getPokemon().size() == 0) {
+					team.setTeamid(rs.getInt(13));
+					team.setTeamname(rs.getString(14));
+					teamList.add(team);
+				}
+				//Create Pokemon object and fill it with query values
+				Pokemon pokemon = new Pokemon(rs.getString(1), rs.getString(2), rs.getString(3),
+						rs.getInt(4), rs.getInt(5), rs.getInt(6), rs.getInt(7), rs.getInt(8), rs.getInt(9));
+				pokemon.setDatabaseID(rs.getInt(12));
+				//Add attacks to pokemon
+				pokemon.translateAttacksFromDB(rs.getString(10));
 				
-				// Datenbankverbindung wird geschlossen
-				con.close();
+				//TeamId differs from current Rowvalue
+				if(team.getTeamid() != rs.getInt(13)) {
+					//create new team
+					team = new Pokemonteam();
+					team.setTeamid(rs.getInt(13));
+					team.setTeamname(rs.getString(14));
+					teamList.add(team);
+				}
+				team.getPokemon().add(pokemon);
+			}
+			con.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return teamList;
 	}
 }
