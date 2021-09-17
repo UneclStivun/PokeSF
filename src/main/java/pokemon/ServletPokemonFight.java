@@ -35,37 +35,34 @@ public class ServletPokemonFight extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		//Session setzen oder wiederverwenden
+		// Session setzen oder wiederverwenden
 		HttpSession session = request.getSession();
 		
 		// In der Session gespeichertes Pokemonteam aufrufen
 		List<Pokemon> poketeam = (List)session.getAttribute("poketeam");
-		
-		boolean teamDefeated = false;
 		
 		switch(request.getParameter("action")) {
 			case "switch":
 				switchPokemon(poketeam, Integer.parseInt(request.getParameter("position")));
 				break;
 			case "damage":
-				teamDefeated = calculateDamage(poketeam);
+				// Speichere, ob Team nach Schadensberechnung besiegt
+				session.setAttribute("isDefeated", calculateDamage(poketeam));
 				break;
 			default:
 				break;
 		}
 		
-//		// Rückgabeinhalt auf JSON einstellen
-//		response.setContentType("application/json");
-//	    PrintWriter out = response.getWriter();
-//	    
-//		JSONObject pokeToJson = new JSONObject("{"
-//				+ "defeated:" + teamDefeated 
-//				+ ",pokeName:" + poketeam.get(0).getName()
-//				+ ",pokeHP:" + poketeam.get(0).getHitpoints()
-//				+ ",pokeAil:" + poketeam.get(0).getAil1()
-//				+ "}");
-//		
-//		out.print(pokeToJson);
+		// Rückgabeinhalt auf JSON einstellen
+		response.setContentType("application/json");
+	    PrintWriter out = response.getWriter();
+	    
+		JSONObject pokeToJson = new JSONObject("{"
+			+ "pokeName:" + poketeam.get(0).getName()
+			+ ",pokeHP:" + poketeam.get(0).getHitpoints()
+			+ ",pokeAil:" + poketeam.get(0).getAil1()
+			+ "}");
+		
 		response.sendRedirect("pokemonFight.jsp");
 	}
 	
@@ -73,9 +70,7 @@ public class ServletPokemonFight extends HttpServlet {
 	// Zu tauschende Pokemon tauschen den Platz in der Liste
 	private void switchPokemon(List<Pokemon> poketeam, int position) {
 		Pokemon pokemonPlaceholder = poketeam.get(0);
-		
 		poketeam.set(0, poketeam.get(position));
-		
 		poketeam.set(position, pokemonPlaceholder);
 	}
 	

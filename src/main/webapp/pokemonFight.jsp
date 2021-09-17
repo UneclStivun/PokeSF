@@ -3,7 +3,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-
 	<!-- Ajax -->
 	<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
 	
@@ -24,10 +23,8 @@
 	<div class="display">
 		<c:choose>
 			<c:when test="${sessionScope.poketeam != null}">
-				<label id="pokeValue">
 					${sessionScope.poketeam.get(0).getName()}  HP: ${sessionScope.poketeam.get(0).getHitpoints()}
 					${sessionScope.poketeam.get(0).getAil1()}<br>
-				</label>
 			</c:when>
 			<c:otherwise>
 				<%response.sendRedirect("ServletAgentLauncher");%>
@@ -101,12 +98,11 @@
 				cache : false,
 				url : "ServletPokemonFight",
 				type : "POST",
-				//dataType : "json",
 				data : {
 					action: "damage",
 				},
 				success : function(data) {
-					//updateDisplay(data);
+					updateDisplay(data);
 					$("#page").html(data);
 				},
 				error : function(data, status) {
@@ -122,13 +118,11 @@
 				cache : false,
 				url : "ServletPokemonFight",
 				type : "POST",
-				//dataType : "json",
 				data : {
 					action: "switch",
 					position: position
 				},
 				success : function(data) {
-					//updateDisplay(data);
 					$("#page").html(data);
 				},
 				error : function(data, status) {
@@ -137,7 +131,8 @@
 			});
 		}
 		
-		/* function updateDisplay(data) {
+		function updateDisplay(data) {
+			/*
 			var name = data.pokeName;
 			var hp = data.pokeHP;
 			var ail = data.pokeAil;
@@ -150,13 +145,17 @@
 			if(ail != null) {
 				$("#pokeValue").append(ail);
 			}
+			*/
 			
-			if(defeated) {
+			if(${sessionScope.isDefeated}) {
 				alert("Team NAME has been defeated");
-			} else if(hp == 0) {
+			}
+			/*
+			else if(true) {
 				alert("You should switch your pokemon...no really!");
 			}
-		} */
+			*/
+		}
 	</script>
 </body>
 </html>
