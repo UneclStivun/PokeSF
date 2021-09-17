@@ -89,12 +89,12 @@
   </servlet-mapping>
   <servlet>
     <description></description>
-    <display-name>prepareTeamServlet</display-name>
-    <servlet-name>prepareTeamServlet</servlet-name>
-    <servlet-class>pokemon.prepareTeamServlet</servlet-class>
+    <display-name>ServletPrepareTeam</display-name>
+    <servlet-name>ServletPrepareTeam</servlet-name>
+    <servlet-class>pokemon.ServletPrepareTeam</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>prepareTeamServlet</servlet-name>
-    <url-pattern>/prepareTeamServlet</url-pattern>
+    <servlet-name>ServletPrepareTeam</servlet-name>
+    <url-pattern>/ServletPrepareTeam</url-pattern>
   </servlet-mapping>
 </web-app>
