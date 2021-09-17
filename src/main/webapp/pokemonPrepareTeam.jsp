@@ -1,7 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+<%@ include file = "header/checkUser.jsp" %>
     <%@taglib uri="/WEB-INF/prepareTeamTag.tld" prefix="ptt"%>
-    <%@taglib  uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,16 +13,81 @@
   <div class="col-4">
   <p> Your Current Team:</p>
   <br>
-  
+  <table>
+  <tr>
+	<th>"${sessionScope.userTeam.getTeamname()}"</th>
+	<th colspan="2">Type</th>
+	<th>Hp</th>
+	<th>Att</th>
+	<th>Def</th>
+	<th>SpAtt</th>
+	<th>SpDef</th>	
+	<th>Ini</th>
+  </tr>
+  <c:forEach items="${sessionScope.userTeam.getPokemon()}" var="poke">
+  <tr>
+  	<td><button type="button" class="btn btn-link" onclick="showAttacks('u${poke.getDatabaseID()}')">${poke.getName()}</button></td>
+	<td>${poke.getType1()}</td>
+	<td>${poke.getType2()}</td>
+	<td>${poke.getHitpoints()}</td>
+	<td>${poke.getAttack()}</td>
+	<td>${poke.getDefense()}</td>
+	<td>${poke.getSpAttack()}</td>
+	<td>${poke.getSpDefense()}</td>
+	<td>${poke.getInitiative()}</td>
+  </tr>
+  <c:forEach items="${poke.getAttacks()}" var="attack">
+  	<tr name="u${poke.getDatabaseID()}" style="display: none">
+		<td width=20>${attack.getAttacktype()}</td>
+		<td width=20>${attack.getAttackclass()}</td>
+		<td width=20>${attack.getDmg()}</td>
+		<td width=20>${attack.getEffect()}</td>
+  	</tr>
+  </c:forEach>
+</c:forEach>
+  </table>
   </div>
   <div class="col-4">
   <p>Current Enemy Team:</p>
   <br>
+  <table>
+  <tr>
+	<th>"${sessionScope.userTeam.getTeamname()}"</th>
+	<th colspan="2">Type</th>
+	<th>Hp</th>
+	<th>Att</th>
+	<th>Def</th>
+	<th>SpAtt</th>
+	<th>SpDef</th>	
+	<th>Ini</th>
+  </tr>
+<c:forEach items="${sessionScope.enemyTeam.getPokemon()}" var="poke">
+  <tr>
+  	<td><button type="button" class="btn btn-link" onclick="showAttacks('e${poke.getDatabaseID()}')">${poke.getName()}</button></td>
+	<td>${poke.getType1()}</td>
+	<td>${poke.getType2()}</td>
+	<td>${poke.getHitpoints()}</td>
+	<td>${poke.getAttack()}</td>
+	<td>${poke.getDefense()}</td>
+	<td>${poke.getSpAttack()}</td>
+	<td>${poke.getSpDefense()}</td>
+	<td>${poke.getInitiative()}</td>
+  </tr>
+  <c:forEach items="${poke.getAttacks()}" var="attack">
+  	<tr name="e${poke.getDatabaseID()}" style="display: none">
+		<td width=20>${attack.getAttacktype()}</td>
+		<td width=20>${attack.getAttackclass()}</td>
+		<td width=20>${attack.getDmg()}</td>
+		<td width=20>${attack.getEffect()}</td>
+  	</tr>
+  </c:forEach>
+</c:forEach>
+  </table>
   </div>
   <div class="col-4">
-  <form>
+  <form action="ServletPrepareTeam" method="post">
   <p>All available Teams:</p>
-  <div action="prepareTeamServlet" method="post">
+  <div>
   	<datalist id="suggestions" >
   	<%int number = 0;%>
     	<c:forEach items="${sessionScope.allTeamList}" var="poke">
@@ -50,5 +113,20 @@
 	
 	</div> 
 </div>
+
+<script>
+		function showAttacks(pokemon_name){
+			var e = [];
+			var elems = document.getElementsByName(pokemon_name);
+			for(var i=0; i<elems.length;i++) {
+				if(elems[i].style.display=="none") {
+					elems[i].style.display="block"
+		    	} else {
+		    		   elems[i].style.display="none"
+		    	}
+			}
+		}
+	</script>
+
 </body>
 </html>
