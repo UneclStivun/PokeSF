@@ -2,6 +2,8 @@ package agents;
 
 import java.io.IOException;
 
+import org.json.JSONObject;
+
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -72,9 +74,17 @@ private static Session session;
 				// Check if message is not null and contains a content or block
 				if(msgReceive != null && msgReceive.getContent() != null) {
 					
-					// Send message to webSocket eventlistener
+					JSONObject plan = new JSONObject(msgReceive.getContent());
+					
+					String action = plan.getString("action");
+					
+					// Send message to webSocket eventListener
 					try {
-						session.getBasicRemote().sendText("Kommt das durch?");
+						if(action.equals("attack")) {
+							chooseAttack();
+						}
+						
+						session.getBasicRemote().sendText(plan.toString());
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -86,6 +96,10 @@ private static Session session;
 	}
 	
 	protected void takeDown() {
+	}
+	
+	private void chooseAttack() {
+		
 	}
 }
 

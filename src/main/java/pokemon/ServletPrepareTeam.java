@@ -20,14 +20,12 @@ public class ServletPrepareTeam extends HttpServlet {
      * Default constructor. 
      */
     public ServletPrepareTeam() {
-        // TODO Auto-generated constructor stub
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
@@ -35,24 +33,29 @@ public class ServletPrepareTeam extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		//get Action from PrepareTeam.jsp
+		// Session setzen oder wiederverwenden
 		HttpSession session = request.getSession();
+		
 		List<Pokemonteam> allTeams = (List<Pokemonteam>) session.getAttribute("allTeamList");
+		
 		int counter;
 			
 		//add Team to user
 		if(request.getParameter("user") != null) {
 			counter = Integer.parseInt(request.getParameter("all"));
 			session.setAttribute("userTeam", allTeams.get(counter));
+			session.setAttribute("isUserTeamDefeated", false);
 		}
 			
 		//add Team to Enemy
 		if(request.getParameter("enemy") != null) {
 			counter = Integer.parseInt(request.getParameter("all"));
 			session.setAttribute("enemyTeam", allTeams.get(counter));
+			session.setAttribute("isEnemyTeamDefeated", false);
 		}
+		
 		//Then possibility to gain similar Teams for either user or enemy Team
 		//Then (optional get a "counter" to the current user / enemy Team)
 		request.getRequestDispatcher("pokemonPrepareTeam.jsp").forward(request, response);
-		}
 	}
+}

@@ -28,7 +28,6 @@ public class ServletCreateTeam extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
@@ -36,14 +35,15 @@ public class ServletCreateTeam extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		HttpSession session = request.getSession();
 		List<Pokemon> poketeam;
 		List<Pokemon> quickList;
 		List<Pokemon> allPokemon;
 		Pokemonteam team;
 		int pos;
+		
 		quickList = (List<Pokemon>) session.getAttribute("quickList");
+		
 		//check if there is alrady an existing poketeam in the session
 		if((List) session.getAttribute("poketeam") != null) {
 			poketeam = (List)session.getAttribute("poketeam");
@@ -66,7 +66,7 @@ public class ServletCreateTeam extends HttpServlet {
 			}
 		}
 		
-//if user wants to add from all PokemonList to poketeam
+		//if user wants to add from all PokemonList to poketeam
 		if(request.getParameter("all") != null) {
 			//more than 6 Pokemon to be added
 			if(poketeam.size() > 5) {

@@ -40,10 +40,6 @@ public class ServletAgentLauncher extends HttpServlet {
 		// Rufe AgentLauncher auf, um Agenten dort zu initialisieren
 		new AgentLauncher().launchAgents();
 		
-		String pokemonTeam = request.getParameter("pokemonTeam");
-		
-		request.setAttribute("pokemonTeam", pokemonTeam);
-
 		// Weiterleitung für die Kampfsimulation
 		request.getRequestDispatcher("pokemonFight.jsp").forward(request, response);
 	}

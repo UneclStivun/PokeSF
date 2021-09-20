@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 public class Pokemon {
-	// Membervariables
+	
+	/* === Membervariables === */
+	
 	private String name;
 	
 	private String type1;
@@ -38,7 +40,8 @@ public class Pokemon {
 	private String ail2;
 	
 	
-	// Constructor
+	/* === Constructor ===*/
+	
 	public Pokemon() {this.attacks = new ArrayList<Attack>();}
 	
 	public Pokemon(String name, String type1, String type2,
@@ -55,6 +58,8 @@ public class Pokemon {
 		this.initiative = initiative;
 		this.attacks = new ArrayList<Attack>();
 	}
+	
+	/* === Methods === */
 	
 	// Add attack objects to List
 	public void addAttacks(Attack attack1, Attack attack2, Attack attack3, Attack attack4) {
@@ -84,7 +89,7 @@ public class Pokemon {
 	      }
 	}
 	
-	//Transform attacklist into string for casebase and database
+	// Transform attacklist into string for casebase and database
 	public String attackListToString() {
 		String attacksS = "";
 		if(attacks.size() > 0) {
@@ -99,6 +104,55 @@ public class Pokemon {
 			attacksS = attacksS.substring(0, attacksS.length() -1);
 		}
 		return attacksS;
+	}
+	
+	// Transform attacks into json string
+	public String attackListToJson() {
+		
+		String attackJson = "{";
+		
+		if(attacks.size() > 0) {
+			for(int i = 0; i < attacks.size(); i++) {
+				attackJson += "attack" + (i+1) + ":{";
+				attackJson += attacks.get(i).getAttacktype() + "-";
+				attackJson += attacks.get(i).getAttackclass() + "-";
+				attackJson += attacks.get(i).getDmg() + "-";
+				attackJson += attacks.get(i).getEffect();
+				attackJson += "},";
+			}
+			//return without the last commata
+			attackJson = attackJson.substring(0, attackJson.length() -1);
+			
+			attackJson += "}";
+		}
+		
+		return attackJson;
+	}
+	
+	// Transform pokemon class to json string
+	public String pokemonToJson() {
+		
+		if(this.type2 != null) {
+			if(this.type2.equals("")) { this.setType2("null"); }
+		}
+		
+		String pokeJson = "{";
+		pokeJson += "name:" + this.name;
+		pokeJson += ",type1:" + this.type1;
+		pokeJson += ",type2:" + this.type2;
+		pokeJson += ",hp:" + this.hitpoints;
+		pokeJson += ",attack:" + this.attack;
+		pokeJson += ",defense:" + this.defense;
+		pokeJson += ",spAttack:" + this.spAttack;
+		pokeJson += ",spDefense:" + this.spDefense;
+		pokeJson += ",initiative:" + this.initiative;
+		pokeJson += ",ail1:" + this.ail1;
+		pokeJson += ",ail2:" + this.ail2;
+		pokeJson += ",id:" + this.databaseID;
+		//pokeJson += ",attacks:" + this.attackListToJson();
+		pokeJson += "}";
+		
+		return pokeJson;
 	}
 	
 	//Getter Setter methods

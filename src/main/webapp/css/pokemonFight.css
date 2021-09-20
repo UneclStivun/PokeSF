@@ -27,3 +27,49 @@ body{
 	border: 5px solid rgb(128, 128, 128);
 	background-color: rgb(192, 192, 192);
 }
+
+.normal {
+	background: rgb(192, 192, 192);
+}
+.fire {
+	background: rgb(255, 0, 0);
+}
+.water {
+	background: rgb(0, 128, 255);
+}
+.electric {
+	background: rgb(255, 255, 0);
+}
+.grass {
+	background: rgb(0, 196, 0);
+}
+.ice {
+	background: rgb(0, 255, 255);
+}
+.fighting {
+	background: rgb(176, 98, 98);
+}
+.poison {
+	background: rgb(196, 0, 196);
+}
+.ground {
+	background: rgb(250, 173, 31);
+}
+.flying {
+	background: rgb(136, 196, 255);
+}
+.psychic {
+	background: rgb(255, 79, 255);
+}
+.bug {
+	background: rgb(128, 255, 128);
+}
+.rock {
+	background: rgb(175, 152, 141);
+}
+.ghost {
+	background: rgb(131, 6, 255);
+}
+.dragon {
+	background: rgb(0, 0, 255);
+}
