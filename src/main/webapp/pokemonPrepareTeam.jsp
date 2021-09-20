@@ -13,19 +13,17 @@
 </head>
 <body>
 	<ptt:CaseLoader></ptt:CaseLoader>
-	
 	<form method="post" action="ServletAgentLauncher">
 		<button type="submit" class="btn btn-danger">Start fight!</button>
 	</form>
 	<br>
-	
 	<div class="row">
 		<div class="col-4">
 			<p>Your Current Team:</p>
 			<br>
 			<table>
 				<tr>
-					<th>"${sessionScope.userTeam.getTeamname()}"</th>
+					<th>${sessionScope.userTeam.getTeamname()}</th>
 					<th colspan="2">Type</th>
 					<th>Hp</th>
 					<th>Att</th>
@@ -63,7 +61,7 @@
 			<br>
 			<table>
 				<tr>
-					<th>"${sessionScope.userTeam.getTeamname()}"</th>
+					<th>${sessionScope.enemyTeam.getTeamname()}</th>
 					<th colspan="2">Type</th>
 					<th>Hp</th>
 					<th>Att</th>
@@ -120,9 +118,115 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-4"></div>
-		<div class="col-4"></div>
-		<div class="col-4"></div>
+		<div class="col-6">
+			<br>
+			<p>Get similar teams to selected team</p>
+			<form action="ServletPokemonteamSimilarityFinder" method="post">
+				<div>
+					<datalist id="simSugg">
+						<option value="${sessionScope.userTeam.getTeamid()}">${sessionScope.userTeam.getTeamname()}</option>
+						<option value="${sessionScope.enemyTeam.getTeamid()}">${sessionScope.enemyTeam.getTeamname()}</option>
+					</datalist>
+					<input autoComplete="on" list="simSugg" name="sim" />
+					<button type="submit" name="retrieve" value="yes">Retrieve
+						similar Teams</button>
+				</div>
+			</form>
+		</div>
+		<div class="col-6">
+			<br>
+			<p>Get counter teams to selected team</p>
+			<form action="ServletPokemonteamSimilarityFinder" method="post">
+				<div>
+					<datalist id="counterSugg">
+						<option value="${sessionScope.userTeam.getTeamid()}">${sessionScope.userTeam.getTeamname()}</option>
+						<option value="${sessionScope.enemyTeam.getTeamid()}">${sessionScope.enemyTeam.getTeamname()}</option>
+					</datalist>
+					<input autoComplete="on" list="counterSugg" name="count" />
+					<button type="submit" name="counter" value="yes">Get
+						counter team</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-6">
+			<c:if
+				test="${sessionScope.simTeams != null && !sessionScope.simTeams.isEmpty()}">
+				<br>
+				<p>similar Teams:</p>
+				<table>
+					<c:forEach items="${sessionScope.simTeams}" var="sims">
+						<tr>
+							<th colspan="2">${sims.getCasename()}</th>
+							<th colspan="2">${sims.getSim()}</th>
+						</tr>
+						<tr>
+							<td>Resistances:</td>
+							<c:forEach items="${sims.getResistances()}" var="res">
+								<td>${res}</td>
+							</c:forEach>
+						</tr>
+						<tr>
+							<td>Weaknesses:</td>
+							<c:forEach items="${sims.getWeaknesses()}" var="weak">
+								<td>${weak}</td>
+							</c:forEach>
+						</tr>
+						<tr>
+							<td>Immunities:</td>
+							<c:forEach items="${sims.getImmunities()}" var="imm">
+								<td>${imm}</td>
+							</c:forEach>
+						</tr>
+					</c:forEach>
+				</table>
+			</c:if>
+		</div>
+
+		<div class="col-6">
+			<c:if
+				test="${sessionScope.counterTeamList != null && !sessionScope.counterTeamList.isEmpty()}">
+				<br>
+				<p>similar Teams:</p>
+				<table>
+					<c:forEach items="${sessionScope.counterTeamList}" var="counter">
+						<tr>
+							<th colspan="2">${counter.getTeamname()}</th>
+							<th><form>
+									<button>Add to user</button>
+								</form></th>
+							<th><form>
+									<button>Add to enemy</button>
+								</form></th>
+						</tr>
+						<c:forEach items="${counter.getPokemon()}" var="poke">
+							<tr>
+								<td><button type="button" class="btn btn-link"
+										onclick="showAttacks('${poke.getDatabaseID() + counter.getTeamid()}')">${poke.getName()}</button></td>
+								<td>${poke.getType1()}</td>
+								<td>${poke.getType2()}</td>
+								<td>${poke.getHitpoints()}</td>
+								<td>${poke.getAttack()}</td>
+								<td>${poke.getDefense()}</td>
+								<td>${poke.getSpAttack()}</td>
+								<td>${poke.getSpDefense()}</td>
+								<td>${poke.getInitiative()}</td>
+							</tr>
+							<tr id="${poke.getDatabaseID() + counter.getTeamid()}"
+								style="display: none">
+								<c:forEach items="${poke.getAttacks()}" var="attack">
+									<td>${attack.getAttacktype()}</td>
+									<td>${attack.getAttackclass()}</td>
+									<td>${attack.getDmg()}</td>
+									<td>${attack.getEffect()}</td>
+								</c:forEach>
+							</tr>
+						</c:forEach>
+					</c:forEach>
+				</table>
+			</c:if>
+		</div>
 	</div>
 
 	<script>

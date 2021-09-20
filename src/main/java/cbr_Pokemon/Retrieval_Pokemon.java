@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cbr_utility.ExplanationManager;
+import cbr_utility.CBRExplanationManagerPokemon;
 import de.dfki.mycbr.core.casebase.Instance;
 import de.dfki.mycbr.core.model.IntegerDesc;
 import de.dfki.mycbr.core.model.StringDesc;
@@ -24,7 +24,7 @@ public class Retrieval_Pokemon {
 	
 	//static method to set the query attributes for retrieval and get all result
 	//cases for a single Pokemon
-	public static ArrayList<Case_Pokemon> retrieveSimCases(CaseBaseLoader_Pokemon cbl, Pokemon pokemon) {
+	public static List<Case_Pokemon> retrieveSimCases(CaseBaseLoader_Pokemon cbl, Pokemon pokemon) {
 		//List that saves all similar cases related to current Pokemon
 		ArrayList<Case_Pokemon> resultCasesPokemon = new ArrayList<Case_Pokemon>();
 		try {
@@ -69,7 +69,7 @@ public class Retrieval_Pokemon {
 				//Casefetching and saving to ArrayList<Pokemon>
 				result = ret.getRetrievalEngine().retrieve(cbl.getCb(), query);
 				Collection<Instance> cases = cbl.getCb().getCases();
-				ArrayList<Pokemon> pokemonList = new ArrayList<Pokemon>();
+				List<Pokemon> pokemonList = new ArrayList<Pokemon>();
 				
 				//Create Pokemoninstances from cases of the Casebase
 				for(Instance i : cases) {
@@ -94,7 +94,7 @@ public class Retrieval_Pokemon {
 				if(result.size() > 0) {
 					for(int i = 0; i < pokemonList.size();i++) {					
 						//sum up similarities from functions with self written String functions
-						ExplanationManager expMan = new ExplanationManager();
+						CBRExplanationManagerPokemon expMan = new CBRExplanationManagerPokemon();
 						
 						//check if HP Similarity is lower than 0
 						if(cbl.getHpFct()

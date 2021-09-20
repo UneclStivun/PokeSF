@@ -97,4 +97,14 @@
     <servlet-name>ServletPrepareTeam</servlet-name>
     <url-pattern>/ServletPrepareTeam</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>ServletPokemonteamSimilarityFinder</display-name>
+    <servlet-name>ServletPokemonteamSimilarityFinder</servlet-name>
+    <servlet-class>pokemon.ServletPokemonteamSimilarityFinder</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ServletPokemonteamSimilarityFinder</servlet-name>
+    <url-pattern>/ServletPokemonteamSimilarityFinder</url-pattern>
+  </servlet-mapping>
 </web-app>

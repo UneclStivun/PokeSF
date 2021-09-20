@@ -1,10 +1,13 @@
-package cbr_utility;
+package cbr_Pokemonteam;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
-public class ExplanationManager {
-	//Membervariablen
+import cbr_utility.SimPair;
+
+public class CBRExplanationManagerPokemonteam {
+	//Membervariables
 	private double hpSim;
 	
 	private double attSim;
@@ -19,20 +22,16 @@ public class ExplanationManager {
 	
 	private double typeSim;
 	
-	private double nameSim;
-	
-	private double attacksSim;
-	
 	private List<SimPair> topSimAtt;
 	
-	public ExplanationManager () {
+	public CBRExplanationManagerPokemonteam() {
 		topSimAtt = new ArrayList<SimPair>();
 	}
 	
-	//Summarize all similarities
-	public double sumSimilarities() {
+	public double sumUpSimilarities() {
 		double sim = 0.0;
 		double validAtts = 0.0;
+		
 		if(Double.compare(hpSim, 0.0) != 0) {
 			sim += hpSim;
 			validAtts++;
@@ -61,14 +60,7 @@ public class ExplanationManager {
 			sim += typeSim;
 			validAtts++;
 		}
-		if(Double.compare(nameSim, 0.0) != 0) {
-			sim += nameSim;
-			validAtts++;
-		}
-		if(Double.compare(attacksSim, 0.0) != 0) {
-			sim += attacksSim;
-			validAtts++;
-		}
+		//divide similarity 
 		sim = sim/validAtts;
 		if (Double.isNaN(sim)) {
 			sim = 0.0;
@@ -85,8 +77,6 @@ public class ExplanationManager {
 		SimPair s5 = new SimPair("Special Defense: ", spDefSim);
 		SimPair s6 = new SimPair("Initiative: ", iniSim);
 		SimPair s7 = new SimPair("Type: ", typeSim);
-		SimPair s8 = new SimPair("Name: ", nameSim);
-		SimPair s9 = new SimPair("Attacks: ", attacksSim);
 		
 		topSimAtt.add(s1);
 		topSimAtt.add(s2);
@@ -95,16 +85,11 @@ public class ExplanationManager {
 		topSimAtt.add(s5);
 		topSimAtt.add(s6);
 		topSimAtt.add(s7);
-		topSimAtt.add(s8);
-		topSimAtt.add(s9);
+		
+		//Comparator method in order to sort from highest to lowest
+		topSimAtt.sort(Comparator.comparingDouble(SimPair::getSim).reversed());
 	}
 	
-	public void toConsole() {
-		for(int i = 0; i < topSimAtt.size(); i++) {
-			System.out.println(topSimAtt.get(i).getSimAtt() + topSimAtt.get(i).getSim());
-		}
-	}
-
 	public double getHpSim() {
 		return hpSim;
 	}
@@ -142,7 +127,7 @@ public class ExplanationManager {
 	}
 
 	public void setSpDefSim(double spDefSim) {
-		spDefSim = spDefSim;
+		this.spDefSim = spDefSim;
 	}
 
 	public double getIniSim() {
@@ -159,22 +144,6 @@ public class ExplanationManager {
 
 	public void setTypeSim(double typeSim) {
 		this.typeSim = typeSim;
-	}
-
-	public double getNameSim() {
-		return nameSim;
-	}
-
-	public void setNameSim(double nameSim) {
-		this.nameSim = nameSim;
-	}
-
-	public double getAttacksSim() {
-		return attacksSim;
-	}
-
-	public void setAttacksSim(double attacksSim) {
-		this.attacksSim = attacksSim;
 	}
 
 	public List<SimPair> getTopSimAtt() {
