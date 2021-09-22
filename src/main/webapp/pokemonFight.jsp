@@ -99,51 +99,46 @@
 			
 			// Falls block aktiviert wurde, muss Pokemon auf Nutzerseite ausgewechselt werden
 			// Ansonsten führe Tausch normal durch
-			if(block) {
-				alert("Switch blockt\nuserAction: " + userAction + "\agentAction: " + agentAction);
-				$.ajax({
-					async : false,
-					cache : false,
-					url : "ServletPokemonFight",
-					dataType: "json",
-					type : "POST",
-					data : {
-						userAction : "{action:forceSwitch, position:" + position + "}",
-						agentAction : "{action:wait}"
-					},
-					success : function(data) {
-					},
-					error : function(data, status) {
-						alert("Something went wrong :(\nData: " + data + "\nStatus: " + status);
-					}
-				});
-			} else {
-				// Prüfe ob auzuwechselndes Pokemon gültig ist
-				if(checkPokemonForSwitch(position)) {
+			// Prüfe ob auzuwechselndes Pokemon gültig ist
+			if(checkPokemonForSwitch(position)) {
+				if(block) {
+					$.ajax({
+						async : false,
+						cache : false,
+						url : "ServletPokemonFight",
+						type : "POST",
+						data : {
+							userAction : "{action:forceSwitch, position:" + position + "}",
+							agentAction : "{action:wait}"
+						},							success : function(data) {
+							$("#page").html(data);
+							block = false;
+							checkDefeated();
+						},
+						error : function(data, status) {
+							alert("Something went wrong :(\nData: " + data + "\nStatus: " + status);
+						}
+					});
+				}  else {
 					userAction = "{action:switch, position:" + position + "}";
 					agentAction = "action:choose,";
 					sendToAgent();
-				} else {
-					alert("Cannot switch to defeated Pokemon!");
-					document.getElementsByClassName("explanation_box")[0].append("Cannot switch to defeated Pokemon!\n");
 				}
+			} else {
+				alert("Cannot switch to defeated Pokemon!");
+				document.getElementsByClassName("explanation_box")[0].append("Cannot switch to defeated Pokemon!\n");
 			}
 		}
 		
 		// Methode für das Auswechseln eines besiegten Pokemons des Agenten
-		function forceSwitchPokemon(player) {
+		function forceSwitchPokemon() {
 			
 			// Unterscheide zwischen Nutzer und Agent
-			if(player === "agent") {
-				agentAction = "action:forceSwitch,";
-				userAction = "{action:wait}";
-				sendToAgent();
-				alert("Agent wechselt ");
-			} else {
-				userAction = "{action:forceSwitch, position:" + position + "}";
-				agentAction = "{action:wait}";
-				alert("User wechselt\nuserAction: " + userAction + "\agentAction: " + agentAction);
-			}
+			agentAction = "action:forceSwitch,";
+			userAction = "{action:wait}";
+			
+			setTimeout(function(){sendToAgent();},500);
+			
 		}
 		
 		// Prüfe ob zu wechselndes Pokemon nicht K.O. ist
@@ -171,6 +166,7 @@
 		
 		// Methode zum Senden von Rundeninformationen an das Agentensystem
 		function sendToAgent() {
+			
 			var teamJson = "{";
 			
 			teamJson += agentAction;
@@ -223,13 +219,12 @@
 				alert("Team ${sessionScope.userTeam.getTeamname()} has been defeated");
 			} else if(${sessionScope.userTeam.getPokemon().get(0).getHitpoints() == 0}) {
 				block = true;
-				forceSwitchPokemon("user");
 			}
 			
 			if(${sessionScope.isEnemyTeamDefeated}) {
 				alert("Team ${sessionScope.enemyTeam.getTeamname()} has been defeated");
 			} else if(${sessionScope.enemyTeam.getPokemon().get(0).getHitpoints() == 0}) {
-				forceSwitchPokemon("agent");
+				forceSwitchPokemon();
 			}
 		}
 		
