@@ -85,6 +85,7 @@ private static Session session;
 						}
 						
 						session.getBasicRemote().sendText(plan.toString());
+						
 					} catch (IOException e) {
 						e.printStackTrace();
 					}

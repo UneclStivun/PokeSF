@@ -140,7 +140,7 @@ public class Pokemon {
 		pokeJson += "name:" + this.name;
 		pokeJson += ",type1:" + this.type1;
 		pokeJson += ",type2:" + this.type2;
-		pokeJson += ",hp:" + this.hitpoints;
+		pokeJson += ",hitpoints:" + this.hitpoints;
 		pokeJson += ",attack:" + this.attack;
 		pokeJson += ",defense:" + this.defense;
 		pokeJson += ",spAttack:" + this.spAttack;
@@ -148,7 +148,7 @@ public class Pokemon {
 		pokeJson += ",initiative:" + this.initiative;
 		pokeJson += ",ail1:" + this.ail1;
 		pokeJson += ",ail2:" + this.ail2;
-		pokeJson += ",id:" + this.databaseID;
+		pokeJson += ",databaseID:" + this.databaseID;
 		//pokeJson += ",attacks:" + this.attackListToJson();
 		pokeJson += "}";
 		

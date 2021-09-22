@@ -16,9 +16,9 @@ import pokemon.Pokemon;
 
 public class AgentPlaner extends Agent {
 	
-	Pokemon actualUserPokemon;
+	private Pokemon actualUserPokemon;
 	
-	Pokemon actualAgentPokemon;
+	private Pokemon actualAgentPokemon;
 	
 	public AgentPlaner() {
 	}
@@ -37,6 +37,8 @@ public class AgentPlaner extends Agent {
 					
 					// Get message of AgentFighter
 					JSONObject teamJson = new JSONObject(msgReceive.getContent());
+					String action = teamJson.getString("action");
+					
 					Pokemon userPokemon1 = new Gson().fromJson(teamJson.getJSONObject("userPokemon0").toString(), Pokemon.class);
 					Pokemon userPokemon2 = new Gson().fromJson(teamJson.getJSONObject("userPokemon1").toString(), Pokemon.class);
 					Pokemon userPokemon3 = new Gson().fromJson(teamJson.getJSONObject("userPokemon2").toString(), Pokemon.class);
@@ -51,16 +53,32 @@ public class AgentPlaner extends Agent {
 					Pokemon agentPokemon6 = new Gson().fromJson(teamJson.getJSONObject("enemyPokemon5").toString(), Pokemon.class);
 					
 					List<Pokemon> agentPokemonList = new ArrayList<Pokemon>();
-					agentPokemonList.add(userPokemon1);
-					agentPokemonList.add(userPokemon2);
-					agentPokemonList.add(userPokemon3);
-					agentPokemonList.add(userPokemon4);
-					agentPokemonList.add(userPokemon5);
-					agentPokemonList.add(userPokemon6);
+					agentPokemonList.add(agentPokemon1);
+					agentPokemonList.add(agentPokemon2);
+					agentPokemonList.add(agentPokemon3);
+					agentPokemonList.add(agentPokemon4);
+					agentPokemonList.add(agentPokemon5);
+					agentPokemonList.add(agentPokemon6);
 					
-					statusUpdate(agentPokemonList);
+					List<Pokemon> userPokemonList = new ArrayList<Pokemon>();
+					userPokemonList.add(userPokemon1);
+					userPokemonList.add(userPokemon2);
+					userPokemonList.add(userPokemon3);
+					userPokemonList.add(userPokemon4);
+					userPokemonList.add(userPokemon5);
+					userPokemonList.add(userPokemon6);
 					
-					msgSend.setContent(generatePlan());
+					if(action.equals("forceSwitch")) {
+						// Wechsel das Pokemon
+						System.out.println("Agent forceSwitch mit: " + searchForSwitch(agentPokemonList));
+						msgSend.setContent(searchForSwitch(agentPokemonList));
+					} else {
+						// Wähle eine Aktion
+						statusUpdate(agentPokemonList);
+						
+						msgSend.setContent(generatePlan());
+					}
+
 					msgSend.addReceiver(new AID("Fighter", AID.ISLOCALNAME));
 					send(msgSend);
 				} else {
@@ -76,8 +94,19 @@ public class AgentPlaner extends Agent {
 	private void statusUpdate(List<Pokemon> agentPokemonList) {
 		
 		// aktualisiere das aktuell käpfende Pokemon
-		this.actualUserPokemon = agentPokemonList.get(0);
+		this.actualAgentPokemon = agentPokemonList.get(0);
 		
+	}
+	
+	private String searchForSwitch(List<Pokemon> agentPokemonList) {
+		String action = "";
+		
+		for(int i = 1; i < agentPokemonList.size(); i++) {
+			if(agentPokemonList.get(i).getHitpoints() > 0) {
+				action = "{action:forceSwitch,position:" + i + "}";
+			}
+		}
+		return action;
 	}
 	
 	private String generatePlan() {
@@ -85,7 +114,7 @@ public class AgentPlaner extends Agent {
 		
 		String action = "";
 		
-		if(true) {
+		if(false) {
 			action = "switch";
 		} else {
 			action = "attack";

@@ -51,7 +51,7 @@
 				<p style="color:white;">
 					<c:forEach items="${sessionScope.userTeam.getPokemon()}" var="pokemon" varStatus="counter">
 						<c:if test="${counter.index > 0 }">
-							<button type="button" class="btn btn-link" onclick="switchPokemon(${counter.index})">Switch to</button>
+							<button type="button" class="btn btn-link id=${counter.index}" onclick="switchPokemon(${counter.index})">Switch to</button>
 							${pokemon.getName()}
 							<br>
 						</c:if>
@@ -71,37 +71,98 @@
 
 	<br><br>
 	<a href="index.jsp">Back to main page</a>
-	
+
 	<!-- Functions -->
 	<script>
+		var userAction; // Nutzer-Aktion als json
+		var agentAction; // Aktion des Agenten als Json
+		var block = false; // blockieren der Attacken, falls Pokemon K.O.
 	
-		var userAction;
-	
-		//Function pokemon data to a json string
-	  	function convertPokemonToJson() {
-	  		/*
-			- Agent erhält Infos über sein Team (Anzahl Pokemon + Typen Vorteile)
-			- Agent sieht Infos über aktuelles Pokemon(Leben, Status, Angriffe, Typen)
-			- Agent sieht Infos über Gegner-Pokemon
-			- Agent lernt Angriffe seines Gegners.
-			*/
-	  	}
-		
 	 	// Methode für das Angreifen von Pokemon
+	 	// Nur für den menschlichen Spieler
 		function attack(position) {
-			userAction = "{action:attack, position:" + position + "}";
-			sendToAgent();
+			
+			// Falls block aktiviert, kann Nutzer nicht angreifen
+	 		if(!block) {
+	 			userAction = "{action:attack, position:" + position + "}";
+				agentAction = "action:choose,";
+				sendToAgent();
+	 		} else {
+	 			alert("Switch to an undefeated pokemon!");
+	 			document.getElementsByClassName("explanation_box")[0].append("Switch to an undefeated pokemon!\n");
+	 		}
 		}
 		
 		// Methode für das Austauschen von Pokemon
+		// Nur für den menschlichen Spieler
 		function switchPokemon(position) {
-			userAction = "{action:switch, position:" + position + "}";
-			sendToAgent();
+			
+			// Falls block aktiviert wurde, muss Pokemon auf Nutzerseite ausgewechselt werden
+			// Ansonsten führe Tausch normal durch
+			if(block) {			
+				$.ajax({
+					async : false,
+					cache : false,
+					url : "ServletPokemonFight",
+					dataType: "json",
+					type : "POST",
+					data : {
+						userAction : "{action:forceSwitch, position:" + position + "}"
+					},
+					success : function(data) {
+					},
+					error : function(data, status) {
+						alert("Something went wrong :(\nData: " + data + "\nStatus: " + status);
+					}
+				});
+			} else {
+				// Prüfe ob auzuwechselndes Pokemon gültig ist
+				if(checkPokemonForSwitch(position)) {
+					userAction = "{action:switch, position:" + position + "}";
+					agentAction = "action:choose,";
+					sendToAgent();
+				} else {
+					alert("Cannot switch to defeated Pokemon!");
+					document.getElementsByClassName("explanation_box")[0].append("Cannot switch to defeated Pokemon!\n");
+				}
+			}
+		}
+		
+		// Methode für das Auswechseln eines besiegten Pokemons des Agenten
+		function forceSwitchPokemon() {
+				agentAction = "action:forceSwitch,";
+				userAction = "{action:wait}";
+				sendToAgent();
+		}
+		
+		// Prüfe ob zu wechselndes Pokemon nicht K.O. ist
+		function checkPokemonForSwitch(position) {
+			var check = false;
+			
+			$.ajax({
+				async : false,
+				cache : false,
+				url : "ServletPokemonFight",
+				dataType: "json",
+				type : "POST",
+				data : {
+					check: position
+				},
+				success : function(data) {
+					check = data.check;
+				},
+				error : function(data, status) {
+					alert("Something went wrong :(\nData: " + data + "\nStatus: " + status);
+				}
+			});
+			return check;
 		}
 		
 		// Methode zum Senden von Rundeninformationen an das Agentensystem
 		function sendToAgent() {
 			var teamJson = "{";
+			
+			teamJson += agentAction;
 			
 			/* userTeam */
 			<c:forEach items="${sessionScope.userTeam.getPokemon()}" var="pokemon" varStatus="counter">
@@ -126,7 +187,7 @@
 		webSocket.addEventListener('message', function(message) {
 			
 			$.ajax({
-				async : true,
+				async : false,
 				cache : false,
 				url : "ServletPokemonFight",
 				type : "POST",
@@ -136,6 +197,7 @@
 				},
 				success : function(data) {
 					$("#page").html(data);
+					block = false;
 					checkDefeated();
 				},
 				error : function(data, status) {
@@ -146,9 +208,10 @@
 		
 		function checkDefeated() {
 			if(${sessionScope.isUserTeamDefeated}) {
+				block = true;
 				alert("Team ${sessionScope.userTeam.getTeamname()} has been defeated");
 			} else if(${sessionScope.userTeam.getPokemon().get(0).getHitpoints() == 0}) {
-				forceSwitchPokemon();
+				block = true;
 			}
 			
 			if(${sessionScope.isEnemyTeamDefeated}) {
@@ -158,9 +221,6 @@
 			}
 		}
 		
-		function forceSwitchPokemon() {
-			alert("Wechsel das Pokemon!");
-		}
 	</script>
 </body>
 </html>
