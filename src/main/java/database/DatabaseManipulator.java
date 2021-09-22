@@ -304,4 +304,29 @@ public class DatabaseManipulator {
 		}
 		return teamList;
 	}
+
+	public List<Pokemon> getAllSimilarPokemon(Pokemon actualUserPokemon) {
+		List<Pokemon> pokeList = new ArrayList<Pokemon>();
+		String query = "SELECT * FROM POKEMON where name = ?";
+		ResultSet rs;
+		
+		try {
+			PreparedStatement pstmnt = con.prepareStatement(query);
+			pstmnt.setString(1, actualUserPokemon.getName());
+			rs = pstmnt.executeQuery();
+			
+			while(rs.next()) {
+				//Create Pokemon object and fill it with query values
+				Pokemon pokemon = new Pokemon(rs.getString(1), rs.getString(2), rs.getString(3),
+						rs.getInt(4), rs.getInt(5), rs.getInt(6), rs.getInt(7), rs.getInt(8), rs.getInt(9));
+				pokemon.setDatabaseID(rs.getInt(12));
+				//Add attacks to pokemon
+				pokemon.translateAttacksFromDB(rs.getString(10));
+				pokeList.add(pokemon);
+			}
+		} catch (SQLException e) {
+			System.out.println(e);
+		}
+		return pokeList;
+	}
 }

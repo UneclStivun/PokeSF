@@ -5,6 +5,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONObject;
+
+import com.google.gson.Gson;
+
 public class Pokemon {
 	
 	/* === Membervariables === */
@@ -106,32 +110,8 @@ public class Pokemon {
 		return attacksS;
 	}
 	
-	// Transform attacks into json string
-	public String attackListToJson() {
-		
-		String attackJson = "{";
-		
-		if(attacks.size() > 0) {
-			for(int i = 0; i < attacks.size(); i++) {
-				attackJson += "attack" + (i+1) + ":{";
-				attackJson += attacks.get(i).getAttacktype() + "-";
-				attackJson += attacks.get(i).getAttackclass() + "-";
-				attackJson += attacks.get(i).getDmg() + "-";
-				attackJson += attacks.get(i).getEffect();
-				attackJson += "},";
-			}
-			//return without the last commata
-			attackJson = attackJson.substring(0, attackJson.length() -1);
-			
-			attackJson += "}";
-		}
-		
-		return attackJson;
-	}
-	
 	// Transform pokemon class to json string
 	public String pokemonToJson() {
-		
 		if(this.type2 != null) {
 			if(this.type2.equals("")) { this.setType2("null"); }
 		}
@@ -149,9 +129,7 @@ public class Pokemon {
 		pokeJson += ",ail1:" + this.ail1;
 		pokeJson += ",ail2:" + this.ail2;
 		pokeJson += ",databaseID:" + this.databaseID;
-		//pokeJson += ",attacks:" + this.attackListToJson();
 		pokeJson += "}";
-		
 		return pokeJson;
 	}
 	

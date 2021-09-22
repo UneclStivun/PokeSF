@@ -99,7 +99,8 @@
 			
 			// Falls block aktiviert wurde, muss Pokemon auf Nutzerseite ausgewechselt werden
 			// Ansonsten führe Tausch normal durch
-			if(block) {			
+			if(block) {
+				alert("Switch blockt\nuserAction: " + userAction + "\agentAction: " + agentAction);
 				$.ajax({
 					async : false,
 					cache : false,
@@ -107,7 +108,8 @@
 					dataType: "json",
 					type : "POST",
 					data : {
-						userAction : "{action:forceSwitch, position:" + position + "}"
+						userAction : "{action:forceSwitch, position:" + position + "}",
+						agentAction : "{action:wait}"
 					},
 					success : function(data) {
 					},
@@ -129,10 +131,19 @@
 		}
 		
 		// Methode für das Auswechseln eines besiegten Pokemons des Agenten
-		function forceSwitchPokemon() {
+		function forceSwitchPokemon(player) {
+			
+			// Unterscheide zwischen Nutzer und Agent
+			if(player === "agent") {
 				agentAction = "action:forceSwitch,";
 				userAction = "{action:wait}";
 				sendToAgent();
+				alert("Agent wechselt ");
+			} else {
+				userAction = "{action:forceSwitch, position:" + position + "}";
+				agentAction = "{action:wait}";
+				alert("User wechselt\nuserAction: " + userAction + "\agentAction: " + agentAction);
+			}
 		}
 		
 		// Prüfe ob zu wechselndes Pokemon nicht K.O. ist
@@ -212,12 +223,13 @@
 				alert("Team ${sessionScope.userTeam.getTeamname()} has been defeated");
 			} else if(${sessionScope.userTeam.getPokemon().get(0).getHitpoints() == 0}) {
 				block = true;
+				forceSwitchPokemon("user");
 			}
 			
 			if(${sessionScope.isEnemyTeamDefeated}) {
 				alert("Team ${sessionScope.enemyTeam.getTeamname()} has been defeated");
 			} else if(${sessionScope.enemyTeam.getPokemon().get(0).getHitpoints() == 0}) {
-				forceSwitchPokemon();
+				forceSwitchPokemon("agent");
 			}
 		}
 		

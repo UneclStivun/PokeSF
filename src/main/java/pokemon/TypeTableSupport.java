@@ -9,7 +9,7 @@ import java.util.Map;
 public final class TypeTableSupport {
 	//Links für Angriff / Oben für Abwehr
 	static String[][] typeArray = { {"", "normal", "fire", "water", "electric", "grass",
-		"ice", "fighting", "poison", "ground", "flying", "psycho", "bug",
+		"ice", "fighting", "poison", "ground", "flying", "psychic", "bug",
 		"rock", "ghost", "dragon"},
 			{"normal", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1",
 			"1", "1", "0.5", "0", "1"},

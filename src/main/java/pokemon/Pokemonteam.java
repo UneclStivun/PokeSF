@@ -3,6 +3,8 @@ package pokemon;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.Gson;
+
 public class Pokemonteam {
 	//Membervariables
 	private List<Pokemon> pokemon;
@@ -75,6 +77,4 @@ public class Pokemonteam {
 		sumUpVals.add(spDef);
 		sumUpVals.add(ini);
 	}
-	
-	
 }

@@ -3,12 +3,14 @@ package pokemon;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
 import cbr_Pokemonteam.CaseBaseLoader_Pokemonteam;
 import cbr_Pokemonteam.Case_Pokemonteam;
 import cbr_Pokemonteam.Retrieval_Pokemonteam;
+import cbr_utility.SimPair;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -102,7 +104,7 @@ public class ServletPokemonteamSimilarityFinder extends HttpServlet {
 			}
 			
 			if(team != null) {
-				List<Integer> scoreList = new ArrayList<Integer>();
+				List<ScorePair> scoreList = new ArrayList<ScorePair>();
 				int scorer;
 				//retrieve hard counter teams from all Teams and calculate the strongest teams with a new TypeTableSupport function
 				Map<String, Integer> defAff = TypeTableSupport.checkTeamDefenseAffinities(team);
@@ -135,23 +137,15 @@ public class ServletPokemonteamSimilarityFinder extends HttpServlet {
 							}
 						}
 					}
-					scoreList.add(scorer);
+					scoreList.add(new ScorePair(allTeams.get(i), scorer));
 				}
 				//iterate through scoreList and allTeams to get 1-3 counter teams and save it as a new list to the session
-				//Verweis von Liste auf List => fehler durch transitivität von änderungen von liste a zu b
-				//ScoreList wird auch sortiert obwohl nur sortedScoreList sortiert wird
-				List<Integer> sortedScoreList = scoreList;
 				List<Pokemonteam> counterTeamList = new ArrayList<Pokemonteam>();
-				Collections.sort(sortedScoreList, Collections.reverseOrder());
-				
-				for(int i = 0; i < sortedScoreList.size(); i++) {
-					for(int j = 0; j < scoreList.get(j); j++) {
+				scoreList.sort(Comparator.comparingInt(ScorePair::getScore).reversed());
+				for(int i = 0; i < scoreList.size(); i++) {
 						if(counterTeamList.size() < 2) {
-							if(sortedScoreList.get(i) == scoreList.get(j)) {
-								counterTeamList.add(allTeams.get(j));
-							}
+							counterTeamList.add(scoreList.get(i).getTeam());
 						}
-					}
 				}
 				session.setAttribute("counterTeamList", counterTeamList);
 			}
