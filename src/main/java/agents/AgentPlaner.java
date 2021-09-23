@@ -90,6 +90,8 @@ public class AgentPlaner extends Agent {
 					statusUpdateUser(userPokemonList);
 					statusUpdateAgent(agentPokemonList);
 					
+					
+					System.out.println("Empfangene Action: " + action);
 					if(action.equals("forceSwitch")) {
 						// Wechsel das Pokemon
 						msgSend.setContent(searchForSwitch(agentPokemonList));
@@ -137,9 +139,11 @@ public class AgentPlaner extends Agent {
 	//forces pokemon switch
 	private String searchForSwitch(List<Pokemon> agentPokemonList) {
 		String action = "";
-		
-		for(int i = 1; i < agentPokemonList.size(); i++) {
-			if(agentPokemonList.get(i).getHitpoints() > 0) {
+		action = getBestAction(); //get the best remaining Pokemon to switch into
+		System.out.println("Bestes Pokemon: " + action);
+		for(int i = 0; i < agentPokemonList.size(); i++) {
+			if(action.contains(agentPokemonList.get(i).getName())) {
+				System.out.println(agentPokemonList.get(i).getName());
 				action = "{action:forceSwitch,position:" + i + "}";
 			}
 		}
