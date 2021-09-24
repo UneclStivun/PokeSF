@@ -76,17 +76,25 @@
 	<script>
 		var userAction; // Nutzer-Aktion als json
 		var agentAction; // Aktion des Agenten als Json
-		var block = false; // blockieren der Attacken, falls Pokemon K.O.
+		var block = false; // blockieren der Aktionen
+		var switchBlock = false; // blockieren der Attacken, wenn Nutzer Pokemon wechseln muss
 	
 	 	// Methode für das Angreifen von Pokemon
 	 	// Nur für den menschlichen Spieler
 		function attack(position) {
 			
+			// Gebe Warnung aus, wenn Nutzer zu schnell klickt
+			if(block) {
+				alert("Time for processing needed, please wait one second.");
+				document.getElementsByClassName("explanation_box")[0].append("Time for processing needed, please wait one second.\n");
+				return;
+			}
+			
 			// Falls block aktiviert, kann Nutzer nicht angreifen
-	 		if(!block) {
+	 		if(!switchBlock) {
 	 			userAction = "{action:attack, position:" + position + "}";
 				agentAction = "action:choose,";
-				sendToAgent();
+				setTimeout(function(){sendToAgent();},500);
 	 		} else {
 	 			alert("Switch to an undefeated pokemon!");
 	 			document.getElementsByClassName("explanation_box")[0].append("Switch to an undefeated pokemon!\n");
@@ -97,11 +105,18 @@
 		// Nur für den menschlichen Spieler
 		function switchPokemon(position) {
 			
+			// Gebe Warnung aus, wenn Nutzer zu schnell klickt
+			if(block) {
+				alert("Time for processing needed, please wait one second.");
+				document.getElementsByClassName("explanation_box")[0].append("Time for processing needed, please wait one second.\n");
+				return;
+			}
+			
 			// Falls block aktiviert wurde, muss Pokemon auf Nutzerseite ausgewechselt werden
 			// Ansonsten führe Tausch normal durch
 			// Prüfe ob auzuwechselndes Pokemon gültig ist
 			if(checkPokemonForSwitch(position)) {
-				if(block) {
+				if(switchBlock) {
 					$.ajax({
 						async : false,
 						cache : false,
@@ -110,9 +125,10 @@
 						data : {
 							userAction : "{action:forceSwitch, position:" + position + "}",
 							agentAction : "{action:wait}"
-						},							success : function(data) {
+						},	success : function(data) {
 							$("#page").html(data);
 							block = false;
+							switchBlock = false;
 							checkDefeated();
 						},
 						error : function(data, status) {
@@ -133,12 +149,11 @@
 		// Methode für das Auswechseln eines besiegten Pokemons des Agenten
 		function forceSwitchPokemon() {
 			
-			// Unterscheide zwischen Nutzer und Agent
 			agentAction = "action:forceSwitch,";
 			userAction = "{action:wait}";
 			
+			// Warte eine halbe Sekunde, bevor Agent Aktion ausführt
 			setTimeout(function(){sendToAgent();},500);
-			
 		}
 		
 		// Prüfe ob zu wechselndes Pokemon nicht K.O. ist
@@ -170,6 +185,7 @@
 			var teamJson = "{";
 			
 			teamJson += agentAction;
+			teamJson += "\nuserAction:" + userAction + ",\n";
 			
 			/* userTeam */
 			<c:forEach items="${sessionScope.userTeam.getPokemon()}" var="pokemon" varStatus="counter">
@@ -205,6 +221,7 @@
 				success : function(data) {
 					$("#page").html(data);
 					block = false;
+					switchBlock = false;
 					checkDefeated();
 				},
 				error : function(data, status) {
@@ -215,15 +232,17 @@
 		
 		function checkDefeated() {
 			if(${sessionScope.isUserTeamDefeated}) {
-				block = true;
+				switchBlock = true;
 				alert("Team ${sessionScope.userTeam.getTeamname()} has been defeated");
 			} else if(${sessionScope.userTeam.getPokemon().get(0).getHitpoints() == 0}) {
-				block = true;
+				switchBlock = true;
 			}
 			
 			if(${sessionScope.isEnemyTeamDefeated}) {
+				block = true;
 				alert("Team ${sessionScope.enemyTeam.getTeamname()} has been defeated");
 			} else if(${sessionScope.enemyTeam.getPokemon().get(0).getHitpoints() == 0}) {
+				block = true;
 				forceSwitchPokemon();
 			}
 		}

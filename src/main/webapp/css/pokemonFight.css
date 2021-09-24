@@ -31,7 +31,7 @@ body{
 .normal {
 	background: rgb(192, 192, 192);
 }
-.fire {
+.fire, .BRN {
 	background: rgb(255, 0, 0);
 }
 .water {
@@ -73,3 +73,4 @@ body{
 .dragon {
 	background: rgb(0, 0, 255);
 }
+	

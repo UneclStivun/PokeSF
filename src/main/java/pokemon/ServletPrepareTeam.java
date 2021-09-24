@@ -3,8 +3,6 @@ package pokemon;
 import java.io.IOException;
 import java.util.List;
 
-import cbr_Pokemonteam.CaseBaseLoader_Pokemonteam;
-import cbr_Pokemonteam.Retrieval_Pokemonteam;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;

@@ -2,7 +2,6 @@ package pokemon;
 
 //Funktion use Attack on Pokemon to calculate effects
 
-//Bei Attacken 10% Feuer, Elektro, Gift, Eis
 	//	Paralysis 90% Wahrscheinlichkeit, Initative 1/2, 25% Chance dass Pokemon nicht angreifen kann
 	//	Frozen kann nur ausgewechselt werden ,20% Wahrscheinlichkeit Status entfernen 
 	//	Burn 1/8 Dmg bis Heilung
@@ -13,7 +12,6 @@ package pokemon;
 	//	Egelsamen 1/8 Debuff + Heilung um gleichen Betrag
 	//Neue Idee: Status bei Pokemon festhalten (Status beibehalten bei Wechsel etc.), Aktuelles Pokemon auf Active setzen weil
 	//nur bei diesem auch die Statüsschen wirken
-	//Attacke mit flat Schaden [Fire,100]
 	//Status Attacke ohne Schaden aber Debuff (verhindert gegnerischen Schaden)
 	//Attacke mit flat Schaden plus Debuff (Verbrennung macht je Runde Tick Dmg)
 	//Attacke mit flat Schaden plus Debuff (Attacken verhindert vom Gegner (Paralyse, Eingefroren))

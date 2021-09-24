@@ -66,6 +66,10 @@ public class AgentPlaner extends Agent {
 					Pokemon agentPokemon5 = new Gson().fromJson(teamJson.getJSONObject("enemyPokemon4").toString(), Pokemon.class);
 					Pokemon agentPokemon6 = new Gson().fromJson(teamJson.getJSONObject("enemyPokemon5").toString(), Pokemon.class);		
 
+					JSONObject attacks1 = teamJson.getJSONObject("userPokemon0").getJSONObject("attackList");
+					System.out.println("\nVollstaendige Liste" + attacks1
+							+ "\nPlus Typ: " + attacks1.getString("attackType1") + "\n");
+					
 					List<Pokemon> userPokemonList = new ArrayList<Pokemon>();
 					userPokemonList.add(userPokemon1);
 					userPokemonList.add(userPokemon2);
@@ -88,7 +92,6 @@ public class AgentPlaner extends Agent {
 					
 					if(action.equals("forceSwitch")) {
 						// Wechsel das Pokemon
-						System.out.println("Agent forceSwitch mit: " + searchForSwitch(agentPokemonList));
 						msgSend.setContent(searchForSwitch(agentPokemonList));
 					} else {
 						// Wähle eine Aktion
@@ -97,7 +100,7 @@ public class AgentPlaner extends Agent {
 						
 						msgSend.setContent(generatePlan());
 					}
-
+					
 					msgSend.addReceiver(new AID("Fighter", AID.ISLOCALNAME));
 					send(msgSend);
 				} else {
@@ -164,7 +167,6 @@ public class AgentPlaner extends Agent {
 			//pick best attack function
 			plan.put("action", "attack");
 			plan.put("position", pos);
-			System.out.println(actualAgentPokemon.getAttacks().size());  
 		}
 		roundAg++;
 		return plan.toString();

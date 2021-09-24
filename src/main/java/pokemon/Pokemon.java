@@ -129,7 +129,22 @@ public class Pokemon {
 		pokeJson += ",ail1:" + this.ail1;
 		pokeJson += ",ail2:" + this.ail2;
 		pokeJson += ",databaseID:" + this.databaseID;
+		
+		pokeJson += ",attackList:{";
+
+		for (int i = 0; i < attacks.size(); i++) {
+			if (attacks.get(i).getEffect() == null) {
+				attacks.get(i).setEffect("none");
+			}
+			pokeJson+="attackType" + (i + 1) + ":" + attacks.get(i).getAttacktype();
+			pokeJson+=",attackClass" + (i + 1) + ":" + attacks.get(i).getAttackclass();
+			pokeJson+=",attackEffect" + (i + 1) + ":" + attacks.get(i).getEffect() + ",";
+		}
+		pokeJson = pokeJson.substring(0, pokeJson.length() -1);
 		pokeJson += "}";
+		
+		pokeJson += "}";
+		
 		return pokeJson;
 	}
 	

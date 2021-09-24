@@ -2,7 +2,10 @@ package pokemon;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 import org.json.JSONObject;
 
@@ -77,8 +80,10 @@ public class ServletPokemonFight extends HttpServlet {
 		// Ansonsten wird die Runde normal ausgeführt
 		if(agentAction.getString("action").equals("forceSwitch")) {
 			switchPokemon(enemyTeam.getPokemon(), agentAction.getInt("position"));
+			explanationMng.addExplanationSwitch(enemyTeam, agentAction.getInt("position"));
 		} else if (userAction.getString("action").equals("forceSwitch")) {
 			switchPokemon(userTeam.getPokemon(), userAction.getInt("position"));
+			explanationMng.addExplanationSwitch(userTeam, userAction.getInt("position"));
 		} else {
 			explanationMng.addExplanationRound();
 			
@@ -150,8 +155,14 @@ public class ServletPokemonFight extends HttpServlet {
 	private void calculateDamage(List<Pokemon> attackingTeam, List<Pokemon> defendingTeam, int attackPosition) {
 		
 		// Notwendige Werte der Pokemon und der Attacke
-		double damage = 10 * 100;
-		double mod = 1;
+		double damage = 1 * 100;
+		double statusMod = 1.0;
+		double typeMod = 1.0;
+		boolean isSTAB= false;
+		Map<String, Double> defendingPokemon = TypeTableSupport.checkDefenseAffinities(defendingTeam.get(0));
+		List<String> typeKeys = new ArrayList<String>();
+		String ail1 = attackingTeam.get(0).getAil1();
+		String ail2 = attackingTeam.get(0).getAil2();
 		String pokemonType1 = attackingTeam.get(0).getType1();
 		String pokemonType2 = attackingTeam.get(0).getType2();
 		String attackType = attackingTeam.get(0).getAttacks().get(attackPosition).getAttacktype();
@@ -161,21 +172,49 @@ public class ServletPokemonFight extends HttpServlet {
 		int defense = defendingTeam.get(0).getDefense();
 		int spDefense = defendingTeam.get(0).getSpDefense();
 		
+		int rndNum = 0;		
+		rndNum = 1 + (int)(Math.random() * ((10 - 1) + 1)); // [min:1, max:10]
+		
+		// 10% Chance, dass Feuer-, Elektro-, Eis-, Gift-Attacken einen Status auslösen
+		if (rndNum == 10) {
+			switch (attackType) {
+			case "fire":
+				defendingTeam.get(0).setAil1("BRN");
+				break;
+			case "electro":
+				defendingTeam.get(0).setAil1("PAR");
+				break;
+			case "ice":
+				defendingTeam.get(0).setAil1("FRZ");
+				break;
+			case "poison":
+				defendingTeam.get(0).setAil1("PSN");
+				break;
+			default:
+				break;
+			}
+		}
+		
+		// Leidet angreifendes Pokemon unter Status Frozen, Paralysis oder Sleep, greift es evtl. nicht an
+		if(ail1 != null && ail1.equals("")) {
+			rndNum = 1 + (int)(Math.random() * ((10 - 1) + 1)); // [min:1, max:10]
+		}
+		
 		// Wenn angreifer brennt 0.5 Schaden und bei LichtSchild/Reflektor 0.5 Schaden
-		if(attackingTeam.get(0).getAil1() != null && attackingTeam.get(0).getAil1().equals("BRN")) {
-			mod = 0.5;
-			//  #### Lichtschild einberechnen ####
+		if(ail1 != null && ail1.equals("BRN")) {
+			statusMod *= 0.5;
+			//  #### if Lichtschild statusMod *= 0.5;
 		}
 		
 		// Unterscheide zwischen verschiedenen Angriffsklassen
 		switch(attackClass) {
 		case "physical":
 			//damage = damage * (attack / (50 * defense) * mod + 2);
-			damage = damage * attack / 50 / defense * mod + 2;
+			damage = damage * attack / 50 / defense * statusMod + 2;
 			break;
 		case "special":
 			//damage = damage * (spAttack / (50 * spDefense) * mod + 2);
-			damage = damage * spAttack / 50 / spDefense * mod + 2;
+			damage = damage * spAttack / 50 / spDefense * statusMod + 2;
 			break;
 		case "effect":
 			break;
@@ -183,17 +222,39 @@ public class ServletPokemonFight extends HttpServlet {
 			break;
 		}
 		
+		System.out.println(
+				attackingTeam.get(0).getName()
+				+ "\nattack: " + attackType
+				+ "\ntype1: " + pokemonType1
+				+ "\ntype2: " + pokemonType2);
+		
 		// Wenn Angriff STAB ist, dann Schaden um 1.5 erhöht
+		// STAB = Same Type Attack Bonus
 		if(attackType.equals(pokemonType1) || attackType.equals(pokemonType2)) {
+			isSTAB = true;
 			damage = damage * 1.5;
 		}
 		
-		//  #### Typ1 anfällig gegen Attacke  ####
-		//TypeTableSupport.checkDefenseAffinities(defendingTeam.get(0));
+		// Gebe Anfälligkeit/Resistenz gegen die Attacke wieder:		
+		// Pokemontypen der Liste hinzufügen
+		for (Map.Entry<String, Double> entry : defendingPokemon.entrySet()) {
+			typeKeys.add(entry.getKey());
+		}
+		// Liste durchgehen und Modifikation aus TypeTableSupport ziehen
+		for(int i = 0; i < typeKeys.size(); i++) {
+			if(typeKeys.get(i).equals(attackType)) {
+				typeMod = defendingPokemon.get(typeKeys.get(i));
+			}
+		}
 		
-		//  #### Typ2 anfällig gegen Attacke ####
+		// Schaden mit Anfälligkeit/Resistenz multiplizieren
+		// typeMod kann 0, 0.25, 0.5, 1, 2 oder 4 sein
+		damage = damage * typeMod;
 		
-		System.out.println("Schaden: " + damage);
+		System.out.println(
+				"\nSchaden: " + damage
+				+ "\nSTAB: " + isSTAB
+				+ "\nAngriffsmod: " + typeMod);
 		
 		defendingTeam.get(0).setHitpoints(defendingTeam.get(0).getHitpoints() - (int)damage);
 	}

@@ -28,6 +28,13 @@ public class ServletAgentLauncher extends HttpServlet {
 		// Agenten terminieren
 		new AgentLauncher().terminateAgents();
 		
+		// Session heranziehen
+		HttpSession session = request.getSession();
+		
+		// Sessionattribute zurücksetzen
+		session.removeAttribute("userTeam");
+		session.removeAttribute("enemyTeam");
+		
 		response.sendRedirect("pokemonTeamCreator.jsp");
 		return;
 	}
