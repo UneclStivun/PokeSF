@@ -16,6 +16,7 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import pokemon.Attack;
 import pokemon.Pokemon;
+import pokemon.Pokemonteam;
 import pokemon.TypeTableSupport;
 
 
@@ -27,9 +28,11 @@ public class AgentPlaner extends Agent {
 	
 	private List<Pokemon> agentPokemonList;
 	
-	private AgentHelper ah;
+	private List<Pokemonteam> dbTeams;
 	
-	private static int roundAg = 1;
+	private Pokemonteam userTeam;
+	
+	private AgentHelper ah;
 	
 	private static int roundUs = 1;
 	
@@ -87,19 +90,14 @@ public class AgentPlaner extends Agent {
                     agentPokemonList.add(agentPokemon6);
 
 					//Updating agent view on current enemy Pokemon
-					statusUpdateUser(userPokemonList);
+					statusUpdateUser(userPokemonList, action);
 					statusUpdateAgent(agentPokemonList);
 					
-					
-					System.out.println("Empfangene Action: " + action);
 					if(action.equals("forceSwitch")) {
 						// Wechsel das Pokemon
 						msgSend.setContent(searchForSwitch(agentPokemonList));
 					} else {
 						// Wähle eine Aktion
-						statusUpdateAgent(agentPokemonList);
-						statusUpdateUser(userPokemonList);
-						
 						msgSend.setContent(generatePlan());
 					}
 					
@@ -116,9 +114,28 @@ public class AgentPlaner extends Agent {
 	}
 	
 	//update with actual user Pokemon
-	private void statusUpdateUser(List<Pokemon> userPokemonList) {
+	private void statusUpdateUser(List<Pokemon> userPokemonList, String action) {
+		//first round of Pokemon add User´s start Pokemon to recognized team
+		if(!(userTeam != null)) {
+			userTeam = new Pokemonteam();
+			userTeam.getPokemon().add(userPokemonList.get(0));
+			
+			//get a pool of all Teams in the beginning of the fight in order to give all Agent Pokemon their attacks
+			DatabaseManipulator dbm = new DatabaseManipulator();
+			dbTeams = dbm.getAllPokemonTeamsFromDatabase();
+			for(int i = 0; i < dbTeams.size(); i++) {
+				for(int j = 0; j < dbTeams.get(i).getPokemon().size(); j++) {
+					//same Pokemon match via ID / allocate fitting attacks for agent functions
+					if(agentPokemonList.get(j).getDatabaseID() == dbTeams.get(i).getPokemon().get(j).getDatabaseID()) {
+						agentPokemonList.get(j).setAttacks(dbTeams.get(i).getPokemon().get(j).getAttacks());
+					}
+				}
+			}
+		}
+		
 		if(actualUserPokemon != null) {
 			if(actualUserPokemon.getName() != userPokemonList.get(0).getName()) {
+				addToUserTeam(userPokemonList.get(0));
 				roundUs = 1;
 			} else {
 				roundUs++;
@@ -130,6 +147,37 @@ public class AgentPlaner extends Agent {
 		ah.visiblePokemon(userPokemonList.get(0));
 	}
 	
+	//this method adds an observed Pokemon to the Userteam if it hasnt been added already
+	private void addToUserTeam(Pokemon pokemon) {
+		boolean unique = true;
+		for(int i = 0; i < userTeam.getPokemon().size(); i++) {
+			if(pokemon.getName().equals(userTeam.getPokemon().get(i).getName())) {
+				unique = false;
+			}
+		}
+		if(unique) {
+			userTeam.getPokemon().add(pokemon);
+			//narrow down potential teams with current Knowledge
+			reduceDBTeam();
+		}
+	}
+	
+	//reducing the list with all Teams to those which could possibly be the user team until 1
+	private void reduceDBTeam() {
+		boolean same;
+		//iterating through teams
+		for(int i= 0; i < dbTeams.size(); i++) {
+			same = true;
+			//iterating through Pokemons
+			for(int j = 0; j < dbTeams.get(i).getPokemon().size(); j++) {
+				if(j == 0 && !(userTeam.getPokemon().get(0).getName().equals(dbTeams.get(i).getPokemon().get(j).getName()))) {
+					same = false;
+				}
+				
+			}
+		}
+	}
+
 	//update with actual Agent Pokemon
 	private void statusUpdateAgent(List<Pokemon> agentPokemonList) {
 		// aktualisiere das akutell kämpfende Agenten Pokemon
@@ -143,7 +191,6 @@ public class AgentPlaner extends Agent {
 		System.out.println("Bestes Pokemon: " + action);
 		for(int i = 0; i < agentPokemonList.size(); i++) {
 			if(action.contains(agentPokemonList.get(i).getName())) {
-				System.out.println(agentPokemonList.get(i).getName());
 				action = "{action:forceSwitch,position:" + i + "}";
 			}
 		}
@@ -164,7 +211,6 @@ public class AgentPlaner extends Agent {
 					plan.put("position", i);
 				}
 			}
-			roundAg = 0;
 			plan.put("action", "switch");
 		} else {
 			int pos = getBestAttack();
@@ -172,7 +218,6 @@ public class AgentPlaner extends Agent {
 			plan.put("action", "attack");
 			plan.put("position", pos);
 		}
-		roundAg++;
 		return plan.toString();
 	}
 	//Plan to get the enemy Pokemon and the user Pokemon
@@ -228,6 +273,7 @@ public class AgentPlaner extends Agent {
 				hiScore = score;
 				pos = i;
 			}
+			//increase Score of attacks that get strong with agent Pokemon type (Fire + Fire => 1.5 dmg)
 		}
 		return pos;
 	}

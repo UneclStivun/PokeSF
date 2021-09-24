@@ -20,6 +20,7 @@
 	<div class="row">
 		<div class="col-4">
 			<p>Your Current Team:</p>
+			<c:if test="${sessionScope.userTeam != null}">
 			<br>
 			<table>
 				<tr>
@@ -55,9 +56,11 @@
 					</c:forEach>
 				</c:forEach>
 			</table>
+			</c:if>
 		</div>
 		<div class="col-4">
 			<p>Current Enemy Team:</p>
+			<c:if test="${sessionScope.enemyTeam != null}">
 			<br>
 			<table>
 				<tr>
@@ -93,6 +96,7 @@
 					</c:forEach>
 				</c:forEach>
 			</table>
+			</c:if>
 		</div>
 		<div class="col-4">
 			<form action="ServletPrepareTeam" method="post">

@@ -35,7 +35,9 @@
 	<br><br> 			
 	<button class="btn btn-danger btn-block" onclick="window.location.href='pokemonSimilarityFinder.jsp'">Find similar Pokemon</button>
 	<br><br>
-	<button class="btn btn-danger btn-block" onclick="window.location.href='pokemonTeamCreator.jsp'">Create Pokemon Teams</button>	
+	<button class="btn btn-danger btn-block" onclick="window.location.href='pokemonTeamCreator.jsp'">Create Pokemon Teams</button>
+	<br><br>
+	<button class="btn btn-danger btn-block" onclick="window.location.href='pokemonPrepareTeam.jsp'">Prepare the Pokemonfight!</button>	
 	
 	<div class="footer">
 		<br>Neue Technologien für Semantic Web und Wissensmanagement
