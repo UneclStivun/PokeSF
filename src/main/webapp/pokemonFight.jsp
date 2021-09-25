@@ -1,4 +1,4 @@
-<%@ include file = "header/checkUser.jsp" %>
+<%@include file = "header/checkUser.jsp" %>
     
 <!DOCTYPE html>
 <html>
@@ -10,23 +10,35 @@
 	<script src="js/websocket.js"></script>
 	
 	<meta charset="ISO-8859-1">
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">	
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 	<link rel="stylesheet" href="css/pokemonFight.css" type="text/css">
 	
 	<title>Pokemon Fight</title>
 </head>
 <body id="page">
-	
 	<c:choose>
 		<c:when test="${sessionScope.userTeam != null && sessionScope.enemyTeam != null}">
 			<div class="display">
-				${sessionScope.enemyTeam.getPokemon().get(0).getName()}  HP: ${sessionScope.enemyTeam.getPokemon().get(0).getHitpoints()}
-				${sessionScope.enemyTeam.getPokemon().get(0).getAil1()} <br>
+				<table>
+					<tr>
+						<th>Player</th><th>Team</th><th>Pokemon</th><th>HP</th><th>Status</th>
+					</tr>
+					<tr>
+						<td class="td-line">Enemy/Agent</td>
+						<td class="td-line">${sessionScope.enemyTeam.getTeamname()}</td>
+						<td class="td-line pokemonName" title="${sessionScope.enemyTeam.getPokemon().get(0).getType1()} ${sessionScope.enemyTeam.getPokemon().get(0).getType2() == 'null' ? '' : sessionScope.enemyTeam.getPokemon().get(0).getType2()}"><u>${sessionScope.enemyTeam.getPokemon().get(0).getName()}</u></td>
+						<td class="td-line">${sessionScope.enemyTeam.getPokemon().get(0).getHitpoints()}</td>
+						<td class="td-line ${sessionScope.enemyTeam.getPokemon().get(0).getAil1()}">${sessionScope.enemyTeam.getPokemon().get(0).getAil1()}</td>
+					</tr>
+					<tr>
+						<td>User</td>
+						<td>${sessionScope.userTeam.getTeamname()}</td>
+						<td class="pokemonName" title="${sessionScope.userTeam.getPokemon().get(0).getType1()} ${sessionScope.userTeam.getPokemon().get(0).getType2() == 'null' ? '' : sessionScope.userTeam.getPokemon().get(0).getType2()}"><u>${sessionScope.userTeam.getPokemon().get(0).getName()}</u></td>
+						<td>${sessionScope.userTeam.getPokemon().get(0).getHitpoints()}</td>
+						<td class="${sessionScope.userTeam.getPokemon().get(0).getAil1()}">${sessionScope.userTeam.getPokemon().get(0).getAil1()}</td>
+					</tr>
+				</table>
 			</div>
-			<div class="display">
-				${sessionScope.userTeam.getPokemon().get(0).getName()}  HP: ${sessionScope.userTeam.getPokemon().get(0).getHitpoints()}
-				${sessionScope.userTeam.getPokemon().get(0).getAil1()} <br>
-			</div> <br>
 		</c:when>
 		<c:otherwise>
 			<%
@@ -35,6 +47,7 @@
 			%>
 		</c:otherwise>
 	</c:choose>
+	<br>
 	
 	<div class="user_options" class="container">
 		<div class="row">
@@ -42,7 +55,9 @@
 			<!-- Attack buttons -->
 			<div class="col-md-6">
 				<c:forEach items="${sessionScope.userTeam.getPokemon().get(0).getAttacks()}" var="attack" varStatus="counter">
-					<p><button type="button" class="btn btn-light ${attack.getAttacktype()}" onclick="attack('${counter.index}')">Attack ${counter.index}</button></p>
+					<p>
+						<button type="button" class="btn btn-light ${attack.getAttacktype()}" title="${attack.getAttacktype()} ${attack.getAttackclass()} ${attack.getEffect().equals('none') ? '' : attack.getEffect()}" onclick="attack('${counter.index}')">Attack ${counter.index +1}</button>
+					</p>
 				</c:forEach>
 			</div>
 			
@@ -51,7 +66,14 @@
 				<p style="color:white;">
 					<c:forEach items="${sessionScope.userTeam.getPokemon()}" var="pokemon" varStatus="counter">
 						<c:if test="${counter.index > 0 }">
-							<button type="button" class="btn btn-link id=${counter.index}" onclick="switchPokemon(${counter.index})">Switch to</button>
+							<c:choose>
+								<c:when test="${sessionScope.userTeam.getPokemon().get(counter.index).getHitpoints() > 0 }">
+									<button type="button" class="btn btn-link" onclick="switchPokemon(${counter.index})">Switch to</button>
+								</c:when>
+								<c:otherwise>
+									<button type="button" class="btn btn-link" onclick="switchPokemon(${counter.index})"><strike>Switch to</strike></button>
+								</c:otherwise>
+							</c:choose>
 							${pokemon.getName()}
 							<br>
 						</c:if>

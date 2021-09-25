@@ -155,34 +155,76 @@ public class ServletPokemonFight extends HttpServlet {
 	private void calculateDamage(List<Pokemon> attackingTeam, List<Pokemon> defendingTeam, int attackPosition) {
 		
 		// Notwendige Werte der Pokemon und der Attacke
-		double damage = 1 * 100;
+		double damage = 4 * 100;
 		double statusMod = 1.0;
 		double typeMod = 1.0;
 		boolean isSTAB= false;
-		Map<String, Double> defendingPokemon = TypeTableSupport.checkDefenseAffinities(defendingTeam.get(0));
-		List<String> typeKeys = new ArrayList<String>();
-		String ail1 = attackingTeam.get(0).getAil1();
-		String ail2 = attackingTeam.get(0).getAil2();
+		/* Angreifendes Pokemon */
+		String ail1Att = attackingTeam.get(0).getAil1();
+		String ail2Att = attackingTeam.get(0).getAil2();
 		String pokemonType1 = attackingTeam.get(0).getType1();
 		String pokemonType2 = attackingTeam.get(0).getType2();
 		String attackType = attackingTeam.get(0).getAttacks().get(attackPosition).getAttacktype();
 		String attackClass = attackingTeam.get(0).getAttacks().get(attackPosition).getAttackclass();
+		String attackEffect = attackingTeam.get(0).getAttacks().get(attackPosition).getEffect();
 		int attack = attackingTeam.get(0).getAttack();
+		/* Verteidigendes Pokemon */
+		Map<String, Double> defendingPokemon = TypeTableSupport.checkDefenseAffinities(defendingTeam.get(0));
+		List<String> typeKeys = new ArrayList<String>();
 		int spAttack = attackingTeam.get(0).getSpAttack();
 		int defense = defendingTeam.get(0).getDefense();
 		int spDefense = defendingTeam.get(0).getSpDefense();
 		
-		int rndNum = 0;		
+		int rndNum = 0;
+		
+		// Prüfe ob Pokemon einen Status besitzt
+		if(ail1Att != null) {
+			
+			rndNum = 1 + (int)(Math.random() * ((100 - 1) + 1)); // [min:1, max:100]
+			
+			// 25% Chance durch Paralyse nicht angreifen zu können
+			if(ail1Att.equals("PAR") && rndNum >= 75) {
+				System.out.println("\nDurch Status PAR kein Angriff.");
+				return;
+			}
+			
+			rndNum = 1 + (int)(Math.random() * ((100 - 1) + 1)); // [min:1, max:100]
+			System.out.println(rndNum);
+			// 20% Chance den Gefroren-Status des Angreifers zu entfernen und Angriff fortzusetzen
+			// Ansonsten kann nicht angegriffen werden
+			if(ail1Att.equals("FRZ") && rndNum >= 80) {
+				attackingTeam.get(0).setAil1(null);
+				System.out.println("\nStatus FRZ geheilt.");
+			} else if(ail1Att.equals("FRZ")) {
+				System.out.println("\nDurch Status FRZ kein Angriff.");
+				return;
+			}
+			
+			rndNum = 1 + (int)(Math.random() * ((100 - 1) + 1)); // [min:1, max:100]
+			
+			// 33% Chance Schlafen-Status des Angreifers zu entfernen und ANgriff fortzusetzen
+			// Ansonsten kann nicht angegriffen werden
+			if(ail1Att != null && ail1Att.equals("SLP") && rndNum > 66) {
+				attackingTeam.get(0).setAil1(null);
+				System.out.println("\nStatus SLP geheilt.");
+			} else if(ail1Att != null && ail1Att.equals("SLP")) {
+				System.out.println("\nDurch Status SLP kein Angriff.");
+				return;
+			}
+		}
+		
 		rndNum = 1 + (int)(Math.random() * ((10 - 1) + 1)); // [min:1, max:10]
 		
 		// 10% Chance, dass Feuer-, Elektro-, Eis-, Gift-Attacken einen Status auslösen
-		if (rndNum == 10) {
+		// Nur wenn das Pokemon bisher keinen primären Status hat
+		if (rndNum == 10 && defendingTeam.get(0).getAil1() == null) {
 			switch (attackType) {
 			case "fire":
 				defendingTeam.get(0).setAil1("BRN");
 				break;
-			case "electro":
+			case "electric":
 				defendingTeam.get(0).setAil1("PAR");
+				defendingTeam.get(0).setInitiative((int)(defendingTeam.get(0).getInitiative() * 0.5));
 				break;
 			case "ice":
 				defendingTeam.get(0).setAil1("FRZ");
@@ -195,38 +237,11 @@ public class ServletPokemonFight extends HttpServlet {
 			}
 		}
 		
-		// Leidet angreifendes Pokemon unter Status Frozen, Paralysis oder Sleep, greift es evtl. nicht an
-		if(ail1 != null && ail1.equals("")) {
-			rndNum = 1 + (int)(Math.random() * ((10 - 1) + 1)); // [min:1, max:10]
-		}
-		
-		// Wenn angreifer brennt 0.5 Schaden und bei LichtSchild/Reflektor 0.5 Schaden
-		if(ail1 != null && ail1.equals("BRN")) {
+		// Wenn angreifer brennt verursacht er halben Schaden und bei LichtSchild/Reflektor zusätzlich halben Schaden
+		if(ail1Att != null && ail1Att.equals("BRN")) {
 			statusMod *= 0.5;
 			//  #### if Lichtschild statusMod *= 0.5;
 		}
-		
-		// Unterscheide zwischen verschiedenen Angriffsklassen
-		switch(attackClass) {
-		case "physical":
-			//damage = damage * (attack / (50 * defense) * mod + 2);
-			damage = damage * attack / 50 / defense * statusMod + 2;
-			break;
-		case "special":
-			//damage = damage * (spAttack / (50 * spDefense) * mod + 2);
-			damage = damage * spAttack / 50 / spDefense * statusMod + 2;
-			break;
-		case "effect":
-			break;
-		default:
-			break;
-		}
-		
-		System.out.println(
-				attackingTeam.get(0).getName()
-				+ "\nattack: " + attackType
-				+ "\ntype1: " + pokemonType1
-				+ "\ntype2: " + pokemonType2);
 		
 		// Wenn Angriff STAB ist, dann Schaden um 1.5 erhöht
 		// STAB = Same Type Attack Bonus
@@ -235,6 +250,97 @@ public class ServletPokemonFight extends HttpServlet {
 			damage = damage * 1.5;
 		}
 		
+		// Unterscheide zwischen verschiedenen Angriffsklassen
+		switch (attackClass) {
+		case "physical":
+			damage = damage * attack / 50 / defense * statusMod + 2;
+			break;
+		case "special":
+			damage = damage * spAttack / 50 / spDefense * statusMod + 2;
+			break;
+		case "status":
+			damage = 0;
+			switch (attackEffect) {
+			case "brn":
+				if(defendingTeam.get(0).getAil1() == null) {
+					defendingTeam.get(0).setAil1("BRN");
+				}
+				break;
+			case "par":
+				rndNum = 1 + (int)(Math.random() * ((100 - 1) + 1)); // [min:1, max:100]
+				if(rndNum >= 10 && defendingTeam.get(0).getAil1() == null) {
+					defendingTeam.get(0).setAil1("PAR");
+					defendingTeam.get(0).setInitiative((int) (defendingTeam.get(0).getInitiative() * 0.5));
+				}
+				break;
+			case "psn":
+				if(defendingTeam.get(0).getAil1() == null) {
+					defendingTeam.get(0).setAil1("PSN");
+				}
+				break;
+			case "psn2":
+				if(defendingTeam.get(0).getAil1() == null) {
+					defendingTeam.get(0).setAil1("PSN2");
+				}
+				break;
+			case "slp":
+				if(defendingTeam.get(0).getAil1() == null) {
+					defendingTeam.get(0).setAil1("SLP");
+				}
+				break;
+			case "conf":
+				defendingTeam.get(0).setAil2("conf");
+				break;
+			case "leech":
+				defendingTeam.get(0).setAil2("leech");
+				break;
+			case "heal":
+				//attackingTeam.get(0).setHitpoints(50%);
+				break;
+			case "ref":
+				//Reflektor
+				break;
+			case "ls":
+				//Lichtschild
+				break;
+			case "ab":
+				attackingTeam.get(0).setAttack((int) (attackingTeam.get(0).getAttack() * 1.5));
+				break;
+			case "db":
+				attackingTeam.get(0).setDefense((int) (attackingTeam.get(0).getDefense() * 1.5));
+				break;
+			case "sab":
+				attackingTeam.get(0).setSpAttack((int) (attackingTeam.get(0).getSpAttack() * 1.5));
+				break;
+			case "sdb":
+				attackingTeam.get(0).setSpDefense((int) (attackingTeam.get(0).getSpDefense() * 1.5));
+				break;
+			case "sb":
+				attackingTeam.get(0).setInitiative((int) (attackingTeam.get(0).getInitiative() * 1.5));
+				break;
+			case "ad":
+				defendingTeam.get(0).setAttack((int) (defendingTeam.get(0).getAttack() * 0.5));
+				break;
+			case "dd":
+				defendingTeam.get(0).setDefense((int) (defendingTeam.get(0).getDefense() * 0.5));
+				break;
+			case "sad":
+				defendingTeam.get(0).setSpAttack((int) (defendingTeam.get(0).getSpAttack() * 0.5));
+				break;
+			case "sdd":
+				defendingTeam.get(0).setSpDefense((int) (defendingTeam.get(0).getSpDefense() * 0.5));
+				break;
+			case "sd":
+				defendingTeam.get(0).setInitiative((int) (defendingTeam.get(0).getInitiative() * 0.5));
+				break;
+			default:
+				break;
+			}
+			break;
+		default:
+			break;
+		}
+				
 		// Gebe Anfälligkeit/Resistenz gegen die Attacke wieder:		
 		// Pokemontypen der Liste hinzufügen
 		for (Map.Entry<String, Double> entry : defendingPokemon.entrySet()) {
@@ -246,15 +352,18 @@ public class ServletPokemonFight extends HttpServlet {
 				typeMod = defendingPokemon.get(typeKeys.get(i));
 			}
 		}
-		
 		// Schaden mit Anfälligkeit/Resistenz multiplizieren
 		// typeMod kann 0, 0.25, 0.5, 1, 2 oder 4 sein
 		damage = damage * typeMod;
 		
-		System.out.println(
-				"\nSchaden: " + damage
+		System.out.println("\n"
+				+ attackingTeam.get(0).getName()
+				+ "\nattack: " + attackType
+				+ "\ntype1: " + pokemonType1
+				+ "\ntype2: " + pokemonType2
 				+ "\nSTAB: " + isSTAB
-				+ "\nAngriffsmod: " + typeMod);
+				+ "\nAngriffsmod: " + typeMod
+				+ "\nSchaden: " + (int)damage);
 		
 		defendingTeam.get(0).setHitpoints(defendingTeam.get(0).getHitpoints() - (int)damage);
 	}

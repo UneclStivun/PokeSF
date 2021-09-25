@@ -70,8 +70,6 @@ public class AgentPlaner extends Agent {
 					Pokemon agentPokemon6 = new Gson().fromJson(teamJson.getJSONObject("enemyPokemon5").toString(), Pokemon.class);		
 
 					JSONObject attacks1 = teamJson.getJSONObject("userPokemon0").getJSONObject("attackList");
-					System.out.println("\nVollstaendige Liste" + attacks1
-							+ "\nPlus Typ: " + attacks1.getString("attackType1") + "\n");
 					
 					List<Pokemon> userPokemonList = new ArrayList<Pokemon>();
 					userPokemonList.add(userPokemon1);

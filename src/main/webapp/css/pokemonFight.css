@@ -5,11 +5,30 @@ body{
   	background-size: 100%;
  	background-repeat: no-repeat;
 }
+table {
+	font-family: arial, sans-serif;
+	border-collapse: collapse;
+	width: 100%;
+}
+
+td, th {
+ 	text-align: left;
+  	padding: 5px;
+}
+
+.td-line {
+	border-bottom: 1px solid rgb(218, 252, 160);
+}
+
+.pokemonName {
+	color: rgb(218, 252, 160);
+}
+
 .display {
 	margin: auto;
 	width: 40%;
 	padding: 10px;
-	border: 5px solid #FFFF00;
+	border: 5px solid rgb(218, 252, 160);
 }
 
 .user_options {
@@ -28,10 +47,11 @@ body{
 	background-color: rgb(192, 192, 192);
 }
 
+/* button color */
 .normal {
 	background: rgb(192, 192, 192);
 }
-.fire, .BRN {
+.fire {
 	background: rgb(255, 0, 0);
 }
 .water {
@@ -73,4 +93,20 @@ body{
 .dragon {
 	background: rgb(0, 0, 255);
 }
-	
+
+/* statu color */
+.BRN {
+	color: rgb(255, 0, 0);
+}
+.PAR {
+	color: rgb(255, 255, 0);
+}
+.FRZ {
+	color: rgb(0, 255, 255);
+}
+.PSN {
+	color: rgb(196, 0, 196);
+}
+.SLP {
+	color: rgb(192, 192, 192);
+}	

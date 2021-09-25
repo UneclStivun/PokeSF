@@ -1,5 +1,6 @@
 <%@ include file="header/checkUser.jsp"%>
 <%@taglib uri="/WEB-INF/prepareTeamTag.tld" prefix="ptt"%>
+
 <!DOCTYPE html>
 <html>
 <head>

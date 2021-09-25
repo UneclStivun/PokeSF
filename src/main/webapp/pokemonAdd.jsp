@@ -118,7 +118,7 @@
 			<option value="dd">Defense Debuff</option>
 			<option value="sad">Specialattack Debuff</option>
 			<option value="sdd">Specialdefense Debuff</option>
-			<option value="ss">Speed Debuff</option>
+			<option value="sd">Speed Debuff</option>
 		</select>
 		<br>
 		
@@ -172,7 +172,7 @@
 			<option value="dd">Defense Debuff</option>
 			<option value="sad">Specialattack Debuff</option>
 			<option value="sdd">Specialdefense Debuff</option>
-			<option value="ss">Speed Debuff</option>
+			<option value="sd">Speed Debuff</option>
 		</select>
 		<br>
 		
@@ -226,7 +226,7 @@
 			<option value="dd">Defense Debuff</option>
 			<option value="sad">Specialattack Debuff</option>
 			<option value="sdd">Specialdefense Debuff</option>
-			<option value="ss">Speed Debuff</option>
+			<option value="sd">Speed Debuff</option>
 		</select>
 		<br>
 		
@@ -280,7 +280,7 @@
 			<option value="dd">Defense Debuff</option>
 			<option value="sad">Specialattack Debuff</option>
 			<option value="sdd">Specialdefense Debuff</option>
-			<option value="ss">Speed Debuff</option>
+			<option value="sd">Speed Debuff</option>
 		</select>
 		
 		<br><br>

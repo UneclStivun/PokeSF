@@ -48,7 +48,7 @@ public class PokemonExplanationManager {
 	public void addExplanationDamage(Pokemonteam attackingTeam, Pokemonteam defendingTeam, int position) {
 		
 		explanationString += attackingTeam.getPokemon().get(0).getName() + " (from " + attackingTeam.getTeamname() + ") "
-				+ "attacked<br>" + defendingTeam.getPokemon().get(0).getName() + " (from " + defendingTeam.getTeamname() + ").<br>";
+				+ "attacked " + defendingTeam.getPokemon().get(0).getName() + " (from " + defendingTeam.getTeamname() + ").<br>";
 		
 		// Füge Erweiterung der Session hinzu
 		session.setAttribute("explanation", explanationString);
