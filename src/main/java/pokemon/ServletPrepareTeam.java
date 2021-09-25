@@ -37,6 +37,7 @@ public class ServletPrepareTeam extends HttpServlet {
 		HttpSession session = request.getSession();
 		
 		List<Pokemonteam> allTeams = (List<Pokemonteam>) session.getAttribute("allTeamList");
+		List<Pokemonteam> counterTeams = (List<Pokemonteam>) session.getAttribute("counterTeamList");
 		
 		int counter;
 		String all = request.getParameter("all");		
@@ -44,14 +45,32 @@ public class ServletPrepareTeam extends HttpServlet {
 		//add Team to user
 		if(request.getParameter("user") != null && !all.isEmpty()) {
 			counter = Integer.parseInt(all);
+			allTeams.get(counter).pokemonAttsToString();
 			session.setAttribute("userTeam", allTeams.get(counter));
 			session.setAttribute("isUserTeamDefeated", false);
 		}
-			
+		
 		//add Team to Enemy
 		if(request.getParameter("enemy") != null && !all.isEmpty()) {
 			counter = Integer.parseInt(all);
+			allTeams.get(counter).pokemonAttsToString();
 			session.setAttribute("enemyTeam", allTeams.get(counter));
+			session.setAttribute("isEnemyTeamDefeated", false);
+		}
+		
+		//add Team to User from Counter Teams
+		if(request.getParameter("userC") != null) {
+			counter = Integer.parseInt(request.getParameter("userC"));
+			counterTeams.get(counter).pokemonAttsToString();
+			session.setAttribute("userTeam", counterTeams.get(counter));
+			session.setAttribute("isUserTeamDefeated", false);
+		}
+		
+		//add Team to Enemy from Counter Teams
+		if(request.getParameter("enemyC") != null) {
+			counter = Integer.parseInt(request.getParameter("enemyC"));
+			counterTeams.get(counter).pokemonAttsToString();
+			session.setAttribute("enemyTeam", counterTeams.get(counter));
 			session.setAttribute("isEnemyTeamDefeated", false);
 		}
 		

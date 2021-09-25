@@ -9,7 +9,6 @@ import org.json.JSONObject;
 
 import com.google.gson.Gson;
 
-import database.DatabaseManipulator;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -28,7 +27,7 @@ public class AgentPlaner extends Agent {
 	
 	private List<Pokemon> agentPokemonList;
 	
-	private List<Pokemonteam> dbTeams;
+	private List<Pokemon> agentPokemonListMax;
 	
 	private Pokemonteam userTeam;
 	
@@ -67,9 +66,7 @@ public class AgentPlaner extends Agent {
 					Pokemon agentPokemon3 = new Gson().fromJson(teamJson.getJSONObject("enemyPokemon2").toString(), Pokemon.class);
 					Pokemon agentPokemon4 = new Gson().fromJson(teamJson.getJSONObject("enemyPokemon3").toString(), Pokemon.class);
 					Pokemon agentPokemon5 = new Gson().fromJson(teamJson.getJSONObject("enemyPokemon4").toString(), Pokemon.class);
-					Pokemon agentPokemon6 = new Gson().fromJson(teamJson.getJSONObject("enemyPokemon5").toString(), Pokemon.class);		
-
-					JSONObject attacks1 = teamJson.getJSONObject("userPokemon0").getJSONObject("attackList");
+					Pokemon agentPokemon6 = new Gson().fromJson(teamJson.getJSONObject("enemyPokemon5").toString(), Pokemon.class);
 					
 					List<Pokemon> userPokemonList = new ArrayList<Pokemon>();
 					userPokemonList.add(userPokemon1);
@@ -78,7 +75,17 @@ public class AgentPlaner extends Agent {
 					userPokemonList.add(userPokemon4);
 					userPokemonList.add(userPokemon5);
 					userPokemonList.add(userPokemon6);
-
+					
+					if(!(agentPokemonListMax != null)) {
+						agentPokemonListMax = new ArrayList<Pokemon>();
+						agentPokemonListMax.add(agentPokemon1);
+						agentPokemonListMax.add(agentPokemon2);
+						agentPokemonListMax.add(agentPokemon3);
+						agentPokemonListMax.add(agentPokemon4);
+						agentPokemonListMax.add(agentPokemon5);
+						agentPokemonListMax.add(agentPokemon6);
+					}
+					
 					agentPokemonList = new ArrayList<Pokemon>();
                     agentPokemonList.add(agentPokemon1);
                     agentPokemonList.add(agentPokemon2);
@@ -86,6 +93,12 @@ public class AgentPlaner extends Agent {
                     agentPokemonList.add(agentPokemon4);
                     agentPokemonList.add(agentPokemon5);
                     agentPokemonList.add(agentPokemon6);
+                    
+                  //extract attacks from JSON Object and parse it to agentPokemon atleast once
+                    if(!(agentPokemonList.get(0).getAttacks().size() > 0)) {
+        				extractAttacks(teamJson);
+                    }
+                  
 
 					//Updating agent view on current enemy Pokemon
 					statusUpdateUser(userPokemonList, action);
@@ -105,6 +118,26 @@ public class AgentPlaner extends Agent {
 					block();
 				}
 			}
+			
+			//extract attacks for agent pokemon
+			private void extractAttacks(JSONObject teamJson) {
+				for(int i = 0; i < 6; i++) {
+					//create a new List for each Pokemon
+					List<Attack> attacks = new ArrayList<Attack>();
+					JSONObject attack = teamJson.getJSONObject("enemyPokemon" + i).getJSONObject("attackList");
+					for(int j = 1; j < 5; j++) {
+						Attack att = new Attack();
+						att.setAttacktype(attack.getString("attackType" + j));
+						att.setAttackclass(attack.getString("attackClass" + j));
+						if(!attack.getString("attackEffect" + j).equals("none")) {
+							att.setEffect(attack.getString("attackEffect" + j));
+						}
+						//add extracted Attack to list
+						attacks.add(att);
+					}
+					agentPokemonList.get(i).setAttacks(attacks);
+				}
+			}
 		});
 	}
 	
@@ -117,23 +150,10 @@ public class AgentPlaner extends Agent {
 		if(!(userTeam != null)) {
 			userTeam = new Pokemonteam();
 			userTeam.getPokemon().add(userPokemonList.get(0));
-			
-			//get a pool of all Teams in the beginning of the fight in order to give all Agent Pokemon their attacks
-			DatabaseManipulator dbm = new DatabaseManipulator();
-			dbTeams = dbm.getAllPokemonTeamsFromDatabase();
-			for(int i = 0; i < dbTeams.size(); i++) {
-				for(int j = 0; j < dbTeams.get(i).getPokemon().size(); j++) {
-					//same Pokemon match via ID / allocate fitting attacks for agent functions
-					if(agentPokemonList.get(j).getDatabaseID() == dbTeams.get(i).getPokemon().get(j).getDatabaseID()) {
-						agentPokemonList.get(j).setAttacks(dbTeams.get(i).getPokemon().get(j).getAttacks());
-					}
-				}
-			}
 		}
 		
 		if(actualUserPokemon != null) {
 			if(actualUserPokemon.getName() != userPokemonList.get(0).getName()) {
-				addToUserTeam(userPokemonList.get(0));
 				roundUs = 1;
 			} else {
 				roundUs++;
@@ -143,37 +163,6 @@ public class AgentPlaner extends Agent {
 		this.actualUserPokemon = userPokemonList.get(0);
 		//update Agent world with "possible" new seen Pokemon
 		ah.visiblePokemon(userPokemonList.get(0));
-	}
-	
-	//this method adds an observed Pokemon to the Userteam if it hasnt been added already
-	private void addToUserTeam(Pokemon pokemon) {
-		boolean unique = true;
-		for(int i = 0; i < userTeam.getPokemon().size(); i++) {
-			if(pokemon.getName().equals(userTeam.getPokemon().get(i).getName())) {
-				unique = false;
-			}
-		}
-		if(unique) {
-			userTeam.getPokemon().add(pokemon);
-			//narrow down potential teams with current Knowledge
-			reduceDBTeam();
-		}
-	}
-	
-	//reducing the list with all Teams to those which could possibly be the user team until 1
-	private void reduceDBTeam() {
-		boolean same;
-		//iterating through teams
-		for(int i= 0; i < dbTeams.size(); i++) {
-			same = true;
-			//iterating through Pokemons
-			for(int j = 0; j < dbTeams.get(i).getPokemon().size(); j++) {
-				if(j == 0 && !(userTeam.getPokemon().get(0).getName().equals(dbTeams.get(i).getPokemon().get(j).getName()))) {
-					same = false;
-				}
-				
-			}
-		}
 	}
 
 	//update with actual Agent Pokemon
@@ -247,6 +236,7 @@ public class AgentPlaner extends Agent {
 		return action;
 	}
 	
+	//this method scores all attacks and returns the position of the attack with the highest score
 	private int getBestAttack() {
 		int pos = 0;
 		double hiScore = 0;
@@ -258,20 +248,66 @@ public class AgentPlaner extends Agent {
 			Attack att = actualAgentPokemon.getAttacks().get(i);
 			//if user Pokemon has no ailment and has its first round
 			if(!(actualUserPokemon.getAil1() != null)) {
+				//prefer Effect Attack in first rounds over following rounds
 				if(att.getEffect() != null && roundUs == 1) {
-					score++;
+					score = score +4;
+				}
+				if(att.getEffect() != null && roundUs != 1) {
+					score = score +2;
 				}
 			}
 			//if user Pokemon has a weakness against agent attack type, the higher the weakness the higher the score
 			if(defAttUser.get(att.getAttacktype()) > 1.0) {
 				score = score + defAttUser.get(att.getAttacktype());
 			}
+			
+			//if user pokemon is resistant to attack lower score
+			if(defAttUser.get(att.getAttacktype()) == 0.5) {
+				score--;
+			}
+			
+			//if Pokemon is immune to attack no reason to use it
+			if(defAttUser.get(att.getAttacktype()) < 0.5) {
+				score = score - 10;
+			}
+			//check if Attack is a STAB
+			if(att.getAttacktype().equals(actualAgentPokemon.getType1())) {
+				score++;
+			}
+			//check for second type STAB
+			if(actualAgentPokemon.getType2() != null && att.getAttacktype().equals(actualAgentPokemon.getType2())) {
+				score++;
+			}
+			
+			//check if heal is needed (below 40%)
+			if(att.getEffect() != null ) {
+				for(int j = 0; j < agentPokemonListMax.size(); j++) {
+					if(actualAgentPokemon.getName().equals(agentPokemonListMax.get(j).getName())) {
+						if(((Double.parseDouble(actualAgentPokemon.getHitpoints() + "") / Double.parseDouble("" + agentPokemonListMax.get(j).getMaxHp()) * 100.00) < 40 )
+							&& att.getEffect().equals("heal") ) {
+							score = score + 4;
+						}
+					}
+				}
+			}
+			
+			//if enemy pokemon is bound by status prefer buff
+			if(actualUserPokemon.getAil1().equals("PAR") || actualUserPokemon.getAil1().equals("FRZ") || actualUserPokemon.getAil1().equals("SLP")) {
+				if(att.getEffect() != null) {
+					String[] buffs = {"ab", "db", "sab", "sdb" , "sb" ,"ad", "dd", "sad", "sdd", "sd"};
+					for(int j = 0; j < buffs.length; j++) {
+						if(att.getEffect().equals(buffs[i])) {
+							score = score + 8;
+						}
+					}
+				}
+			}
+
 			//get Attack position with highest score
 			if(score > hiScore) {
 				hiScore = score;
 				pos = i;
 			}
-			//increase Score of attacks that get strong with agent Pokemon type (Fire + Fire => 1.5 dmg)
 		}
 		return pos;
 	}

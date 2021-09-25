@@ -14,19 +14,71 @@
 </head>
 <body>
 	<ptt:CaseLoader></ptt:CaseLoader>
-	<form method="post" action="ServletAgentLauncher">
-		<button type="submit" class="btn btn-danger">Start fight!</button>
-	</form>
-	<br>
 	<div class="row">
 		<div class="col-4">
+		<form method="post" action="ServletAgentLauncher">
+			<button type="submit" class="btn btn-danger">Start fight!</button>
+		</form>
+		<br>
+		</div>
+		<div class="col-6">
+			<form action="ServletPrepareTeam" method="post">
+				<p>All available Teams:</p>
+				<div>
+					<datalist id="suggestions">
+						<%
+						int number = 0;
+						%>
+						<c:forEach items="${sessionScope.allTeamList}" var="poke">
+							<option value="<%=number%>">${poke.getTeamname()}</option>
+							<%
+							number++;
+							%>
+						</c:forEach>
+					</datalist>
+					<input autoComplete="on" list="suggestions" name="all" />
+					<button type="submit" name="user" value="yes">Add to User</button>
+					<button type="submit" name="enemy" value="yes">Add to
+						Enemy</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-5">
+		<br>
 			<p>Your Current Team:</p>
 			<c:if test="${sessionScope.userTeam != null}">
-			<br>
-			<table>
+			<table class="table">
+				<c:if test="${sessionScope.userTeam.getResistances().size() > 0}">
+				<tr>
+					<td>Resistances:</td>
+					<c:forEach items="${sessionScope.userTeam.getResistances()}" var="res">
+						<td>${res}</td>
+					</c:forEach>
+				</tr>
+				</c:if>
+				<c:if test="${sessionScope.userTeam.getWeaknesses().size() > 0}">
+				<tr>
+					<td>Weaknesses:</td>
+					<c:forEach items="${sessionScope.userTeam.getWeaknesses()}" var="weak">
+						<td>${weak}</td>
+					</c:forEach>
+				</tr>
+				</c:if>
+				<c:if test="${sessionScope.userTeam.getImmunities().size() > 0}">
+				<tr>
+					<td>Immunities:</td>
+					<c:forEach items="${sessionScope.userTeam.getImmunities()}" var="immune">
+						<td>${immune}</td>
+					</c:forEach>
+				</tr>
+				</c:if>
+			</table>
+			<table class="table">
 				<tr>
 					<th>${sessionScope.userTeam.getTeamname()}</th>
-					<th colspan="2">Type</th>
+					<th>Type</th>
 					<th>Hp</th>
 					<th>Att</th>
 					<th>Def</th>
@@ -47,11 +99,15 @@
 						<td>${poke.getSpDefense()}</td>
 						<td>${poke.getInitiative()}</td>
 					</tr>
+					<thead name="u${poke.getDatabaseID()}" style="display: none">
+						<th>Attack type:</th>
+						<th>Attack class:</th>
+						<th>Effect:</th>
+					</thead>
 					<c:forEach items="${poke.getAttacks()}" var="attack">
 						<tr name="u${poke.getDatabaseID()}" style="display: none">
 							<td width=20>${attack.getAttacktype()}</td>
 							<td width=20>${attack.getAttackclass()}</td>
-							<td width=20>${attack.getDmg()}</td>
 							<td width=20>${attack.getEffect()}</td>
 						</tr>
 					</c:forEach>
@@ -59,11 +115,40 @@
 			</table>
 			</c:if>
 		</div>
-		<div class="col-4">
+		<div class="col-1">
+			
+		</div>
+		<div class="col-5">
+		<br>
 			<p>Current Enemy Team:</p>
 			<c:if test="${sessionScope.enemyTeam != null}">
-			<br>
-			<table>
+			<table class="table">
+				<c:if test="${sessionScope.enemyTeam.getResistances().size() > 0}">
+				<tr>
+					<td>Resistances:</td>
+					<c:forEach items="${sessionScope.enemyTeam.getResistances()}" var="res">
+						<td colspan="2">${res}</td>
+					</c:forEach>
+				</tr>
+				</c:if>
+				<c:if test="${sessionScope.enemyTeam.getWeaknesses().size() > 0}">
+				<tr>
+					<td>Weaknesses:</td>
+					<c:forEach items="${sessionScope.enemyTeam.getWeaknesses()}" var="weak">
+						<td colspan="2">${weak}</td>
+					</c:forEach>
+				</tr>
+				</c:if>
+				<c:if test="${sessionScope.enemyTeam.getImmunities().size() > 0}">
+				<tr>
+					<td>Immunities:</td>
+					<c:forEach items="${sessionScope.enemyTeam.getImmunities()}" var="immune">
+						<td colspan="2">${immune}</td>
+					</c:forEach>
+				</tr>
+				</c:if>
+			</table>
+			<table class="table">
 				<tr>
 					<th>${sessionScope.enemyTeam.getTeamname()}</th>
 					<th colspan="2">Type</th>
@@ -87,39 +172,21 @@
 						<td>${poke.getSpDefense()}</td>
 						<td>${poke.getInitiative()}</td>
 					</tr>
+					<tr name="e${poke.getDatabaseID()}" style="display: none">
+						<th>Attack type:</th>
+						<th>Attack class:</th>
+						<th>Effect:</th>
+					</tr>
 					<c:forEach items="${poke.getAttacks()}" var="attack">
 						<tr name="e${poke.getDatabaseID()}" style="display: none">
 							<td width=20>${attack.getAttacktype()}</td>
 							<td width=20>${attack.getAttackclass()}</td>
-							<td width=20>${attack.getDmg()}</td>
 							<td width=20>${attack.getEffect()}</td>
 						</tr>
 					</c:forEach>
 				</c:forEach>
 			</table>
 			</c:if>
-		</div>
-		<div class="col-4">
-			<form action="ServletPrepareTeam" method="post">
-				<p>All available Teams:</p>
-				<div>
-					<datalist id="suggestions">
-						<%
-						int number = 0;
-						%>
-						<c:forEach items="${sessionScope.allTeamList}" var="poke">
-							<option value="<%=number%>">${poke.getTeamname()}</option>
-							<%
-							number++;
-							%>
-						</c:forEach>
-					</datalist>
-					<input autoComplete="on" list="suggestions" name="all" />
-					<button type="submit" name="user" value="yes">Add to User</button>
-					<button type="submit" name="enemy" value="yes">Add to
-						Enemy</button>
-				</div>
-			</form>
 		</div>
 	</div>
 	<div class="row">
@@ -155,12 +222,12 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-6">
+		<div class="col-5">
 			<c:if
 				test="${sessionScope.simTeams != null && !sessionScope.simTeams.isEmpty()}">
 				<br>
 				<p>similar Teams:</p>
-				<table>
+				<table class="table">
 					<c:forEach items="${sessionScope.simTeams}" var="sims">
 						<tr>
 							<th colspan="2">${sims.getCasename()}</th>
@@ -188,23 +255,31 @@
 				</table>
 			</c:if>
 		</div>
-
-		<div class="col-6">
+		<div class="col-1">
+		
+		</div>
+		<div class="col-5">
 			<c:if
 				test="${sessionScope.counterTeamList != null && !sessionScope.counterTeamList.isEmpty()}">
 				<br>
 				<p>similar Teams:</p>
-				<table>
+				<table class="table">
+				<%int count = 0;%>
 					<c:forEach items="${sessionScope.counterTeamList}" var="counter">
 						<tr>
 							<th colspan="2">${counter.getTeamname()}</th>
-							<th><form>
-									<button>Add to user</button>
-								</form></th>
-							<th><form>
-									<button>Add to enemy</button>
-								</form></th>
+							<th>
+							<form action="ServletPrepareTeam" method="post">
+								<button value="<%=count%>" name="userC">Add to user</button>
+							</form>
+							</th>
+							<th>
+							<form action="ServletPrepareTeam" method="post">
+								<button value="<%=count%>" name="enemyC">Add to enemy</button>
+							</form>
+							</th>
 						</tr>
+						<%count++;%>
 						<c:forEach items="${counter.getPokemon()}" var="poke">
 							<tr>
 								<td><button type="button" class="btn btn-link"

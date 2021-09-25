@@ -144,6 +144,7 @@ public class ServletPokemonteamSimilarityFinder extends HttpServlet {
 				scoreList.sort(Comparator.comparingInt(ScorePair::getScore).reversed());
 				for(int i = 0; i < scoreList.size(); i++) {
 						if(counterTeamList.size() < 2) {
+							scoreList.get(i).getTeam().pokemonAttsToString();
 							counterTeamList.add(scoreList.get(i).getTeam());
 						}
 				}

@@ -25,6 +25,8 @@ public class Pokemon {
 	
 	private int hitpoints;
 	
+	private int maxHp;
+	
 	private int attack;
 	
 	private int defense;
@@ -121,6 +123,7 @@ public class Pokemon {
 		pokeJson += ",type1:" + this.type1;
 		pokeJson += ",type2:" + this.type2;
 		pokeJson += ",hitpoints:" + this.hitpoints;
+		pokeJson += ",maxHp:" + this.hitpoints;
 		pokeJson += ",attack:" + this.attack;
 		pokeJson += ",defense:" + this.defense;
 		pokeJson += ",spAttack:" + this.spAttack;
@@ -195,6 +198,14 @@ public class Pokemon {
 
 	public void setHitpoints(int hitpoints) {
 		this.hitpoints = hitpoints;
+	}
+
+	public int getMaxHp() {
+		return maxHp;
+	}
+
+	public void setMaxHp(int maxHp) {
+		this.maxHp = maxHp;
 	}
 
 	public int getAttack() {
