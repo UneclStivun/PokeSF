@@ -35,60 +35,24 @@ public class Case_Pokemonteam {
 		
 		for(Map.Entry<String, Integer> entry : defAff.entrySet()) {
 			if(entry.getKey().contains("res") && entry.getValue() > 0) {
-				resistances.add(entry.getKey());
+				resistances.add(entry.getKey() + ": " + entry.getValue());
 			}
 			if(entry.getKey().contains("weak") && entry.getValue() > 0) {
-				weaknesses.add(entry.getKey());
+				weaknesses.add(entry.getKey() + ": " + entry.getValue());
 			}
 			if(entry.getKey().contains("immune") && entry.getValue() > 0) {
-				immunities.add(entry.getKey());
+				immunities.add(entry.getKey() + ": " + entry.getValue());
 			}
 		}
-		int counter = 1;
-		String type = "";
+		
 		for(int i = 0; i < resistances.size(); i++) {
-			type = resistances.get(i).replace("res", "");
-			//iterating through the list to get all doubles
-			for(int j = 0; j < resistances.size(); j++) {
-				if(resistances.get(i).equals(resistances.get(j))) {
-					resistances.remove(j);
-					counter++;
-				}
-			}
-			
-			if(i < resistances.size()) {
-				resistances.set(i, type + ": " + counter);
-			}
+			resistances.set(i, resistances.get(i).replace("res", ""));
 		}
-		
 		for(int i = 0; i < weaknesses.size(); i++) {
-			type = weaknesses.get(i).replace("weak", "");
-			//iterating through the list to get all doubles
-			for(int j = 0; j < weaknesses.size(); j++) {
-				if(weaknesses.get(i).equals(weaknesses.get(j))) {
-					weaknesses.remove(j);
-					counter++;
-				}
-			}
-			
-			if(i < weaknesses.size()) {
-			weaknesses.set(i, type + ": " + counter);
-			}
+			weaknesses.set(i, weaknesses.get(i).replace("weak", ""));
 		}
-		
 		for(int i = 0; i < immunities.size(); i++) {
-			type = immunities.get(i).replace("immune", "");
-			//iterating through the list to get all doubles
-			for(int j = 0; j < immunities.size(); j++) {
-				if(immunities.get(i).equals(immunities.get(j))) {
-					immunities.remove(j);
-					counter++;
-				}
-			}
-			
-			if(i < immunities.size()) {
-			immunities.set(i, type + ": " + counter);
-			}
+			immunities.set(i, immunities.get(i).replace("immune", ""));
 		}
 	}
 	

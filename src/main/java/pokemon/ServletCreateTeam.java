@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import cbr_Pokemon.CaseBaseLoader_Pokemon;
+import cbr_Pokemon.Case_Pokemon;
+import cbr_Pokemon.Retrieval_Pokemon;
 import database.DatabaseManipulator;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -36,6 +39,7 @@ public class ServletCreateTeam extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
+		CaseBaseLoader_Pokemon cbl = (CaseBaseLoader_Pokemon) session.getAttribute("cbl");
 		List<Pokemon> poketeam;
 		List<Pokemon> quickList;
 		List<Pokemon> allPokemon;
@@ -106,10 +110,78 @@ public class ServletCreateTeam extends HttpServlet {
 				request.setAttribute("MsgTeam", "Please enter a teamname!");
 			}
 		}
+		
+		//if user has at least 1 Pokemon in his Team
+		if(poketeam.size() > 0) {
+			Pokemonteam uTeam = new Pokemonteam();
+			uTeam.setPokemon(poketeam);
+			uTeam.pokemonAttsToString();
+			//method to retrieve the types needed for a balanced team composition
+			List<ScorePair> result = checkTeamBalance(cbl, uTeam);
+			List<Case_Pokemon> resultCasesAtt = Retrieval_Pokemon.retrieveSimCases(cbl, result.get(0).getPokemon());
+			List<Pokemon> pokeAttList = new ArrayList<Pokemon>();
+			List<String> topTypes = new ArrayList<String>();
+			//shorten List to 3 most similar Pokemon to best type combination
+			for(int i = 0; i < resultCasesAtt.size(); i++) {
+				if(i < 3) {
+					pokeAttList.add(resultCasesAtt.get(i).getPokemon());
+				}
+			}
+			
+			for(int i = 0; i < result.size(); i++) {
+				if(i < 3) {
+					if(result.get(i).getPokemon().getType2() != null) {
+						topTypes.add(result.get(i).getPokemon().getType1() + "/" + result.get(i).getPokemon().getType2());
+					} else {
+						topTypes.add(result.get(i).getPokemon().getType1());
+					}
+				}
+			}
+			//get the team attributes for display
+			session.setAttribute("uTeam", uTeam);
+			session.setAttribute("resultCasesAtt", pokeAttList);
+			session.setAttribute("topTypes", topTypes);
+		}
 		session.setAttribute("poketeam", poketeam);
 		request.getRequestDispatcher("pokemonTeamCreator.jsp").forward(request, response);
 	}
-
+	
+	//this method checks team balance and starts retrieving pokemon with types similar to the ones needed and 
+	private List<ScorePair> checkTeamBalance(CaseBaseLoader_Pokemon cbl,  Pokemonteam uTeam) {
+		boolean resFound;
+		List<String> weaknesses = new ArrayList<String>();
+		List<String> weaknessesLeft = new ArrayList<String>();
+		
+		//extract type of all weaknesses
+		for(int i = 0; i < uTeam.getWeaknesses().size(); i++) {
+			weaknesses.add((String) uTeam.getWeaknesses().get(i).subSequence(0, uTeam.getWeaknesses().get(i).indexOf(":")));
+		}
+		
+		//check if weaknesses have been adressed by resistances and immunities
+		for(int i = 0; i < weaknesses.size(); i++) {
+			resFound = false;
+			for(int j = 0; j < uTeam.getResistances().size(); j++) {
+				if(uTeam.getResistances().get(j).contains(weaknesses.get(i))) {
+					resFound = true;
+				}
+			}
+			for(int j = 0; j < uTeam.getImmunities().size(); j++) {
+				if(uTeam.getImmunities().get(j).contains(weaknesses.get(i))) {
+					resFound = true;
+				}
+			}
+			//weakness has no resistance/ immune couterpart
+			if(!resFound) {
+				weaknessesLeft.add(weaknesses.get(i));
+			}
+		}
+		//Preparing input of type combinations for retrieval
+		List<String> resTypes = TypeTableSupport.adressWeaknesses(weaknessesLeft);
+		//return List of Case_Pokemon
+		return TypeTableSupport.calculateTypeComboResistance(resTypes, uTeam.getResistances());
+	}
+	
+	//this method checks if pokemon that user wants to add is already in the team
 	private boolean checkUnique(List<Pokemon> poketeam, Pokemon pokemon) {
 		boolean unique = true;
 		for(int i = 0; i < poketeam.size(); i++) {

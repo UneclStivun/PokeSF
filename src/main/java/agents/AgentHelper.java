@@ -130,6 +130,4 @@ public class AgentHelper {
 	public void setSimilarPokemon(List<List<Pokemon>> similarPokemon) {
 		this.similarPokemon = similarPokemon;
 	}
-	
-	
 }

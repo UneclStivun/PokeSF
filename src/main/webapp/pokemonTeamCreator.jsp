@@ -9,16 +9,42 @@
 	<title>Pokemon Team Finder</title>
 </head>
 <body>
-<div class="container">
+
   <div class="row">
 <a href="pokemonPrepareTeam.jsp" class="btn btn-primary">Prepare fight!</a>
   </div>
   <div class="row">
-    <div class="col-6">
+    <div class="col-5">
       <div>
 		<form action="ServletCreateTeam" method="post">
 			<c:if test="${sessionScope.poketeam != null && !sessionScope.poketeam.isEmpty()}">
 		<%int number = 0;%>
+		<table class="table">
+			<c:if test="${sessionScope.uTeam.getResistances().size() > 0}">
+				<tr>
+					<td>Resistances:</td>
+					<c:forEach items="${sessionScope.uTeam.getResistances()}" var="res">
+						<td>${res}</td>
+					</c:forEach>
+				</tr>
+				</c:if>
+				<c:if test="${sessionScope.uTeam.getWeaknesses().size() > 0}">
+				<tr>
+					<td>Weaknesses:</td>
+					<c:forEach items="${sessionScope.uTeam.getWeaknesses()}" var="weak">
+						<td>${weak}</td>
+					</c:forEach>
+				</tr>
+				</c:if>
+				<c:if test="${sessionScope.uTeam.getImmunities().size() > 0}">
+				<tr>
+					<td>Immunities:</td>
+					<c:forEach items="${sessionScope.uTeam.getImmunities()}" var="immune">
+						<td>${immune}</td>
+					</c:forEach>
+				</tr>
+			</c:if>
+		</table>
 		<p>${MsgTeam}</p>
 		<table class="table table-bordered table-dark">
 			<!-- Table Header -->
@@ -67,10 +93,16 @@
 		</table>
 		<br>
 	</c:if>
+	<c:if test="">
+		<table class="table table-bordered">
+			
+		</table>
+	</c:if>
 		</form>
 		</div>
     </div>
-    <div class="col-6">
+    <div class="col-1"></div>
+    <div class="col-5">
       <div class="d-flex p-2">	
 		<div class="d-inline-flex p-2">
 <form action="ServletCreateTeam" method="post">
@@ -124,17 +156,48 @@
   </div>
 </div>
 <ctt:CaseLoader></ctt:CaseLoader>
-<c:if test="${sessionScope.allPokeList != null && !sessionScope.allPokeList.isEmpty()}">
-<form action="ServletCreateTeam" method="post">
-<%int number = 0;%>
-<div class="row">
+	<c:if test="${sessionScope.allPokeList != null && !sessionScope.allPokeList.isEmpty()}">
+	<form action="ServletCreateTeam" method="post">
+	<%int number = 0;%>
+	<div class="row">
 	<div class="col-sm-6">
+	<p>
+	<c:forEach items="${sessionScope.topTypes}" var="type">
+		${type}
+	</c:forEach>
+	</p>
+	<table class="table">
+	<c:if test="${sessionScope.resultCasesAtt != null && sessionScope.resultCasesAtt.size() > 0}">
+	<tr>
+		<th>Pokemon:</th>
+		<th>Type 1:</th>
+		<th>Type 2:</th>
+	</tr>
+	</c:if>
+	<c:forEach items="${sessionScope.resultCasesAtt}" var="poke">
+	<tr>
+		<td>${poke.getName()}</td>
+		<td>${poke.getType1()}</td>
+		<c:if test="${poke.getType2() != null}">
+		<td>${poke.getType2()}</td>
+		</c:if>
+		</tr>
+	</c:forEach>
+	</table>
+	</div>
+	<div class="col-sm-1"></div>
+	<div class="col-sm-4">
      	<div class="d-flex p-2">
 			<div>
 				<p>All Pokemon</p>
     			<datalist id="suggestions" >
     			<c:forEach items="${sessionScope.allPokeList}" var="poke">
-        			<option value="<%=number%>">${poke.getName()}</option>
+    			<c:if test="${!poke.getType2().isEmpty()}">
+    				<option value="<%=number%>"> ${poke.getName()} (${poke.getType1()} / ${poke.getType2()}) </option>
+    			</c:if>
+        		<c:if test="${poke.getType2().isEmpty()}">
+    				<option value="<%=number%>"> ${poke.getName()} (${poke.getType1()}) </option>
+    			</c:if>	
         			<%number++;%>
         		</c:forEach>
     			</datalist>
@@ -146,7 +209,7 @@
 </div>
 </form>
 </c:if>	
-</div>
+
 
 	<br><br>
 	<a href="index.jsp">Back to main page</a>

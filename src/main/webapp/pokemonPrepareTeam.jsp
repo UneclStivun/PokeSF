@@ -283,7 +283,7 @@
 						<c:forEach items="${counter.getPokemon()}" var="poke">
 							<tr>
 								<td><button type="button" class="btn btn-link"
-										onclick="showAttacks('${poke.getDatabaseID() + counter.getTeamid()}')">${poke.getName()}</button></td>
+										onclick="showAttacks('c${poke.getDatabaseID()}<%=count%>')">${poke.getName()}</button></td>
 								<td>${poke.getType1()}</td>
 								<td>${poke.getType2()}</td>
 								<td>${poke.getHitpoints()}</td>
@@ -293,15 +293,14 @@
 								<td>${poke.getSpDefense()}</td>
 								<td>${poke.getInitiative()}</td>
 							</tr>
-							<tr id="${poke.getDatabaseID() + counter.getTeamid()}"
-								style="display: none">
-								<c:forEach items="${poke.getAttacks()}" var="attack">
+							<c:forEach items="${poke.getAttacks()}" var="attack">
+								<tr name="c${poke.getDatabaseID()}<%=count%>"	style="display: none">
 									<td>${attack.getAttacktype()}</td>
 									<td>${attack.getAttackclass()}</td>
 									<td>${attack.getDmg()}</td>
 									<td>${attack.getEffect()}</td>
-								</c:forEach>
-							</tr>
+								</tr>
+							</c:forEach>
 						</c:forEach>
 					</c:forEach>
 				</table>

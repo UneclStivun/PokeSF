@@ -2,6 +2,7 @@ package pokemon;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -117,55 +118,68 @@ public final class TypeTableSupport {
 	public static Map<String, Integer> checkTeamDefenseAffinities(Pokemonteam pokemonteam) {
 		//instantiate needed variables
 		var types = List.of("normal", "fire", "water", "electric", "grass",
-				"ice", "fighting", "poison", "ground", "flying", "psycho", "bug",
+				"ice", "fighting", "poison", "ground", "flying", "psychic", "bug",
 				"rock", "ghost", "dragon");
 		//Counting all resistances, weaknesses and immunities for the whole team
 		List<Integer> immuneCounter = Arrays.asList(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 		List<Integer> resCounter = Arrays.asList(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 		List<Integer> weakCounter = Arrays.asList(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-		Map<String, Integer> mapTypesValuesDef = new HashMap<String, Integer>();
-		//Iteration within first row to find type 1
+		List<Double> values1 = new ArrayList<Double>();
 		
-		for(int k = 0; k < pokemonteam.getPokemon().size(); k++) {
-			//Iteration within first row to find type 1
-			for(int i = 0; i < 16; i ++) {	
-				if(typeArray[0][i].equals(pokemonteam.getPokemon().get(k).getType1())) {
-					for(int j = 1; j < 16; j++) {
-						//if weakness was found
-						if(Double.parseDouble(typeArray[j][i]) == 2.0) {
-							weakCounter.set(j, weakCounter.get(j) + 1);
-						}
-						//if resistance was found
-						if(Double.parseDouble(typeArray[j][i]) == 0.5) {
-							resCounter.set(j, resCounter.get(j) + 1);
-						}
-						//if immunity was found
-						if(Double.parseDouble(typeArray[j][i]) == 0.0) {
-							immuneCounter.set(j, immuneCounter.get(j) + 1);
-						}
+		Map<String, Integer> mapTypesValuesDef = new HashMap<String, Integer>();
+		
+		//compare both type of a pokemon to check if they are resistant/weak/immune
+		for(int i = 0; i < pokemonteam.getPokemon().size(); i++) {
+			//iterate through all types once to get type 1
+			for(int j = 1; j < 16; j++) {
+				//if type 1 of Pokemon was found
+				if(typeArray[0][j].equals(pokemonteam.getPokemon().get(i).getType1())) {
+					//add all found values to List values1
+					for(int k = 1; k < 16; k++) {
+						values1.add(Double.parseDouble(typeArray[k][j]));
 					}
 				}
-				//Iteration within first row to find type 2
-				if(typeArray[0][i].equals(pokemonteam.getPokemon().get(k).getType2()) 
-						&& !pokemonteam.getPokemon().get(k).getType2().isEmpty() 
-						&& !pokemonteam.getPokemon().get(k).getType1().equals(pokemonteam.getPokemon().get(k).getType2())) {
-					for(int j = 1; j < 16; j++) {
-						//if weakness was found
-						if(Double.parseDouble(typeArray[j][i]) == 2.0) {
-							weakCounter.set(j, weakCounter.get(j) + 1);
-						}
-						//if resistance was found
-						if(Double.parseDouble(typeArray[j][i]) == 0.5) {
-							resCounter.set(j, resCounter.get(j) + 1);
-						}
-						//if immunity was found
-						if(Double.parseDouble(typeArray[j][i]) == 0.0) {
-							immuneCounter.set(j, immuneCounter.get(j) + 1);
+			}
+			//check if Type 2 exists
+			if(!pokemonteam.getPokemon().get(i).getType2().isEmpty()) {
+				//iterate a second to get Type 2
+				for(int j = 1; j < 16; j++) {
+					//if type 2 was found and exists
+					if(typeArray[0][j].equals(pokemonteam.getPokemon().get(i).getType2())) {
+						for(int k = 1; k < 16; k++) {
+							values1.set(k - 1, values1.get(k -1) * Double.parseDouble(typeArray[k][j]));
 						}
 					}
 				}
 			}
+			
+			//iterate through multiplied type values of one pokemon
+			for(int j = 0; j < values1.size(); j++) {
+				//if doubled weakness was found
+				if(values1.get(j) == 4.0) {
+					weakCounter.set(j, weakCounter.get(j) + 2);
+				}
+				//if weakness was found
+				if(values1.get(j) == 2.0) {
+					weakCounter.set(j, weakCounter.get(j) + 1);
+				}
+				//if resistance was found
+				if(values1.get(j) == 0.5) {
+					resCounter.set(j, resCounter.get(j) + 1);
+				}
+				//if doubled resistance was found
+				if(values1.get(j) == 0.25) {
+					resCounter.set(j, resCounter.get(j) + 2);
+				}
+				//if immunity was found
+				if(values1.get(j) == 0.0) {
+					immuneCounter.set(j, immuneCounter.get(j) + 1);
+				}
+			}
+			//clear List to fill with new values
+			values1.clear();
 		}
+		
 		//save all Lists to one Map with their specific Values
 		for(int i = 0; i < types.size(); i++) {
 			mapTypesValuesDef.put("res" + types.get(i), resCounter.get(i));
@@ -179,7 +193,7 @@ public final class TypeTableSupport {
 	public static Map<String, Integer> checkTeamAttackAffinities(Pokemonteam pokemonteam) {
 		//instantiate needed variables
 		var types = List.of("normal", "fire", "water", "electric", "grass",
-				"ice", "fighting", "poison", "ground", "flying", "psycho", "bug",
+				"ice", "fighting", "poison", "ground", "flying", "psychic", "bug",
 				"rock", "ghost", "dragon");
 		//Counting all resistances, weaknesses and immunities for the whole team
 		List<Integer> immuneCounter = Arrays.asList(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
@@ -235,5 +249,88 @@ public final class TypeTableSupport {
 			mapTypesValuesAtt.put("none" + types.get(i), immuneCounter.get(i));
 		}
 		return mapTypesValuesAtt;
+	}
+	
+	//this method returns fitting types to adress the weaknesses with scoring
+	public static List<String> adressWeaknesses(List<String> weaknessesLeft) {
+		List<String> resTypes = new ArrayList<String>();
+		for(int i = 0; i < weaknessesLeft.size(); i++) {
+			for(int j = 1; j < 16 ; j++) {
+				if(typeArray[j][0].equals(weaknessesLeft.get(i))) {
+					for(int k = 1; k < 16; k++) {
+						if(Double.parseDouble(typeArray[j][k]) == 0.5) {
+							resTypes.add(weaknessesLeft.get(i) + ":" + typeArray[0][k]);
+						}
+					}
+				}
+			}
+		}
+		return resTypes;
+	}
+	
+	//this methods uses the combination String List of adressWeaknesses to check several Type combinations
+	//regarding their effectiveness and influence on the team combination
+	//returns a List of rated Pokemontype combinations
+	public static List<ScorePair> calculateTypeComboResistance(List<String> resTypes, List<String> teamRes) {
+		List<String> onlyResTypes = new ArrayList<String>();
+		List<String> onlyResTypesNoDoubles = new ArrayList<String>();
+		for(int i = 0; i < resTypes.size(); i++) {
+			int split = resTypes.get(i).indexOf(":");
+			onlyResTypes.add(resTypes.get(i).substring(split +1));
+		}
+		onlyResTypes.sort(Comparator.naturalOrder());
+		//remove doubles from List
+		for(int i = 0; i < onlyResTypes.size(); i++) {
+			if(i == 0) {
+				onlyResTypesNoDoubles.add(onlyResTypes.get(i));
+			} else {
+				//if Resistance is not a double beginning from 1
+				if(!onlyResTypes.get(i -1).equals(onlyResTypes.get(i))) {
+					onlyResTypesNoDoubles.add(onlyResTypes.get(i));
+				}
+			}
+		}
+		//create Type combinations and save them as Pokemon to a List<Pokemon> for further analysis
+		List<Pokemon> pokemonCombinations = new ArrayList<Pokemon>();
+		for(int i = 0; i < onlyResTypesNoDoubles.size(); i++) {
+			for(int j = i; j < onlyResTypesNoDoubles.size();j++) {
+				//combination of the same type
+				Pokemon pokemon = new Pokemon();
+				if(onlyResTypesNoDoubles.get(i).equals(onlyResTypesNoDoubles.get(j))) {
+					pokemon.setType1(onlyResTypesNoDoubles.get(i));
+				} else {
+					pokemon.setType1(onlyResTypesNoDoubles.get(i));
+					pokemon.setType2(onlyResTypesNoDoubles.get(j));
+				}
+				pokemonCombinations.add(pokemon);
+			}
+		}
+		
+		List<ScorePair> result = new ArrayList<ScorePair>();
+		//get from each Pokemon defense Mapping and score it by comparing to resistances from current pokemonteam
+		for(int i = 0; i < pokemonCombinations.size(); i++) {
+			int score = 0;
+			Map<String, Double> defMap = checkDefenseAffinities(pokemonCombinations.get(i));
+			for (Map.Entry<String, Double> entry : defMap.entrySet()) {
+				for(int j = 0; j < teamRes.size(); j++) {
+					//if pokemon combination introduces new weakness that is not covered
+					if(!entry.getKey().equals(teamRes.get(j)) && entry.getValue() == 2.0) {
+						score--;
+					} else if (!entry.getKey().equals(teamRes.get(j)) && entry.getValue() == 4.0) {
+						score = score - 2;
+					}
+					//if pokemon combination introduces new teamResistance => better coverage
+					if(!entry.getKey().equals(teamRes.get(j)) && entry.getValue() == 0.5) {
+						score++;
+					} else if(!entry.getKey().equals(teamRes.get(j)) && entry.getValue() == 0.25) {
+						score = score + 2;
+					}
+				}
+			}
+			result.add(new ScorePair(pokemonCombinations.get(i),score));
+		}	
+		result.sort(Comparator.comparingInt(ScorePair::getScore).reversed());
+		//return the Pokemon on the first index as input for the following retrieve
+		return result;
 	}
 }
