@@ -2,6 +2,10 @@ package pokemon;
 
 import jakarta.servlet.http.HttpSession;
 
+/**Klasse um Erklärungen für den Pokemonkampf zu generieren
+ * @author Tobias Brakel
+ * */
+
 public class PokemonExplanationManager {
 	
 	/*=== Klassenvariablen ===*/

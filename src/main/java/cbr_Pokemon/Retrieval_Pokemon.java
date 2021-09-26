@@ -20,6 +20,10 @@ import pokemon.Attack;
 import pokemon.Pokemon;
 import pokemon.TypeTableSupport;
 
+/**Klasse für das Retrieval von ähnlichen Pokemonobjekten anhand ihrer Attribute (vollständig und unvollständig)
+ * @author Steven Oberle
+ * */
+
 public class Retrieval_Pokemon {
 	
 	//static method to set the query attributes for retrieval and get all result
@@ -199,6 +203,7 @@ public class Retrieval_Pokemon {
 		return sim;
 	}
 	
+	//this method compares an Attack with a List of attack by directly comparing the attack components
 	public static double getMostSimilarAttack(Attack userAtt, List<Attack> cbrPList) {
 		double sim = 0.0;
 		double highestSim = 0.0;
@@ -216,7 +221,7 @@ public class Retrieval_Pokemon {
 					sim+= 1;
 				}
 			} catch (Exception e) {
-				//Either UserAttack has no Effect or CBRPokemonAttack
+				System.out.println(e);
 			}
 			simAttList.put(sim, i);
 			if(highestSim < sim) {

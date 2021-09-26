@@ -9,6 +9,10 @@ import jade.wrapper.AgentController;
 import jade.wrapper.ControllerException;
 import jade.wrapper.StaleProxyException;
 
+/**Klasse um den Lebenszyklus des Agentensystems zu managen
+ * @author Tobias Vrakel
+ * */
+
 public class AgentLauncher extends Agent {
 
 	private Runtime rt;

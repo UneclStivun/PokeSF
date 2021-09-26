@@ -1,12 +1,18 @@
 package agents;
 
 import java.io.IOException;
+import java.util.List;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import pokemon.Pokemonteam;
+
+/**Servlet um den Agentlauncher anzusprechen. Befehle aus der jsp zum Agentensystem
+ * @author Tobias Brakel
+ * */
 
 /**
  * Servlet implementation class ServletAgentLauncher
@@ -30,11 +36,20 @@ public class ServletAgentLauncher extends HttpServlet {
 		
 		// Session heranziehen
 		HttpSession session = request.getSession();
-		
+		List<Pokemonteam> allTeams = (List<Pokemonteam>) session.getAttribute("allTeamList");
 		// Sessionattribute zurücksetzen
+		Pokemonteam team = (Pokemonteam) session.getAttribute("userTeam");
+		int teamId = team.getTeamid();
 		session.removeAttribute("userTeam");
 		session.removeAttribute("enemyTeam");
 		
+		if(allTeams.size() > 0) {
+			for(int i = 0; i < allTeams.size(); i++) {
+				if(teamId == allTeams.get(i).getTeamid()) {
+					session.setAttribute("userTeam", allTeams.get(i));
+				}
+			}
+		}
 		response.sendRedirect("pokemonTeamCreator.jsp");
 		return;
 	}

@@ -1,7 +1,12 @@
 package cbr_utility;
 
+/**Klasse um zu einer CBR Attributsbezeichnung einen String zu koppeln
+ * @author Steven Oberle
+ * */
+
 public class SimPair {
-private Double sim;
+	
+	private Double sim;
 	
 	private String simAtt;
 	

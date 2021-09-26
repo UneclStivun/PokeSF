@@ -9,7 +9,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-
+/**Servlet um die Funktionen auf der pokemonPrepareTeam.jsp umzusetzen.
+ * @author Steven Oberle
+ * */
 /**
  * Servlet implementation class ServletPrepareTeam
  */

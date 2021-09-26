@@ -13,6 +13,9 @@ import de.dfki.mycbr.core.similarity.IntegerFct;
 import de.dfki.mycbr.core.similarity.config.NumberConfig;
 import pokemon.Pokemon;
 
+/**Klasse um den CBR Prozess vorzubereiten und die Casebase mit dem Projekt zu laden
+ * @author Steven Oberle
+ * */
 
 public class CaseBaseLoader_Pokemon {
 	//Membervariables

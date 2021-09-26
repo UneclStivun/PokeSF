@@ -18,6 +18,9 @@ import pokemon.Pokemon;
 import pokemon.Pokemonteam;
 import pokemon.TypeTableSupport;
 
+/**Klasse um die Aktionen des Agenten mit seiner Wahrnehmung zu steuern und um die Welt zu modellieren
+ * @author Tobias Brakel
+ * */
 
 public class AgentPlaner extends Agent {
 	
@@ -34,6 +37,8 @@ public class AgentPlaner extends Agent {
 	private AgentHelper ah;
 	
 	private static int roundUs = 1;
+	
+	private static int statusCounter = 0;
 	
 	public AgentPlaner() {
 		ah = new AgentHelper();
@@ -56,25 +61,12 @@ public class AgentPlaner extends Agent {
 					String action = teamJson.getString("action");
 					
 					Pokemon userPokemon1 = new Gson().fromJson(teamJson.getJSONObject("userPokemon0").toString(), Pokemon.class);
-					Pokemon userPokemon2 = new Gson().fromJson(teamJson.getJSONObject("userPokemon1").toString(), Pokemon.class);
-					Pokemon userPokemon3 = new Gson().fromJson(teamJson.getJSONObject("userPokemon2").toString(), Pokemon.class);
-					Pokemon userPokemon4 = new Gson().fromJson(teamJson.getJSONObject("userPokemon3").toString(), Pokemon.class);
-					Pokemon userPokemon5 = new Gson().fromJson(teamJson.getJSONObject("userPokemon4").toString(), Pokemon.class);
-					Pokemon userPokemon6 = new Gson().fromJson(teamJson.getJSONObject("userPokemon5").toString(), Pokemon.class);
 					Pokemon agentPokemon1 = new Gson().fromJson(teamJson.getJSONObject("enemyPokemon0").toString(), Pokemon.class);
 					Pokemon agentPokemon2 = new Gson().fromJson(teamJson.getJSONObject("enemyPokemon1").toString(), Pokemon.class);
 					Pokemon agentPokemon3 = new Gson().fromJson(teamJson.getJSONObject("enemyPokemon2").toString(), Pokemon.class);
 					Pokemon agentPokemon4 = new Gson().fromJson(teamJson.getJSONObject("enemyPokemon3").toString(), Pokemon.class);
 					Pokemon agentPokemon5 = new Gson().fromJson(teamJson.getJSONObject("enemyPokemon4").toString(), Pokemon.class);
 					Pokemon agentPokemon6 = new Gson().fromJson(teamJson.getJSONObject("enemyPokemon5").toString(), Pokemon.class);
-					
-					List<Pokemon> userPokemonList = new ArrayList<Pokemon>();
-					userPokemonList.add(userPokemon1);
-					userPokemonList.add(userPokemon2);
-					userPokemonList.add(userPokemon3);
-					userPokemonList.add(userPokemon4);
-					userPokemonList.add(userPokemon5);
-					userPokemonList.add(userPokemon6);
 					
 					if(!(agentPokemonListMax != null)) {
 						agentPokemonListMax = new ArrayList<Pokemon>();
@@ -101,7 +93,7 @@ public class AgentPlaner extends Agent {
                   
 
 					//Updating agent view on current enemy Pokemon
-					statusUpdateUser(userPokemonList, action);
+					statusUpdateUser(userPokemon1, action);
 					statusUpdateAgent(agentPokemonList);
 					
 					if(action.equals("forceSwitch")) {
@@ -145,24 +137,24 @@ public class AgentPlaner extends Agent {
 	}
 	
 	//update with actual user Pokemon
-	private void statusUpdateUser(List<Pokemon> userPokemonList, String action) {
+	private void statusUpdateUser(Pokemon userPokemon1, String action) {
 		//first round of Pokemon add User´s start Pokemon to recognized team
 		if(!(userTeam != null)) {
 			userTeam = new Pokemonteam();
-			userTeam.getPokemon().add(userPokemonList.get(0));
+			userTeam.getPokemon().add(userPokemon1);
 		}
 		
 		if(actualUserPokemon != null) {
-			if(actualUserPokemon.getName() != userPokemonList.get(0).getName()) {
+			if(actualUserPokemon.getName() != userPokemon1.getName()) {
 				roundUs = 1;
 			} else {
 				roundUs++;
 			}
 		}
 		// aktualisiere das aktuell kämpfende user Pokemon
-		this.actualUserPokemon = userPokemonList.get(0);
+		this.actualUserPokemon = userPokemon1;
 		//update Agent world with "possible" new seen Pokemon
-		ah.visiblePokemon(userPokemonList.get(0));
+		ah.visiblePokemon(userPokemon1);
 	}
 
 	//update with actual Agent Pokemon
@@ -201,6 +193,12 @@ public class AgentPlaner extends Agent {
 			plan.put("action", "switch");
 		} else {
 			int pos = getBestAttack();
+			//if Pokemon uses status attacks boost probability of other attacks
+			if(actualAgentPokemon.getAttacks().get(pos).getAttackclass().equals("status")) {
+				statusCounter = statusCounter + 2;
+			} else {
+				statusCounter = statusCounter -2;
+			}
 			//pick best attack function
 			plan.put("action", "attack");
 			plan.put("position", pos);
@@ -249,11 +247,11 @@ public class AgentPlaner extends Agent {
 			//if user Pokemon has no ailment and has its first round
 			if(!(actualUserPokemon.getAil1() != null)) {
 				//prefer Effect Attack in first rounds over following rounds
-				if(att.getEffect() != null && roundUs == 1) {
+				if(att.getEffect() != null && roundUs == 1 && !att.getEffect().equals("heal")) {
 					score = score +4;
 				}
 				if(att.getEffect() != null && roundUs != 1) {
-					score = score +2;
+					score = score + 1;
 				}
 			}
 			//if user Pokemon has a weakness against agent attack type, the higher the weakness the higher the score
@@ -283,7 +281,7 @@ public class AgentPlaner extends Agent {
 			if(att.getEffect() != null ) {
 				for(int j = 0; j < agentPokemonListMax.size(); j++) {
 					if(actualAgentPokemon.getName().equals(agentPokemonListMax.get(j).getName())) {
-						if(((Double.parseDouble(actualAgentPokemon.getHitpoints() + "") / Double.parseDouble("" + agentPokemonListMax.get(j).getMaxHp()) * 100.00) < 40 )
+						if(((Double.parseDouble(actualAgentPokemon.getHitpoints() + "") / Double.parseDouble("" + agentPokemonListMax.get(j).getMaxHp()) * 100.00) < 25.00 )
 							&& att.getEffect().equals("heal") ) {
 							score = score + 4;
 						}
@@ -302,7 +300,12 @@ public class AgentPlaner extends Agent {
 					}
 				}
 			}
-
+			
+			//if pokemon attack is not status add the statusCounter (goes up with every status attack use) to the score
+			if(!att.getAttackclass().equals("status")) {
+				score = score + statusCounter;
+			}
+			
 			//get Attack position with highest score
 			if(score > hiScore) {
 				hiScore = score;

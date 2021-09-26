@@ -1,5 +1,8 @@
 <%@ include file = "header/checkAdmin.jsp" %>
-
+<%-- 
+  - Author(s): Tobias Brakel
+  - Description: userManagement.jsp
+  --%>
 <!DOCTYPE html>
 <html>
 <head>

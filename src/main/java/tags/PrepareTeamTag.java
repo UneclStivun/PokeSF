@@ -8,6 +8,9 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.jsp.tagext.TagSupport;
 import pokemon.Pokemonteam;
 
+/**Tag Klasse um alle validen Pokemonteams in die Session zu speichern
+ * @author Steven Oberle
+ * */
 public class PrepareTeamTag extends TagSupport{
 	private static final long serialVersionUID = 1L;
 	

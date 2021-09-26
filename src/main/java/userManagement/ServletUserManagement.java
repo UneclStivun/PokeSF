@@ -8,6 +8,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+/**Servlet um die Funktionen des User Managements umzusetzen
+ * @author Tobias Brakel
+ * */
 /**
  * Servlet implementation class ServletUserManagement
  */

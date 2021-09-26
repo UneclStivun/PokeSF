@@ -1,5 +1,9 @@
 package pokemon;
 
+/**Klasse um die Eigenschaften und Methoden einer Pokemon-Attacke nachzubilden
+ * @author Steven Oberle
+ * */
+
 public class Attack {
 	// Membervariables
 	private String attacktype;

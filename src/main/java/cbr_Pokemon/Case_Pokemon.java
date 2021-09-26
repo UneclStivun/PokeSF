@@ -2,6 +2,10 @@ package cbr_Pokemon;
 
 import pokemon.Pokemon;
 
+/**Klasse um jedem Pokemonobjekt einen Casename und eine Ähnlichkeit zuzuordnen
+ * @author Steven Oberle
+ * */
+
 public class Case_Pokemon {
 	//Membervariables
 	private String casename;

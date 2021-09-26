@@ -13,6 +13,10 @@ import de.dfki.mycbr.core.similarity.IntegerFct;
 import de.dfki.mycbr.core.similarity.config.NumberConfig;
 import pokemon.Pokemonteam;
 
+/**Klasse um den Pokemonteam CBR Prozess vorzubereiten und die Casebase zu laden
+ * @author Steven Oberle
+ * */
+
 public class CaseBaseLoader_Pokemonteam {
 	//Membervariables
 	private Project project;
@@ -44,7 +48,8 @@ public class CaseBaseLoader_Pokemonteam {
 			loadCasesFromDb();
 		}
 	}	
-
+	
+	//this method gets all cases from the database and save them as instances to the casebase
 	private boolean loadCasesFromDb() {
 		boolean success = true;
 		//fill List via database
@@ -73,7 +78,8 @@ public class CaseBaseLoader_Pokemonteam {
 		}
 		return success;
 	}
-
+	
+	//this methods sets up the project by creating a concept aswell as all necessities for CBR
 	public boolean loadProject() {
 		boolean success = true;
 		
@@ -136,6 +142,7 @@ public class CaseBaseLoader_Pokemonteam {
 		return success;
 	}
 
+	//Getter Setter Methods
 	public Project getProject() {
 		return project;
 	}

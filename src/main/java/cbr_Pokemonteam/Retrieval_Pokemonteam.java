@@ -17,6 +17,10 @@ import de.dfki.mycbr.util.Pair;
 import pokemon.Pokemonteam;
 import pokemon.TypeTableSupport;
 
+/**Klasse um den Retrieval Prozess des Pokemonteams umzusetzen
+ * @author Steven Oberle
+ * */
+
 public class Retrieval_Pokemonteam {
 	//static method to set the query attributes for retrieval and get all result
 	//cases for a single Pokemonteam
@@ -209,7 +213,8 @@ public class Retrieval_Pokemonteam {
 		sortResultCases(teamCases);
 		return teamCases;
 	}
-
+	
+	//this method compares the team types by listing their affinities and directly comparing them
 	private static double compareTeamTypes(List<List<String>> userAff,Pokemonteam pokemonteam) {
 		double sim = 0.0;
 		//List for comparing both team´s defense affinities
@@ -281,6 +286,7 @@ public class Retrieval_Pokemonteam {
 		return sim;
 	}
 	
+	//this method sorts the resulted Cases descending
 	public static void sortResultCases(List<Case_Pokemonteam> resultCases) {
 		Collections.sort(resultCases, new Comparator<Case_Pokemonteam>() {
 			@Override

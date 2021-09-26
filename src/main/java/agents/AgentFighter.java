@@ -17,6 +17,9 @@ import jakarta.websocket.OnOpen;
 import jakarta.websocket.Session;
 import jakarta.websocket.server.ServerEndpoint;
 
+/**Klasse als Schnittstelle zwischen AgentPlaner und JSP
+ * @author Tobias Brakel
+ * */
 
 @ServerEndpoint("/websocketendpoint")
 public class AgentFighter extends Agent {

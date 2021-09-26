@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**Klasse um alle Pokemontyp bezogenen Funktionalitäten gesammelt zu behandeln.
+ * @author Steven Oberle
+ * */
 public final class TypeTableSupport {
 	//Links für Angriff / Oben für Abwehr
 	static String[][] typeArray = { {"", "normal", "fire", "water", "electric", "grass",
@@ -199,48 +202,57 @@ public final class TypeTableSupport {
 		List<Integer> immuneCounter = Arrays.asList(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 		List<Integer> resCounter = Arrays.asList(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 		List<Integer> weakCounter = Arrays.asList(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+		List<Double> values1 = new ArrayList<Double>();
 		Map<String, Integer> mapTypesValuesAtt = new HashMap<String, Integer>();
 		//Iteration within first row to find type 1
 		
-		for(int k = 0; k < pokemonteam.getPokemon().size(); k++) {
-			//Iteration within first row to find type 1
-			for(int i = 0; i < 16; i ++) {	
-				if(typeArray[i][0].equals(pokemonteam.getPokemon().get(k).getType1())) {
-					for(int j = 1; j < 16; j++) {
-						//if weakness was found
-						if(Double.parseDouble(typeArray[j][i]) == 2.0) {
-							weakCounter.set(j, weakCounter.get(j) + 1);
-						}
-						//if resistance was found
-						if(Double.parseDouble(typeArray[j][i]) == 0.5) {
-							resCounter.set(j, resCounter.get(j) + 1);
-						}
-						//if immunity was found
-						if(Double.parseDouble(typeArray[j][i]) == 0.0) {
-							immuneCounter.set(j, immuneCounter.get(j) + 1);
-						}
+		for(int i = 0; i < pokemonteam.getPokemon().size(); i++) {
+			for(int j = 1; j < 16; j++) {
+				//if type 1 of Pokemon was found
+				if(typeArray[j][0].equals(pokemonteam.getPokemon().get(i).getType1())) {
+					//add all found values to List values1
+					for(int k = 1; k < 16; k++) {
+						values1.add(Double.parseDouble(typeArray[j][k]));
 					}
 				}
-				//Iteration within first row to find type 2
-				if(typeArray[i][0].equals(pokemonteam.getPokemon().get(k).getType2()) 
-						&& !pokemonteam.getPokemon().get(k).getType2().isEmpty() 
-						&& !pokemonteam.getPokemon().get(k).getType1().equals(pokemonteam.getPokemon().get(k).getType2())) {
-					for(int j = 1; j < 16; j++) {
-						//if weakness was found
-						if(Double.parseDouble(typeArray[j][i]) == 2.0) {
-							weakCounter.set(j, weakCounter.get(j) + 1);
-						}
-						//if resistance was found
-						if(Double.parseDouble(typeArray[j][i]) == 0.5) {
-							resCounter.set(j, resCounter.get(j) + 1);
-						}
-						//if immunity was found
-						if(Double.parseDouble(typeArray[j][i]) == 0.0) {
-							immuneCounter.set(j, immuneCounter.get(j) + 1);
+			}
+			//check if Type 2 exists
+			if(!pokemonteam.getPokemon().get(i).getType2().isEmpty()) {
+				//iterate a second to get Type 2
+				for(int j = 1; j < 16; j++) {
+					//if type 2 was found and exists
+					if(typeArray[j][0].equals(pokemonteam.getPokemon().get(i).getType2())) {
+						for(int k = 1; k < 16; k++) {
+							values1.set(k - 1, values1.get(k -1) * Double.parseDouble(typeArray[j][k]));
 						}
 					}
 				}
 			}
+			//iterate through multiplied type values of one pokemon
+			for(int j = 0; j < values1.size(); j++) {
+				//if doubled weakness was found
+				if(values1.get(j) == 4.0) {
+					weakCounter.set(j, weakCounter.get(j) + 2);
+				}
+				//if weakness was found
+				if(values1.get(j) == 2.0) {
+					weakCounter.set(j, weakCounter.get(j) + 1);
+				}
+				//if resistance was found
+				if(values1.get(j) == 0.5) {
+					resCounter.set(j, resCounter.get(j) + 1);
+				}
+				//if doubled resistance was found
+				if(values1.get(j) == 0.25) {
+					resCounter.set(j, resCounter.get(j) + 2);
+				}
+				//if immunity was found
+				if(values1.get(j) == 0.0) {
+					immuneCounter.set(j, immuneCounter.get(j) + 1);
+				}
+			}
+			//clear List to fill with new values
+			values1.clear();
 		}
 		//save all Lists to one Map with their specific Values
 		for(int i = 0; i < types.size(); i++) {

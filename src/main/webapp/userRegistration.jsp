@@ -1,3 +1,7 @@
+<%-- 
+  - Author(s): Tobias Brakel
+  - Description: userRegistration.jsp
+  --%>
 <!DOCTYPE html>
 <html>
 <head>

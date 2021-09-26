@@ -6,6 +6,10 @@ import java.util.List;
 
 import cbr_utility.SimPair;
 
+/**Klasse um die Ergebnisse (Similarities) nachvollziehbar zusammenzurechnen und vergleichbar zu machen
+ * @author Steven Oberle
+ * */
+
 public class CBRExplanationManagerPokemonteam {
 	//Membervariables
 	private double hpSim;
@@ -28,6 +32,7 @@ public class CBRExplanationManagerPokemonteam {
 		topSimAtt = new ArrayList<SimPair>();
 	}
 	
+	//this methods sums up all valid similarites of the CBR process
 	public double sumUpSimilarities() {
 		double sim = 0.0;
 		double validAtts = 0.0;
@@ -90,6 +95,7 @@ public class CBRExplanationManagerPokemonteam {
 		topSimAtt.sort(Comparator.comparingDouble(SimPair::getSim).reversed());
 	}
 	
+	//Getter Setter methods
 	public double getHpSim() {
 		return hpSim;
 	}

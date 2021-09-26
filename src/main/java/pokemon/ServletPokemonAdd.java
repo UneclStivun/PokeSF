@@ -10,6 +10,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+/**Servlet um die Funktionen auf der pokemonAdd.jsp umzusetzen.
+ * @author Tobias Brakel
+ * */
 /**
  * Servlet implementation class ServletPokemonAdd
  */

@@ -11,6 +11,10 @@ import java.util.List;
 import pokemon.Pokemon;
 import pokemon.Pokemonteam;
 
+/**Klasse um alle Zugriffe auf die Datenbank zu managen
+ * @author Tobias Brakel
+ * */
+
 public class DatabaseManipulator {
 	// Klassenvariablen
 	private Connection con;

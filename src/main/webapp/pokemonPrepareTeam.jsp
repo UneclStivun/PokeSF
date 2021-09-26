@@ -1,6 +1,9 @@
 <%@ include file="header/checkUser.jsp"%>
 <%@taglib uri="/WEB-INF/prepareTeamTag.tld" prefix="ptt"%>
-
+<%-- 
+  - Author(s): Steven Oberle
+  - Description: pokemonPrepareTeam.jsp
+  --%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -210,8 +213,8 @@
 						<option value="${sessionScope.enemyTeam.getTeamid()}">${sessionScope.enemyTeam.getTeamname()}</option>
 					</datalist>
 					<input autoComplete="on" list="counterSugg" name="count" />
-					<button type="submit" name="counter" value="yes">Get
-						counter team</button>
+					<button type="submit" name="counter" value="yes">Get counter team</button>
+					<button type="submit" name="counter" value="no">Get weaker team</button>
 				</div>
 			</form>
 		</div>
@@ -220,8 +223,6 @@
 		<div class="col-5">
 			<c:if
 				test="${sessionScope.simTeams != null && !sessionScope.simTeams.isEmpty()}">
-				<br>
-				<p>similar Teams:</p>
 				<table class="table">
 					<c:forEach items="${sessionScope.simTeams}" var="sims">
 						<tr>

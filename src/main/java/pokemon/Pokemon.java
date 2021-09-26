@@ -9,6 +9,11 @@ import org.json.JSONObject;
 
 import com.google.gson.Gson;
 
+/**Klasse um die Eigenschaften eines Pokemons nachzubilden, samt Methoden zur Umwandlung
+ * von der Datenbank zu Objekt und vice versa. Plus JSON Objekt Erzeugung
+ * @author Tobias Brakel
+ * */
+
 public class Pokemon {
 	
 	/* === Membervariables === */

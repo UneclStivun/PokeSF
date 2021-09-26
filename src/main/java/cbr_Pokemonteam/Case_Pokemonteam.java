@@ -7,6 +7,11 @@ import java.util.Map;
 import pokemon.Pokemonteam;
 import pokemon.TypeTableSupport;
 
+/**Klasse um jedem Pokemonteamobjekt einen Casename und eine Ähnlichkeit zuzuordnen.
+ * Zusätzlich ein paar Lists mit Typ Affinitäten für die Weiterbenutzung und Zuschaustellung-
+ * @author Steven Oberle
+ * */
+
 public class Case_Pokemonteam {
 	//Membervariables
 	private String casename;
@@ -27,6 +32,7 @@ public class Case_Pokemonteam {
 		this.pokemonteam = pokemonteam;
 	}
 	
+	//this method save the team type affinities into three separate lists (resistances, weaknesses, immunities)
 	public void pokemonAttsToString() {
 		resistances = new ArrayList<String>();
 		weaknesses = new ArrayList<String>();

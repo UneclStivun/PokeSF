@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+/**Klasse um die Berechnung von Ähnlichkeiten eines Pokemons nachvollziehbar zu gestalten
+ * @author Steven Oberle
+ * */
+
 public class CBRExplanationManagerPokemon {
 	//Membervariablen
 	private double hpSim;
@@ -103,12 +107,7 @@ public class CBRExplanationManagerPokemon {
 		topSimAtt.sort(Comparator.comparingDouble(SimPair::getSim).reversed());
 	}
 	
-	public void toConsole() {
-		for(int i = 0; i < topSimAtt.size(); i++) {
-			System.out.println(topSimAtt.get(i).getSimAtt() + topSimAtt.get(i).getSim());
-		}
-	}
-
+	//Getter Setter Methods
 	public double getHpSim() {
 		return hpSim;
 	}

@@ -10,6 +10,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+/**Servlet um die Funktionen der UserSession umzusetzen
+ * @author Tobias Brakel
+ * */
 /**
  * Servlet implementation class ServletUserSession
  */

@@ -14,6 +14,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+/**Servlet um die Funktionen auf der pokemonTeamCreator.jsp umzusetzen.
+ * @author Steven Oberle
+ * */
+
 /**
  * Servlet implementation class ServletCreateTeam
  */
@@ -48,7 +52,7 @@ public class ServletCreateTeam extends HttpServlet {
 		
 		quickList = (List<Pokemon>) session.getAttribute("quickList");
 		
-		//check if there is alrady an existing poketeam in the session
+		//check if there is already an existing poketeam in the session
 		if((List) session.getAttribute("poketeam") != null) {
 			poketeam = (List)session.getAttribute("poketeam");
 		} else {

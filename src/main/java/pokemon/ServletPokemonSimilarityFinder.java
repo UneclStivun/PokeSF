@@ -14,6 +14,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+/**Servlet um die Funktionen auf der pokemonSimilarityFinder.jsp umzusetzen.
+ * @author Steven Oberle
+ * */
 /**
  * Servlet implementation class ServletPokemonSimilarityFinder
  */

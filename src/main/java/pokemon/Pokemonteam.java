@@ -7,6 +7,10 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 
+/**Klasse um die Eigenschaften eines Pokemonteam nachzubilden. 
+ * @author Steven Oberle
+ * */
+
 public class Pokemonteam {
 	//Membervariables
 	private List<Pokemon> pokemon;
@@ -97,7 +101,8 @@ public class Pokemonteam {
 	public List<Integer> getSumUpVals() {
 		return sumUpVals;
 	}
-
+	
+	//this method sums up all singular pokemon values of a team
 	public void setSumUpVals() {
 		int hp = 0;
 		int att = 0;

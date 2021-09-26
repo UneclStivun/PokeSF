@@ -17,7 +17,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-
+/**Servlet um die Funktionen auf der pokemonPrepareTeam.jsp umzusetzen hinsichtlich des Pokemonteamretrievals
+ * @author Steven Oberle
+ * */
 /**
  * Servlet implementation class ServletPokemonteamSimilarityFinder
  */
@@ -90,8 +92,9 @@ public class ServletPokemonteamSimilarityFinder extends HttpServlet {
 			}
 		}
 		
-		//if user wants a counter to his selected team
+		//if user wants a counter to his selected team or a weaker team to bully
 		if(request.getParameter("counter") != null && !count.isEmpty()) {
+			String action = request.getParameter("counter");
 			int countInt = Integer.parseInt(count);
 			Pokemonteam team = null;
 			
@@ -113,26 +116,40 @@ public class ServletPokemonteamSimilarityFinder extends HttpServlet {
 					scorer = 0;
 					for(int j = 0; j < allTeams.get(i).getPokemon().size(); j++) {
 						for(Map.Entry<String, Integer> entry : defAff.entrySet()) {
+							//if Pokemontype hits a weakness of the team add a score aquivalent to the amount of its appearance
 							if(entry.getKey().contains("weak") && entry.getValue() > 0) {
 								//if pokemon from allTeams has type that hits weaknesses
 								if(entry.getKey().contains(allTeams.get(i).getPokemon().get(j).getType1())) {
-									scorer++;
+									scorer = scorer + entry.getValue();
 								}
 								
 								if(entry.getKey().contains(allTeams.get(i).getPokemon().get(j).getType2())
 										&& !allTeams.get(i).getPokemon().get(j).getType2().isEmpty()) {
-									scorer++;
+									scorer = scorer + entry.getValue();
 								}
 							}
 							
+							//if Pokemontype hits an immunity of the team add a score aquivalent to the amount of its appearance
 							if(entry.getKey().contains("immune") && entry.getValue() > 0) {
 								if(entry.getKey().contains(allTeams.get(i).getPokemon().get(j).getType1())) {
-									scorer--;
+									scorer = scorer - entry.getValue();
 								}
 								
 								if(entry.getKey().contains(allTeams.get(i).getPokemon().get(j).getType2())
 										&& !allTeams.get(i).getPokemon().get(j).getType2().isEmpty()) {
-									scorer--;
+									scorer = scorer - entry.getValue();
+								}
+							}
+							
+							//if Pokemontype hits a resistance of the team add a score aquivalent to the amount of its appearance
+							if(entry.getKey().contains("res") && entry.getValue() > 0) {
+								if(entry.getKey().contains(allTeams.get(i).getPokemon().get(j).getType1())) {
+									scorer = scorer - entry.getValue();
+								}
+								
+								if(entry.getKey().contains(allTeams.get(i).getPokemon().get(j).getType2())
+										&& !allTeams.get(i).getPokemon().get(j).getType2().isEmpty()) {
+									scorer = scorer - entry.getValue();
 								}
 							}
 						}
@@ -141,7 +158,14 @@ public class ServletPokemonteamSimilarityFinder extends HttpServlet {
 				}
 				//iterate through scoreList and allTeams to get 1-3 counter teams and save it as a new list to the session
 				List<Pokemonteam> counterTeamList = new ArrayList<Pokemonteam>();
-				scoreList.sort(Comparator.comparingInt(ScorePair::getScore).reversed());
+				
+				//if user decided on counter then descending scoreList otherwise ascending scoreList
+				if(action.equals("yes")) {
+					scoreList.sort(Comparator.comparingInt(ScorePair::getScore).reversed());
+				} else {
+					scoreList.sort(Comparator.comparingInt(ScorePair::getScore));
+				}
+				
 				for(int i = 0; i < scoreList.size(); i++) {
 						if(counterTeamList.size() < 2) {
 							scoreList.get(i).getTeam().pokemonAttsToString();

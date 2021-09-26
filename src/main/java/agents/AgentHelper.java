@@ -10,6 +10,10 @@ import pokemon.Pokemon;
 import pokemon.Pokemonteam;
 import pokemon.TypeTableSupport;
 
+/**Klasse um die Agenteninteraktion zu unterstützen und Funktionen auszulagern
+ * @author Steven Oberle
+ * */
+
 public class AgentHelper {
 	//Membervariables
 	private Pokemonteam enemyteam;
@@ -22,6 +26,7 @@ public class AgentHelper {
 		this.enemyteam = new Pokemonteam();
 	}
 	
+	//adds the userPokemon to a Pokemonteam which visualizes the agents world 
 	public void visiblePokemon(Pokemon pokemon) {
 		boolean unique = true;
 		//check if agent has already seen the current User Pokemon before

@@ -2,6 +2,10 @@ package agents;
 
 import pokemon.Pokemon;
 
+/**Klasse um den Agenten beim DangerLevel Assessment zu unterstützen
+ * @author Steven Oberle
+ * */
+
 public class PokemonDangerPair {
 	private Pokemon pokemon;
 	

@@ -15,6 +15,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+/**Servlet um die Funktionen auf der pokemonFight.jsp umzusetzen.
+ * @author Tobias Brakel
+ * */
 /**
  * Servlet implementation class ServletPokemonFight
  */

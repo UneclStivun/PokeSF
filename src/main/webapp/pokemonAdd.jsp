@@ -1,5 +1,8 @@
 <%@ include file = "header/checkUser.jsp" %>
-
+<%-- 
+  - Author(s): Tobias Brakel
+  - Description: pokemonAdd.jsp
+  --%>
 <!DOCTYPE html>
 <html>
 <head>

@@ -1,5 +1,9 @@
 package pokemon;
 
+/**Klasse um die Kombination von einem Pokemonteam / Pokemon mit einem Rating zu ermöglichen.
+ * @author Steven Oberle
+ * */
+
 public class ScorePair {
 	//Membervariables
 	private Pokemonteam team;
