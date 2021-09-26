@@ -122,29 +122,31 @@ public class ServletCreateTeam extends HttpServlet {
 			uTeam.pokemonAttsToString();
 			//method to retrieve the types needed for a balanced team composition
 			List<ScorePair> result = checkTeamBalance(cbl, uTeam);
-			List<Case_Pokemon> resultCasesAtt = Retrieval_Pokemon.retrieveSimCases(cbl, result.get(0).getPokemon());
-			List<Pokemon> pokeAttList = new ArrayList<Pokemon>();
-			List<String> topTypes = new ArrayList<String>();
-			//shorten List to 3 most similar Pokemon to best type combination
-			for(int i = 0; i < resultCasesAtt.size(); i++) {
-				if(i < 3) {
-					pokeAttList.add(resultCasesAtt.get(i).getPokemon());
-				}
-			}
-			
-			for(int i = 0; i < result.size(); i++) {
-				if(i < 3) {
-					if(result.get(i).getPokemon().getType2() != null) {
-						topTypes.add(result.get(i).getPokemon().getType1() + "/" + result.get(i).getPokemon().getType2());
-					} else {
-						topTypes.add(result.get(i).getPokemon().getType1());
+			if(result.size() > 0) {
+				List<Case_Pokemon> resultCasesAtt = Retrieval_Pokemon.retrieveSimCases(cbl, result.get(0).getPokemon());
+				List<Pokemon> pokeAttList = new ArrayList<Pokemon>();
+				List<String> topTypes = new ArrayList<String>();
+				//shorten List to 3 most similar Pokemon to best type combination
+				for(int i = 0; i < resultCasesAtt.size(); i++) {
+					if(i < 3) {
+						pokeAttList.add(resultCasesAtt.get(i).getPokemon());
 					}
 				}
+				
+				for(int i = 0; i < result.size(); i++) {
+					if(i < 3) {
+						if(result.get(i).getPokemon().getType2() != null) {
+							topTypes.add(result.get(i).getPokemon().getType1() + "/" + result.get(i).getPokemon().getType2());
+						} else {
+							topTypes.add(result.get(i).getPokemon().getType1());
+						}
+					}
+				}
+				//get the team attributes for display
+				session.setAttribute("uTeam", uTeam);
+				session.setAttribute("resultCasesAtt", pokeAttList);
+				session.setAttribute("topTypes", topTypes);
 			}
-			//get the team attributes for display
-			session.setAttribute("uTeam", uTeam);
-			session.setAttribute("resultCasesAtt", pokeAttList);
-			session.setAttribute("topTypes", topTypes);
 		}
 		session.setAttribute("poketeam", poketeam);
 		request.getRequestDispatcher("pokemonTeamCreator.jsp").forward(request, response);

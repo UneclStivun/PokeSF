@@ -217,7 +217,7 @@ public class Retrieval_Pokemon {
 				sim+= 1;
 			}
 			try {
-				if(userAtt.getEffect().equals(cbrPList.get(i).getEffect())) {
+				if(userAtt.getEffect() != null && userAtt.getEffect().equals(cbrPList.get(i).getEffect())) {
 					sim+= 1;
 				}
 			} catch (Exception e) {
