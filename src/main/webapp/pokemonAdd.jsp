@@ -5,12 +5,13 @@
 <head>
 	<!-- Styles/Bootstrap -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-	<link rel="stylesheet" href="css/userArea.css" type="text/css">
+	<link rel="stylesheet" href="css/areaUser.css" type="text/css">
 	
 	<meta charset="ISO-8859-1">
 	<title>Add Pokemon</title>
 </head>
 <body>
+	<br>
 	
 	<div class="container">
 		<form id="formoid" method="post" action="ServletPokemonAdd">
@@ -283,14 +284,14 @@
 			</select>
 			
 			<br><br>
-			<button class="btn btn-success" type="submit">Add this pokemon</button>		
+			
+				<button class="btn btn-success" type="submit">Add this pokemon</button>
+				<span class="font-weight-italic" style="color:red;">${message }</span>
 		</form>
 		
 	</div>
 	
 	<br>
-	<p class="font-weight-italic" style="color:red;">${message }</p>
-
 	<br>
 		
 	<button type="button" class="btn btn-info" style="bottom: 0%; position: fixed;" onclick="window.location.href='index.jsp'">Back to main menu</button>

@@ -1,11 +1,12 @@
-@charset "ISO-8859-1";
 /*@author Tobias Brakel */
+
+@charset "ISO-8859-1";
 
 body {
 	margin:0;
 	padding:0;
-    background-image: url(images/bisa.png);
- 	background-size: 100%;
+	background-image: url(images/pokegents.jpg);
     background-repeat: no-repeat;
     background-position: top;
+    color: white;
 }

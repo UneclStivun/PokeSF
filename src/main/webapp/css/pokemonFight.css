@@ -10,6 +10,7 @@ table {
 	border-collapse: collapse;
 	width: 100%;
 }
+/*@author Tobias Brakel */
 
 td, th {
  	text-align: left;
@@ -21,7 +22,7 @@ td, th {
 }
 
 .pokemonName {
-	color: rgb(218, 252, 160);
+	color: #bd0200;
 }
 
 .display {
@@ -29,6 +30,7 @@ td, th {
 	width: 40%;
 	padding: 10px;
 	border: 5px solid rgb(218, 252, 160);
+	background: rgba(198,255,198,0.5);
 }
 
 .user_options {

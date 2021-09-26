@@ -343,11 +343,11 @@ public class ServletPokemonFight extends HttpServlet {
 				}
 				break;
 			case "heal":
-				attackingPokemon.setHitpoints((int) (attackingPokemon.getHitpoints() + (attackingPokemon.getMaxHitpoints() * 0.4)));
+				attackingPokemon.setHitpoints((int) (attackingPokemon.getHitpoints() + (attackingPokemon.getMaxHitpoints() * 0.3)));
 				if(attackingPokemon.getMaxHitpoints() < attackingPokemon.getHitpoints()) {
 					attackingPokemon.setHitpoints(attackingPokemon.getMaxHitpoints());
 				}
-				explanationMng.addExplanationBeforeDamage(nameAttacker + " healed itself by " + (int)(attackingPokemon.getMaxHitpoints() * 0.4) + ".<br>");
+				explanationMng.addExplanationBeforeDamage(nameAttacker + " healed itself by " + (int)(attackingPokemon.getMaxHitpoints() * 0.3) + ".<br>");
 				break;
 			case "ref":
 				//Reflektor

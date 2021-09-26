@@ -49,8 +49,6 @@ public class ServletUserRegistration extends HttpServlet {
 			user_password = request.getParameter("user_password");
 			user_email = request.getParameter("user_email");
 			
-			//// PASSWORT UMWANDELN /////
-			
 			// Instanz von DatabaseManipulator wird erstellt
 			DatabaseManipulator dmUserDatabase = new DatabaseManipulator();
 			
@@ -60,7 +58,12 @@ public class ServletUserRegistration extends HttpServlet {
 				// Falls Email bereits vorhanden, gebe entsprechende Meldung zurück
 				if(dmUserDatabase.emailIsUnique(user_email)) {
 					dmUserDatabase.addUserToDatabase(user_name, user_password, user_email);
-					request.setAttribute("message", "User " + user_name + " was created");
+					
+					// Setze eine Session
+					new ServletUserSession(request, user_name, user_email, "user");
+					
+					response.sendRedirect("index.jsp");
+					return;
 				} else {
 					request.setAttribute("message", "The email address is already in use");
 				}
@@ -72,10 +75,7 @@ public class ServletUserRegistration extends HttpServlet {
 			request.setAttribute("message", "Please fill in all empty fields");
 		}
 		
-		// Setze eine Session
-		new ServletUserSession(request, user_name, user_email, "user");
-		
 		// Führe zurück zur Seite der Registrierung
-		request.getRequestDispatcher("index.jsp").forward(request, response);
+		request.getRequestDispatcher("userRegistration.jsp").forward(request, response);
 	}
 }

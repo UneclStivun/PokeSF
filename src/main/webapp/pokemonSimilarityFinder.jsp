@@ -3,16 +3,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-1">
-<link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-<title>Pokemon Finder</title>
+	<meta charset="ISO-8859-1">
+	
+	<!-- Style/Bootstrap -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/areaUser.css" type="text/css">
+	
+	<title>Pokemon Finder</title>
 </head>
 <body>
-	<form id="formoid" method="post"
-		action="ServletPokemonSimilarityFinder">
-		<input type="text" class="form-control" placeholder="Pokemon Name"
-			name="pokemon_name"> <br> <label>Pokemon Type 1:</label>
+
+	<div class="container">
+	
+	<form id="formoid" method="post" action="ServletPokemonSimilarityFinder">
+		<input type="text" class="form-control" placeholder="Pokemon Name" name="pokemon_name"> <br> <label>Pokemon Type 1:</label>
 		<select name="pokemon_type_1">
 			<option value="normal">Normal</option>
 			<option value="fire">Fire</option>
@@ -318,10 +322,14 @@
 			</c:forEach>
 		</table>
 		<br>
-		<button class="btn btn-primary" type="submit">Add to quicklist</button>
+		<button class="btn btn-success" type="submit">Add to quicklist</button>
 	</c:if>
 	</form>
-
+	
+	</div>
+	
+	<button type="button" class="btn btn-info" style="bottom: 0%; position: fixed;" onclick="window.location.href='index.jsp'">Back to main menu</button>
+		
 	<script> 
 		// Zeige Effekt-Optionen nur, wenn die Attacke als Status-Attacke gewählt wurde
 		function showEffect1() {
@@ -370,7 +378,5 @@
 		}
 	</script>
 	
-	<br><br>
-	<a href="index.jsp">Back to main page</a>
 </body>
 </html>

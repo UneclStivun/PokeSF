@@ -4,42 +4,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-1">
-<link
-	href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-	rel="stylesheet"
-	integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-	crossorigin="anonymous">
-<title>Prepare Pokemon Teams for Battle!</title>
+	<meta charset="ISO-8859-1">
+	
+	<!-- Style/Bootstrap -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"	integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+	<link rel="stylesheet" href="css/areaUser.css" type="text/css">
+	
+	<title>Prepare Pokemon Teams for Battle!</title>
 </head>
 <body>
 	<ptt:CaseLoader></ptt:CaseLoader>
 	<div class="row">
 		<div class="col-4">
-		<form method="post" action="ServletAgentLauncher">
-			<button type="submit" class="btn btn-danger">Start fight!</button>
-		</form>
-		<br>
+			<form method="post" action="ServletAgentLauncher">
+				<button type="submit" class="btn btn-danger">Start fight!</button>
+			</form>
+			<br>
 		</div>
 		<div class="col-6">
 			<form action="ServletPrepareTeam" method="post">
 				<p>All available Teams:</p>
 				<div>
 					<datalist id="suggestions">
-						<%
-						int number = 0;
-						%>
+						<%int number = 0;%>
 						<c:forEach items="${sessionScope.allTeamList}" var="poke">
 							<option value="<%=number%>">${poke.getTeamname()}</option>
-							<%
-							number++;
-							%>
+							<%number++;%>
 						</c:forEach>
 					</datalist>
 					<input autoComplete="on" list="suggestions" name="all" />
 					<button type="submit" name="user" value="yes">Add to User</button>
-					<button type="submit" name="enemy" value="yes">Add to
-						Enemy</button>
+					<button type="submit" name="enemy" value="yes">Add to Enemy</button>
 				</div>
 			</form>
 		</div>
@@ -307,6 +302,8 @@
 			</c:if>
 		</div>
 	</div>
+	
+	<button type="button" class="btn btn-info" style="bottom: 0%; position: fixed;" onclick="window.location.href='index.jsp'">Back to main menu</button>
 
 	<script>
 		function showAttacks(pokemon_name) {
