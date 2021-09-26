@@ -44,14 +44,62 @@ public class PokemonExplanationManager {
 		session.setAttribute("explanation", explanationString);
 	}
 	
-	// Gebe Richtung der Schadensverteilung an
-	public void addExplanationDamage(Pokemonteam attackingTeam, Pokemonteam defendingTeam, int position) {
+	public void addExplanationBeforeDamage(String addition) {
 		
-		explanationString += attackingTeam.getPokemon().get(0).getName() + " (from " + attackingTeam.getTeamname() + ") "
-				+ "attacked " + defendingTeam.getPokemon().get(0).getName() + " (from " + defendingTeam.getTeamname() + ").<br>";
+		explanationString += addition;
 		
 		// Füge Erweiterung der Session hinzu
-		session.setAttribute("explanation", explanationString);
+		session.setAttribute("explanation", explanationString);	}
+	
+	// Gebe Richtung der Schadensverteilung an
+	public void addExplanationDamage(Pokemonteam attackingTeam, Pokemonteam defendingTeam, Attack pokemonAttack, boolean isSTAB, double typeMod, double damage) {
+		
+		Pokemon attackingPokemon = attackingTeam.getPokemon().get(0);
+		Pokemon defendingPokemon = defendingTeam.getPokemon().get(0);
+		
+		String defendingType2 = defendingPokemon.getType2() == "null" ? "" : defendingPokemon.getType2();
+		
+		String titleExplanation = "";
+		
+		// Prüfe ob Attacke kein Statusangriff war
+		if(!pokemonAttack.getAttackclass().equals("status")) {
+			if(pokemonAttack.getAttackclass().equals("physical")) {
+				
+				titleExplanation += "Attack is physical, therefore the attributes"
+						+ " attack (" + attackingPokemon.getAttack() + ") of " + attackingPokemon.getName() 
+						+ " and defense (" + defendingPokemon.getDefense() + ") of " + defendingPokemon.getName()
+						+ " are used.\n";
+				
+			} else if(pokemonAttack.getAttackclass().equals("special")) {
+				
+				titleExplanation += "Attack is special, therefore the attributes"
+						+ " special attack (" + attackingPokemon.getSpAttack() + ") of " + attackingPokemon.getName() 
+						+ " and special defense (" + defendingPokemon.getSpDefense() + ") of " + defendingPokemon.getName()
+						+ " are used.\n";
+			} else {
+				return;
+			}
+			
+			if(isSTAB) {
+				titleExplanation += "Attack was same element as pokemon type. Therefore damage was increased by x1.5\n";
+			}
+			
+			titleExplanation += "Damage is multiplicated by x" + typeMod + " because attack type is " + pokemonAttack.getAttacktype()
+					+ " and defending pokemon type is " + defendingPokemon.getType1() + " " + defendingType2 + ".\n";
+			
+			titleExplanation += "Damge was " + (int)damage + ".";
+			
+			
+			explanationString += attackingTeam.getPokemon().get(0).getName() + " (from " + attackingTeam.getTeamname() + ") "
+					+ "attacked " + defendingTeam.getPokemon().get(0).getName() + " (from " + defendingTeam.getTeamname() + "). ";
+			
+			explanationString += "<span title='"
+					+ titleExplanation
+					+ "'><u style='color:blue;'>Explanation</u></span><br>";
+			
+			// Füge Erweiterung der Session hinzu
+			session.setAttribute("explanation", explanationString);
+		}
 	}
 	
 	// Notiere, falls Pokemon oder gesamtes Team besiegt wurde

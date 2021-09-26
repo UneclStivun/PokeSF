@@ -5,10 +5,10 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import org.json.JSONObject;
 
+import de.dfki.mycbr.core.explanation.ExplanationManager;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -94,18 +94,20 @@ public class ServletPokemonFight extends HttpServlet {
 				// enemyTeam wechselt Pokemon
 				executeRound(session, enemyTeam, userTeam, explanationMng, agentAction.getString("action"), agentAction.getInt("position"));
 				executeRound(session, userTeam, enemyTeam, explanationMng, userAction.getString("action"), userAction.getInt("position"));
-			} else if(userAction.getString("action").equals("switch") && agentAction.getString("action").equals("attack")) {
-				// userTeam wechselt Pokemon
+				calculateStatusDamage(enemyTeam, userTeam, explanationMng);
+				calculateStatusDamage(userTeam, enemyTeam, explanationMng);
+			} else if((userAction.getString("action").equals("switch") && agentAction.getString("action").equals("attack")) || (userSpeed > enemySpeed)) {
+				// userTeam wechselt Pokemon oder agiert schneller
 				executeRound(session, userTeam, enemyTeam, explanationMng, userAction.getString("action"), userAction.getInt("position"));
 				executeRound(session, enemyTeam, userTeam, explanationMng, agentAction.getString("action"), agentAction.getInt("position"));
-			} else if (userSpeed > enemySpeed) {
-				// userTeam agiert schneller
-				executeRound(session, userTeam, enemyTeam, explanationMng, userAction.getString("action"), userAction.getInt("position"));
-				executeRound(session, enemyTeam, userTeam, explanationMng, agentAction.getString("action"), agentAction.getInt("position"));
+				calculateStatusDamage(userTeam, enemyTeam, explanationMng);
+				calculateStatusDamage(enemyTeam, userTeam, explanationMng);
 			} else {
 				// enemyTeam agiert schneller
 				executeRound(session, enemyTeam, userTeam, explanationMng, agentAction.getString("action"), agentAction.getInt("position"));
 				executeRound(session, userTeam, enemyTeam, explanationMng, userAction.getString("action"), userAction.getInt("position"));
+				calculateStatusDamage(enemyTeam, userTeam, explanationMng);
+				calculateStatusDamage(userTeam, enemyTeam, explanationMng);
 			}
 		}
 		
@@ -114,6 +116,8 @@ public class ServletPokemonFight extends HttpServlet {
 		
 		response.sendRedirect("pokemonFight.jsp");
 	}
+	
+/* ####################################################################################### */
 	
 	// Methode zum Ausführen der Ereignisse in der Runde
 	public void executeRound(HttpSession session, Pokemonteam activeTeam, Pokemonteam passiveTeam, PokemonExplanationManager explanationMng, String action, int position) {
@@ -127,8 +131,7 @@ public class ServletPokemonFight extends HttpServlet {
 		case "attack":
 			// Prüfe ob beide Pokemon noch Lebenspunkte haben und fahre entsprechend mit Angriff fort
 			if(activeTeam.getPokemon().get(0).getHitpoints() > 0 && passiveTeam.getPokemon().get(0).getHitpoints() > 0) {
-				calculateDamage(activeTeam.getPokemon(), passiveTeam.getPokemon(), position);
-				explanationMng.addExplanationDamage(activeTeam, passiveTeam, position);
+				calculateFightingDamage(activeTeam, passiveTeam, position, explanationMng);
 				explanationMng.addExplanationDefeat(passiveTeam, checkPokemonDefeated(passiveTeam.getPokemon()), checkTeamDefeated(passiveTeam.getPokemon()));
 				break;
 			}
@@ -152,7 +155,7 @@ public class ServletPokemonFight extends HttpServlet {
 	// Methode für die Schadensberechnung
 	// Gibt einen boolean zurück, der angibt, ob das Team besiegt wurde
 	//Schadensberechnung: Basis * (Angriffswert / (50 * Verteidigungswert) * MOD1 + 2) * STAB * Typ1 * Typ2
-	private void calculateDamage(List<Pokemon> attackingTeam, List<Pokemon> defendingTeam, int attackPosition) {
+	private void calculateFightingDamage(Pokemonteam attackingTeam, Pokemonteam defendingTeam, int attackPosition, PokemonExplanationManager explanationMng) {
 		
 		// Notwendige Werte der Pokemon und der Attacke
 		double damage = 4 * 100;
@@ -160,43 +163,58 @@ public class ServletPokemonFight extends HttpServlet {
 		double typeMod = 1.0;
 		boolean isSTAB= false;
 		/* Angreifendes Pokemon */
-		String ail1Att = attackingTeam.get(0).getAil1();
-		String ail2Att = attackingTeam.get(0).getAil2();
-		String pokemonType1 = attackingTeam.get(0).getType1();
-		String pokemonType2 = attackingTeam.get(0).getType2();
-		String attackType = attackingTeam.get(0).getAttacks().get(attackPosition).getAttacktype();
-		String attackClass = attackingTeam.get(0).getAttacks().get(attackPosition).getAttackclass();
-		String attackEffect = attackingTeam.get(0).getAttacks().get(attackPosition).getEffect();
-		int attack = attackingTeam.get(0).getAttack();
+		Pokemon attackingPokemon = attackingTeam.getPokemon().get(0);
+		String nameAttacker = attackingPokemon.getName();
+		String pokemonType1 = attackingPokemon.getType1();
+		String pokemonType2 = attackingPokemon.getType2();
+		Attack pokemonAttack = attackingPokemon.getAttacks().get(attackPosition);
+		String attackType = pokemonAttack.getAttacktype();
+		String attackClass = pokemonAttack.getAttackclass();
+		String attackEffect = pokemonAttack.getEffect();
+		int attack = attackingPokemon.getAttack();
+		int spAttack = attackingPokemon.getSpAttack();
 		/* Verteidigendes Pokemon */
-		Map<String, Double> defendingPokemon = TypeTableSupport.checkDefenseAffinities(defendingTeam.get(0));
+		Pokemon defendingPokemon = defendingTeam.getPokemon().get(0);
+		Map<String, Double> defendingPokemonAffinities = TypeTableSupport.checkDefenseAffinities(defendingPokemon);
 		List<String> typeKeys = new ArrayList<String>();
-		int spAttack = attackingTeam.get(0).getSpAttack();
-		int defense = defendingTeam.get(0).getDefense();
-		int spDefense = defendingTeam.get(0).getSpDefense();
+		String nameDefender = defendingPokemon.getName();
+		int defense = defendingPokemon.getDefense();
+		int spDefense = defendingPokemon.getSpDefense();
 		
 		int rndNum = 0;
 		
+		// Gebe Anfälligkeit/Resistenz gegen die Attacke wieder:		
+		// Pokemontypen der Liste hinzufügen
+		for (Map.Entry<String, Double> entry : defendingPokemonAffinities.entrySet()) {
+			typeKeys.add(entry.getKey());
+		}
+		// Liste durchgehen und Modifikation aus TypeTableSupport ziehen
+		for (int i = 0; i < typeKeys.size(); i++) {
+			if (typeKeys.get(i).equals(attackType)) {
+				typeMod = defendingPokemonAffinities.get(typeKeys.get(i));
+			}
+		}
+		
 		// Prüfe ob Pokemon einen Status besitzt
-		if(ail1Att != null) {
+		if(attackingPokemon.getAil1() != null) {
 			
 			rndNum = 1 + (int)(Math.random() * ((100 - 1) + 1)); // [min:1, max:100]
 			
 			// 25% Chance durch Paralyse nicht angreifen zu können
-			if(ail1Att.equals("PAR") && rndNum >= 75) {
-				System.out.println("\nDurch Status PAR kein Angriff.");
+			if(attackingPokemon.getAil1().equals("PAR") && rndNum >= 75) {
+				explanationMng.addExplanationBeforeDamage(nameAttacker + " can't attack due to status PAR.<br>");
 				return;
 			}
 			
 			rndNum = 1 + (int)(Math.random() * ((100 - 1) + 1)); // [min:1, max:100]
-			System.out.println(rndNum);
+			
 			// 20% Chance den Gefroren-Status des Angreifers zu entfernen und Angriff fortzusetzen
 			// Ansonsten kann nicht angegriffen werden
-			if(ail1Att.equals("FRZ") && rndNum >= 80) {
-				attackingTeam.get(0).setAil1(null);
-				System.out.println("\nStatus FRZ geheilt.");
-			} else if(ail1Att.equals("FRZ")) {
-				System.out.println("\nDurch Status FRZ kein Angriff.");
+			if(attackingPokemon.getAil1().equals("FRZ") && rndNum >= 80) {
+				attackingPokemon.setAil1(null);
+				explanationMng.addExplanationBeforeDamage(nameAttacker + " healed from status FRZ.<br>");
+			} else if(attackingPokemon.getAil1().equals("FRZ")) {
+				explanationMng.addExplanationBeforeDamage(nameAttacker + " can't attack due to status FRZ.<br>");
 				return;
 			}
 			
@@ -204,33 +222,51 @@ public class ServletPokemonFight extends HttpServlet {
 			
 			// 33% Chance Schlafen-Status des Angreifers zu entfernen und ANgriff fortzusetzen
 			// Ansonsten kann nicht angegriffen werden
-			if(ail1Att != null && ail1Att.equals("SLP") && rndNum > 66) {
-				attackingTeam.get(0).setAil1(null);
-				System.out.println("\nStatus SLP geheilt.");
-			} else if(ail1Att != null && ail1Att.equals("SLP")) {
-				System.out.println("\nDurch Status SLP kein Angriff.");
+			if(attackingPokemon.getAil1() != null && attackingPokemon.getAil1().equals("SLP") && rndNum > 66) {
+				attackingPokemon.setAil1(null);
+				explanationMng.addExplanationBeforeDamage(nameAttacker + " healed from status SLP.<br>");
+			} else if(attackingPokemon.getAil1() != null && attackingPokemon.getAil1().equals("SLP")) {
+				explanationMng.addExplanationBeforeDamage(nameAttacker + " can't attack due to status SLP.<br>");
 				return;
 			}
 		}
 		
+		rndNum = 1 + (int)(Math.random() * ((100 - 1) + 1)); // [min:1, max:100]
+		
+		// 40% Chance Verwirrung-Status aufheben
+		if(attackingPokemon.getAil2() != null && attackingPokemon.getAil2().contains("conf") && rndNum >= 60){
+			attackingPokemon.setAil2(attackingPokemon.getAil2().replace("conf", ""));
+			explanationMng.addExplanationBeforeDamage(nameAttacker + " is no longer confused.<br>");
+		} 
+		
+		rndNum = 1 + (int)(Math.random() * ((100 - 1) + 1)); // [min:1, max:100]
+		
+		// 33% Chance bei Verwirrung-Status sich selbst zu verletzen anstatt anzugreifen
+		if(attackingPokemon.getAil2() != null && attackingPokemon.getAil2().contains("conf") && rndNum > 66){
+			explanationMng.addExplanationBeforeDamage(nameAttacker + " damaged itself due to confusion.<br>");
+			damage = 2 * 40 * attack / 50 / attackingPokemon.getDefense() * statusMod + 2; 
+			attackingPokemon.setHitpoints(attackingPokemon.getHitpoints() - (int)damage);
+			return;
+		} 
+		
 		rndNum = 1 + (int)(Math.random() * ((10 - 1) + 1)); // [min:1, max:10]
 		
 		// 10% Chance, dass Feuer-, Elektro-, Eis-, Gift-Attacken einen Status auslösen
-		// Nur wenn das Pokemon bisher keinen primären Status hat
-		if (rndNum == 10 && defendingTeam.get(0).getAil1() == null) {
+		// Nur wenn das Pokemon bisher keinen primären Status hat und keine Immunität gegen die Attacke
+		if (rndNum == 10 && typeMod != 0 && defendingPokemon.getAil1() == null) {
 			switch (attackType) {
 			case "fire":
-				defendingTeam.get(0).setAil1("BRN");
+				defendingPokemon.setAil1("BRN");
 				break;
 			case "electric":
-				defendingTeam.get(0).setAil1("PAR");
-				defendingTeam.get(0).setInitiative((int)(defendingTeam.get(0).getInitiative() * 0.5));
+				defendingPokemon.setAil1("PAR");
+				defendingPokemon.setInitiative((int)(defendingPokemon.getInitiative() * 0.5));
 				break;
 			case "ice":
-				defendingTeam.get(0).setAil1("FRZ");
+				defendingPokemon.setAil1("FRZ");
 				break;
 			case "poison":
-				defendingTeam.get(0).setAil1("PSN");
+				defendingPokemon.setAil1("PSN");
 				break;
 			default:
 				break;
@@ -238,7 +274,7 @@ public class ServletPokemonFight extends HttpServlet {
 		}
 		
 		// Wenn angreifer brennt verursacht er halben Schaden und bei LichtSchild/Reflektor zusätzlich halben Schaden
-		if(ail1Att != null && ail1Att.equals("BRN")) {
+		if(attackingPokemon.getAil1() != null && attackingPokemon.getAil1().equals("BRN")) {
 			statusMod *= 0.5;
 			//  #### if Lichtschild statusMod *= 0.5;
 		}
@@ -259,79 +295,107 @@ public class ServletPokemonFight extends HttpServlet {
 			damage = damage * spAttack / 50 / spDefense * statusMod + 2;
 			break;
 		case "status":
+			explanationMng.addExplanationBeforeDamage(attackingPokemon.getName() + " used a status attack:<br>");
 			damage = 0;
 			switch (attackEffect) {
 			case "brn":
-				if(defendingTeam.get(0).getAil1() == null) {
-					defendingTeam.get(0).setAil1("BRN");
+				if(defendingPokemon.getAil1() == null) {
+					defendingPokemon.setAil1("BRN");
 				}
+				explanationMng.addExplanationBeforeDamage(nameDefender + " was burned.<br>");
 				break;
 			case "par":
 				rndNum = 1 + (int)(Math.random() * ((100 - 1) + 1)); // [min:1, max:100]
-				if(rndNum >= 10 && defendingTeam.get(0).getAil1() == null) {
-					defendingTeam.get(0).setAil1("PAR");
-					defendingTeam.get(0).setInitiative((int) (defendingTeam.get(0).getInitiative() * 0.5));
+				if(rndNum >= 10 && defendingPokemon.getAil1() == null) {
+					defendingPokemon.setAil1("PAR");
+					defendingPokemon.setInitiative((int) (defendingPokemon.getInitiative() * 0.5));
+					explanationMng.addExplanationBeforeDamage(nameDefender + " was paralysed.<br>");
 				}
 				break;
 			case "psn":
-				if(defendingTeam.get(0).getAil1() == null) {
-					defendingTeam.get(0).setAil1("PSN");
+				if(defendingPokemon.getAil1() == null) {
+					defendingPokemon.setAil1("PSN");
+					explanationMng.addExplanationBeforeDamage(nameDefender + " was poisoned.<br>");
 				}
 				break;
 			case "psn2":
-				if(defendingTeam.get(0).getAil1() == null) {
-					defendingTeam.get(0).setAil1("PSN2");
+				if(defendingPokemon.getAil1() == null) {
+					defendingPokemon.setAil1("PSN2");
+					explanationMng.addExplanationBeforeDamage(nameDefender + " was badly poisoned.<br>");
 				}
 				break;
 			case "slp":
-				if(defendingTeam.get(0).getAil1() == null) {
-					defendingTeam.get(0).setAil1("SLP");
+				if(defendingPokemon.getAil1() == null) {
+					defendingPokemon.setAil1("SLP");
+					explanationMng.addExplanationBeforeDamage(nameDefender + " falls asleep.<br>");
 				}
 				break;
 			case "conf":
-				defendingTeam.get(0).setAil2("conf");
+				if(defendingPokemon.getAil2() == null || !defendingPokemon.getAil2().contains("conf")) {
+					defendingPokemon.setAil2(defendingPokemon.getAil2() + "conf");
+					explanationMng.addExplanationBeforeDamage(nameDefender + " was confused.<br>");
+				}
 				break;
 			case "leech":
-				defendingTeam.get(0).setAil2("leech");
+				if(defendingPokemon.getAil2() != null && !defendingPokemon.getAil2().contains("leech")) {
+					defendingPokemon.setAil2(defendingPokemon.getAil2() + "leech");
+					explanationMng.addExplanationBeforeDamage("A seed was planted on " + nameAttacker + ".<br>");
+				}
 				break;
 			case "heal":
-				//attackingTeam.get(0).setHitpoints(50%);
+				attackingPokemon.setHitpoints((int) (attackingPokemon.getHitpoints() + (attackingPokemon.getMaxHitpoints() * 0.4)));
+				if(attackingPokemon.getMaxHitpoints() < attackingPokemon.getHitpoints()) {
+					attackingPokemon.setHitpoints(attackingPokemon.getMaxHitpoints());
+				}
+				explanationMng.addExplanationBeforeDamage(nameAttacker + " healed itself by " + (int)(attackingPokemon.getMaxHitpoints() * 0.4) + ".<br>");
 				break;
 			case "ref":
 				//Reflektor
+				explanationMng.addExplanationBeforeDamage(nameAttacker + "'s set up a reflector (not implemented).<br>");
 				break;
 			case "ls":
 				//Lichtschild
+				explanationMng.addExplanationBeforeDamage(nameAttacker + "'s set up a light screen (not implemented).<br>");
 				break;
 			case "ab":
-				attackingTeam.get(0).setAttack((int) (attackingTeam.get(0).getAttack() * 1.5));
+				attackingPokemon.setAttack((int) (attackingPokemon.getAttack() * 1.5));
+				explanationMng.addExplanationBeforeDamage(nameAttacker + "'s attack was increased.<br>");
 				break;
 			case "db":
-				attackingTeam.get(0).setDefense((int) (attackingTeam.get(0).getDefense() * 1.5));
+				attackingPokemon.setDefense((int) (attackingPokemon.getDefense() * 1.5));
+				explanationMng.addExplanationBeforeDamage(nameAttacker + "'s defense was increased.<br>");
 				break;
 			case "sab":
-				attackingTeam.get(0).setSpAttack((int) (attackingTeam.get(0).getSpAttack() * 1.5));
+				attackingPokemon.setSpAttack((int) (attackingPokemon.getSpAttack() * 1.5));
+				explanationMng.addExplanationBeforeDamage(nameAttacker + " special attack was increased.<br>");
 				break;
 			case "sdb":
-				attackingTeam.get(0).setSpDefense((int) (attackingTeam.get(0).getSpDefense() * 1.5));
+				attackingPokemon.setSpDefense((int) (attackingPokemon.getSpDefense() * 1.5));
+				explanationMng.addExplanationBeforeDamage(nameAttacker + "'s special defense was increased.<br>");
 				break;
 			case "sb":
-				attackingTeam.get(0).setInitiative((int) (attackingTeam.get(0).getInitiative() * 1.5));
+				attackingPokemon.setInitiative((int) (attackingPokemon.getInitiative() * 1.5));
+				explanationMng.addExplanationBeforeDamage(nameAttacker + "'s speed was increased.<br>");
 				break;
 			case "ad":
-				defendingTeam.get(0).setAttack((int) (defendingTeam.get(0).getAttack() * 0.5));
+				defendingPokemon.setAttack((int) (defendingPokemon.getAttack() * 0.5));
+				explanationMng.addExplanationBeforeDamage(nameDefender + "'s attack was decreased.<br>");
 				break;
 			case "dd":
-				defendingTeam.get(0).setDefense((int) (defendingTeam.get(0).getDefense() * 0.5));
+				defendingPokemon.setDefense((int) (defendingPokemon.getDefense() * 0.5));
+				explanationMng.addExplanationBeforeDamage(nameDefender + "'s defense was decreased.<br>");
 				break;
 			case "sad":
-				defendingTeam.get(0).setSpAttack((int) (defendingTeam.get(0).getSpAttack() * 0.5));
+				defendingPokemon.setSpAttack((int) (defendingPokemon.getSpAttack() * 0.5));
+				explanationMng.addExplanationBeforeDamage(nameDefender + "'s special attack was decreased.<br>");
 				break;
 			case "sdd":
-				defendingTeam.get(0).setSpDefense((int) (defendingTeam.get(0).getSpDefense() * 0.5));
+				defendingPokemon.setSpDefense((int) (defendingPokemon.getSpDefense() * 0.5));
+				explanationMng.addExplanationBeforeDamage(nameDefender + "'s special defense was decreased.<br>");
 				break;
 			case "sd":
-				defendingTeam.get(0).setInitiative((int) (defendingTeam.get(0).getInitiative() * 0.5));
+				defendingPokemon.setInitiative((int) (defendingPokemon.getInitiative() * 0.5));
+				explanationMng.addExplanationBeforeDamage(nameDefender + "'s speed was decreased.<br>");
 				break;
 			default:
 				break;
@@ -341,31 +405,52 @@ public class ServletPokemonFight extends HttpServlet {
 			break;
 		}
 				
-		// Gebe Anfälligkeit/Resistenz gegen die Attacke wieder:		
-		// Pokemontypen der Liste hinzufügen
-		for (Map.Entry<String, Double> entry : defendingPokemon.entrySet()) {
-			typeKeys.add(entry.getKey());
-		}
-		// Liste durchgehen und Modifikation aus TypeTableSupport ziehen
-		for(int i = 0; i < typeKeys.size(); i++) {
-			if(typeKeys.get(i).equals(attackType)) {
-				typeMod = defendingPokemon.get(typeKeys.get(i));
-			}
-		}
 		// Schaden mit Anfälligkeit/Resistenz multiplizieren
 		// typeMod kann 0, 0.25, 0.5, 1, 2 oder 4 sein
 		damage = damage * typeMod;
 		
-		System.out.println("\n"
-				+ attackingTeam.get(0).getName()
-				+ "\nattack: " + attackType
-				+ "\ntype1: " + pokemonType1
-				+ "\ntype2: " + pokemonType2
-				+ "\nSTAB: " + isSTAB
-				+ "\nAngriffsmod: " + typeMod
-				+ "\nSchaden: " + (int)damage);
+		defendingPokemon.setHitpoints(defendingPokemon.getHitpoints() - (int)damage);
 		
-		defendingTeam.get(0).setHitpoints(defendingTeam.get(0).getHitpoints() - (int)damage);
+		explanationMng.addExplanationDamage(attackingTeam, defendingTeam, pokemonAttack, isSTAB, typeMod, damage);
+	}
+	
+	// Methode für die Berechnung des Schadens durch einen Status
+	private void calculateStatusDamage(Pokemonteam activeTeam, Pokemonteam passiveTeam, PokemonExplanationManager explanationMng) {
+		
+		Pokemon activePokemon = activeTeam.getPokemon().get(0);
+		Pokemon passivePokemon = passiveTeam.getPokemon().get(0);
+		
+		int maxHp = activePokemon.getMaxHitpoints();
+		double hpFracture = maxHp * (1.0 / 8.0);
+		String ail1 = activePokemon.getAil1();
+		String ail2 = activePokemon.getAil2();
+		
+		// Prüfe ob Pokemon einen Status hat
+		if(ail1 != null) {
+			
+			// Wenn Pokemon an Verbrennung-Status leidet, füge Schaden in Höhe von 1/8 max. HP
+			if(ail1.equals("BRN")) {
+				activePokemon.setHitpoints((int) (activePokemon.getHitpoints() - hpFracture));
+				explanationMng.addExplanationBeforeDamage(activePokemon.getName() + " took damage due to burning.<br>");
+			}
+			
+			// Berechne Schaden Schweres Gift
+			//	Heavy Poison x*1/16 x inkrementiert sich um 1 je Runde wo Pokemon draussen; Reset auf 1 bei Wechsel
+			if(ail1.equals("PSN2") || ail1.equals("PSN")) {
+				activePokemon.setHitpoints((int) (activePokemon.getHitpoints() - hpFracture));
+				explanationMng.addExplanationBeforeDamage(activePokemon.getName() + " took damage due to poison.<br>");
+			}
+		}
+		
+		// Wenn Egelsamen-Status, dann Schaden in Höhe von 1/8 max. HP
+		// Gegner wird um Betrag des Schadens geheilt
+		if(ail2 != null &&  ail2.contains("leech")) {
+			activePokemon.setHitpoints((int) (activePokemon.getHitpoints() - hpFracture));
+			passivePokemon.setHitpoints((int) (passivePokemon.getHitpoints() + hpFracture));
+			explanationMng.addExplanationBeforeDamage(activePokemon.getName() + " took damage due to leech seed.<br>"
+					+ passivePokemon.getName() + " was healed a bit due to leech seed.");
+		}
+		explanationMng.addExplanationDefeat(passiveTeam, checkPokemonDefeated(passiveTeam.getPokemon()), checkTeamDefeated(passiveTeam.getPokemon()));
 	}
 	
 	// Methode zum Prüfen ob ein Pokemon besiegt wurde

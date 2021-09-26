@@ -1,11 +1,5 @@
 package pokemon;
 
-	//	Burn 1/8 Dmg bis Heilung
-	//	Poison 1/8 Dmg bis Heilung
-	//	Heavy Poison x*1/16 x inkrementiert sich um 1 je Runde wo Pokemon draussen; Reset auf 1 bei Wechsel
-	//	Confusion 1/3 selber Schaden (40 Physisch Normal) zufügen, anstelle Attacke (2-5 Runden)
-	//	Egelsamen 1/8 Debuff + Heilung um gleichen Betrag
-	
 public class Attack {
 	// Membervariables
 	private String attacktype;

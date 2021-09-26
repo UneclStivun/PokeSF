@@ -76,6 +76,6 @@ public class ServletUserRegistration extends HttpServlet {
 		new ServletUserSession(request, user_name, user_email, "user");
 		
 		// Führe zurück zur Seite der Registrierung
-		request.getRequestDispatcher("userRegistration.jsp").forward(request, response);
+		request.getRequestDispatcher("index.jsp").forward(request, response);
 	}
 }

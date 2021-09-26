@@ -1,0 +1,19 @@
+@charset "ISO-8859-1";
+
+body {
+	margin:0;
+	padding:0;
+    background-image: url(images/pokemon.jpg);
+    background-repeat: no-repeat;
+    background-position: top;
+}
+
+select{
+    background: rgba(255,255,255,1);
+    color:	#400040;
+}
+
+.container {
+	color: white;
+}
+

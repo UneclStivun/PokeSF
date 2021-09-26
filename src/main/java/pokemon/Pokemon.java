@@ -23,6 +23,8 @@ public class Pokemon {
 	
 	private Map<String, Double> defenseAffinity;
 	
+	private int maxHitpoints;
+	
 	private int hitpoints;
 	
 	private int maxHp;
@@ -56,6 +58,7 @@ public class Pokemon {
 		this.name = name;
 		this.type1 = type1;
 		this.type2 = type2;
+		this.maxHitpoints = hitpoints;
 		this.hitpoints = hitpoints;
 		this.attack = attack;
 		this.defense = defense;
@@ -278,5 +281,12 @@ public class Pokemon {
 
 	public void setAttacks(List<Attack> attacks) {
 		this.attacks = attacks;
+	}
+	public int getMaxHitpoints() {
+		return maxHitpoints;
+	}
+
+	public void setMaxHitpoints(int maxHitpoints) {
+		this.maxHitpoints = maxHitpoints;
 	}
 }

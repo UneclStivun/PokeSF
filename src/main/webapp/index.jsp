@@ -27,7 +27,9 @@
 	
 	<!-- Wenn Rolle des Nutzers eine Adminrolle ist, wird der Delete-Button angezeigt -->
 	<c:if test="${sessionScope.user_role == 'admin' || sessionScope.user_role == 'origin' }">
-		<button class="btn btn-danger btn-block" onclick="window.location.href='pokemonEdit.jsp'">Edit Pokemon Databse</button>
+		<button class="btn btn-danger btn-block" onclick="window.location.href='userManagement.jsp'">User Management</button>
+		<br><br>
+		<button class="btn btn-danger btn-block" onclick="window.location.href='pokemonEdit.jsp'">Edit Pokemon Database</button>
 		<br><br>
 	</c:if>
 	

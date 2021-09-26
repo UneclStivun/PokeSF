@@ -122,7 +122,7 @@ public class ServletPokemonEdit extends HttpServlet {
 
 		// Instanz von DatabaseManipulator, um Validationseintrag in der Datenbank zu aktualisieren
 		DatabaseManipulator dmPokemonDatabase = new DatabaseManipulator();
-		//dmPokemonDatabase.deletePokemon(pokemon_id);
+		dmPokemonDatabase.deletePokemon(pokemon_id);
 		
 		showPokemonTable(request, response, session.getAttribute("pressedButton").toString());
 	}

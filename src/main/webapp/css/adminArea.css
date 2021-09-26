@@ -1,0 +1,22 @@
+@charset "ISO-8859-1";
+
+body {
+	margin:0;
+	padding:0;
+    background-image: url(images/pokeball_background.jpg);
+ 	background-size: 100%;
+    background-repeat: repeat;
+    background-position: top;
+}
+
+th {
+	color: #999ba2;
+}
+
+tr {
+	color: #779df5;
+}
+
+span {
+	/* background: rgba(101, 162, 184, 0.5); */
+}

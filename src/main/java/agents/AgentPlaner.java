@@ -292,7 +292,7 @@ public class AgentPlaner extends Agent {
 			}
 			
 			//if enemy pokemon is bound by status prefer buff
-			if(actualUserPokemon.getAil1().equals("PAR") || actualUserPokemon.getAil1().equals("FRZ") || actualUserPokemon.getAil1().equals("SLP")) {
+			if(actualUserPokemon.getAil1() != null && (actualUserPokemon.getAil1().equals("PAR") || actualUserPokemon.getAil1().equals("FRZ") || actualUserPokemon.getAil1().equals("SLP"))) {
 				if(att.getEffect() != null) {
 					String[] buffs = {"ab", "db", "sab", "sdb" , "sb" ,"ad", "dd", "sad", "sdd", "sd"};
 					for(int j = 0; j < buffs.length; j++) {

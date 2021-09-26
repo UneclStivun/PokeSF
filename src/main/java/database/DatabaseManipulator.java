@@ -89,7 +89,113 @@ public class DatabaseManipulator {
 		
 		return userData;
 	}
+	
+	//==== Methode zum Heranziehen aller angemeldeten Accounts ====//
+	public ArrayList<String[]> getAllAccounts() {
 		
+		ArrayList<String[]> allAccounts = new ArrayList<String[]>();
+		ResultSet rs;
+		
+		try {
+			PreparedStatement pStmntAllAccounts = con.prepareStatement("SELECT username, email, role FROM account");
+			rs = pStmntAllAccounts.executeQuery();		
+			
+			while (rs.next()) {
+				String[] s = { rs.getString(1), rs.getString(2), rs.getString(3)};
+				allAccounts.add(s);
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return allAccounts;
+	}
+	
+	//==== Methode zum Heranziehen aller User-Accounts ====//
+	public ArrayList<String[]> getUserAccounts() {
+		
+		ArrayList<String[]> allUsers = new ArrayList<String[]>();
+		ResultSet rs;
+		
+		try {
+			PreparedStatement pStmntAllUsers = con.prepareStatement("SELECT username, email, role FROM account WHERE role = 'user'");
+			rs = pStmntAllUsers.executeQuery();		
+			
+			while (rs.next()) {
+				String[] s = { rs.getString(1), rs.getString(2), rs.getString(3)};
+				allUsers.add(s);
+			}
+			
+			con.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return allUsers;
+	}
+	
+	//==== Methode zum Heranziehen aller Admin-Accounts ====//
+	public ArrayList<String[]> getAdminAccounts() {
+		
+		ArrayList<String[]> allAdmins = new ArrayList<String[]>();
+		ResultSet rs;
+		
+		try {
+			PreparedStatement pStmntAllAdmins = con.prepareStatement("SELECT username, email, role FROM account WHERE role = 'admin' OR role = 'origin' ORDER BY role");
+			rs = pStmntAllAdmins.executeQuery();		
+			
+			while (rs.next()) {
+				String[] s = { rs.getString(1), rs.getString(2), rs.getString(3)};
+				allAdmins.add(s);
+			}
+			
+			con.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return allAdmins;
+	}
+	
+	//==== Methode zum Ändern einer Rolle ====//
+	public void changeAccountRole(String role, String email) {
+		
+		try {
+			PreparedStatement pStmntValidate = con.prepareStatement("UPDATE account SET role = ? WHERE email = ?");
+			
+			pStmntValidate.setString(1, role);
+			pStmntValidate.setString(2, email);
+			
+			pStmntValidate.executeUpdate();
+			
+			con.close();
+				
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	//==== Methode zum Löschen eines Accounts ====//
+	public void deleteAccount(String email) {
+		
+		try {
+			PreparedStatement pStmntValidate = con.prepareStatement("DELETE FROM account WHERE email = ?");
+			
+			pStmntValidate.setString(1, email);
+			
+			pStmntValidate.executeUpdate();
+			
+			// Datenbankverbindung schließen
+			con.close();
+				
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	//==== Methode zum Hinzufügen eines Nutzers in die Datenbank ====//
 	public void addUserToDatabase(String user_name, String user_password, String user_email) throws SQLException {
 		

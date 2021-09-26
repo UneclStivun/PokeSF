@@ -9,9 +9,11 @@
 	<!-- Websocket -->
 	<script src="js/websocket.js"></script>
 	
-	<meta charset="ISO-8859-1">
+	<!-- Styles/Bootstrap -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 	<link rel="stylesheet" href="css/pokemonFight.css" type="text/css">
+	
+	<meta charset="ISO-8859-1">
 	
 	<title>Pokemon Fight</title>
 </head>
@@ -27,14 +29,14 @@
 						<td class="td-line">Enemy/Agent</td>
 						<td class="td-line">${sessionScope.enemyTeam.getTeamname()}</td>
 						<td class="td-line pokemonName" title="${sessionScope.enemyTeam.getPokemon().get(0).getType1()} ${sessionScope.enemyTeam.getPokemon().get(0).getType2() == 'null' ? '' : sessionScope.enemyTeam.getPokemon().get(0).getType2()}"><u>${sessionScope.enemyTeam.getPokemon().get(0).getName()}</u></td>
-						<td class="td-line">${sessionScope.enemyTeam.getPokemon().get(0).getHitpoints()}</td>
+						<td class="td-line">${sessionScope.enemyTeam.getPokemon().get(0).getHitpoints()} / ${sessionScope.enemyTeam.getPokemon().get(0).getMaxHitpoints()}</td>
 						<td class="td-line ${sessionScope.enemyTeam.getPokemon().get(0).getAil1()}">${sessionScope.enemyTeam.getPokemon().get(0).getAil1()}</td>
 					</tr>
 					<tr>
 						<td>User</td>
 						<td>${sessionScope.userTeam.getTeamname()}</td>
 						<td class="pokemonName" title="${sessionScope.userTeam.getPokemon().get(0).getType1()} ${sessionScope.userTeam.getPokemon().get(0).getType2() == 'null' ? '' : sessionScope.userTeam.getPokemon().get(0).getType2()}"><u>${sessionScope.userTeam.getPokemon().get(0).getName()}</u></td>
-						<td>${sessionScope.userTeam.getPokemon().get(0).getHitpoints()}</td>
+						<td>${sessionScope.userTeam.getPokemon().get(0).getHitpoints()} / ${sessionScope.userTeam.getPokemon().get(0).getMaxHitpoints()}</td>
 						<td class="${sessionScope.userTeam.getPokemon().get(0).getAil1()}">${sessionScope.userTeam.getPokemon().get(0).getAil1()}</td>
 					</tr>
 				</table>
@@ -49,7 +51,7 @@
 	</c:choose>
 	<br>
 	
-	<div class="user_options" class="container">
+	<div class="user_options container">
 		<div class="row">
 			
 			<!-- Attack buttons -->
@@ -67,14 +69,16 @@
 					<c:forEach items="${sessionScope.userTeam.getPokemon()}" var="pokemon" varStatus="counter">
 						<c:if test="${counter.index > 0 }">
 							<c:choose>
-								<c:when test="${sessionScope.userTeam.getPokemon().get(counter.index).getHitpoints() > 0 }">
+								<c:when test="${pokemon.getHitpoints() > 0 }">
 									<button type="button" class="btn btn-link" onclick="switchPokemon(${counter.index})">Switch to</button>
 								</c:when>
 								<c:otherwise>
 									<button type="button" class="btn btn-link" onclick="switchPokemon(${counter.index})"><strike>Switch to</strike></button>
 								</c:otherwise>
 							</c:choose>
-							${pokemon.getName()}
+							<span title="${pokemon.getType1()} ${pokemon.getType2() == 'null' ? '' : pokemon.getType2()}">
+								${pokemon.getName()}
+							</span>
 							<br>
 						</c:if>
 					</c:forEach>
