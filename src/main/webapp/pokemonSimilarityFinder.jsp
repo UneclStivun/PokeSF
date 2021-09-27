@@ -16,8 +16,9 @@
 </head>
 <body>
 
-	<div class="container">
-	
+<div class="container">
+	<div class="row">
+	<br><br>
 	<form id="formoid" method="post" action="ServletPokemonSimilarityFinder">
 		<input type="text" class="form-control" placeholder="Pokemon Name" name="pokemon_name"> <br> <label>Pokemon Type 1:</label>
 		<select name="pokemon_type_1">
@@ -281,55 +282,56 @@
 		<button class="btn btn-primary" type="submit">Search for similar Pokemon</button>
 		<a href="pokemonTeamCreator.jsp" class="btn btn-primary">Go to Teamcreator</a>
 	</form>
-
-	<br>
-	<p class="font-weight-italic" style="color: red;">${message }</p>
-	<form action="ServletQuickList" method="post">
-	<c:if
-		test="${sessionScope.resultCases != null && !sessionScope.resultCases.isEmpty()}">
-		<%int number = 0;%>
-		<table border=1>
-			<!-- Table Header -->
-			<tr>
-				<c:forEach items="${columnNames}" var="name">
-					<th>${name}</th>
-				</c:forEach>
-			</tr>
-			<!-- Table Content -->
-			<c:forEach items="${sessionScope.resultCases}" var="result">
+	</div>
+	<div class="row">
+		<div class="col-12">
+		<br>
+		<p class="font-weight-italic" style="color: red;">${message }</p>
+		<form action="ServletQuickList" method="post">
+		<c:if test="${sessionScope.resultCases != null && !sessionScope.resultCases.isEmpty()}">
+			<%int number = 0;%>
+			<table border=1 style="width:100%">
+				<!-- Table Header -->
 				<tr>
-					<td><button type="button" class="btn btn-link" onclick="showAttacks('${result.getPokemon().getDatabaseID()}')">${result.getPokemon().getName()}</button></td>
-					<td>${result.getPokemon().getType1()}</td>
-					<td>${result.getPokemon().getType2()}</td>
-					<td>${result.getPokemon().getHitpoints()}</td>
-					<td>${result.getPokemon().getAttack()}</td>
-					<td>${result.getPokemon().getDefense()}</td>
-					<td>${result.getPokemon().getSpAttack()}</td>
-					<td>${result.getPokemon().getSpDefense()}</td>
-					<td>${result.getPokemon().getInitiative()}</td>
-					<td>${result.getSim()}</td>
-					<td>
-						<input class="form-check-input" type="checkbox" value="<%=number%>" name="add<%=number%>" checked> 
-						<label class="form-check-label"	for="flexCheckChecked" style="margin-left: 2.em"> </label>
-					</td>
-				</tr>
-				<tr id="${result.getPokemon().getDatabaseID()}" style="display: none">
-					<c:forEach items="${result.getPokemon().getAttacks()}" var="attack">
-					<td width=20>${attack.getAttacktype()}</td>
-					<td width=30>${attack.getAttackclass()}</td>
-					<td width=40>${attack.getDmg()}</td>
-					<td width=50>${attack.getEffect()}</td>
+					<c:forEach items="${columnNames}" var="name">
+						<th>${name}</th>
 					</c:forEach>
 				</tr>
-				<%number++; %>
-			</c:forEach>
-		</table>
-		<br>
-		<button class="btn btn-success" type="submit">Add to quicklist</button>
-	</c:if>
-	</form>
-	
+				<!-- Table Content -->
+				<c:forEach items="${sessionScope.resultCases}" var="result">
+					<tr>
+						<td><button type="button" class="btn btn-link" onclick="showAttacks('${result.getPokemon().getDatabaseID()}')">${result.getPokemon().getName()}</button></td>
+						<td>${result.getPokemon().getType1()}</td>
+						<td>${result.getPokemon().getType2()}</td>
+						<td>${result.getPokemon().getHitpoints()}</td>
+						<td>${result.getPokemon().getAttack()}</td>
+						<td>${result.getPokemon().getDefense()}</td>
+						<td>${result.getPokemon().getSpAttack()}</td>
+						<td>${result.getPokemon().getSpDefense()}</td>
+						<td>${result.getPokemon().getInitiative()}</td>
+						<td>${result.getSim()}</td>
+						<td>
+							<input class="form-check-input" type="checkbox" value="<%=number%>" name="add<%=number%>" checked> 
+							<label class="form-check-label"	for="flexCheckChecked" style="margin-left: 2.em"> </label>
+						</td>
+					</tr>
+					<c:forEach items="${result.getPokemon().getAttacks()}" var="attack">
+					<tr name="${result.getPokemon().getDatabaseID()}" style="display: none">
+						<td width=60>${attack.getAttacktype()}</td>
+						<td width=60>${attack.getAttackclass()}</td>
+						<td width=50>${attack.getEffect()}</td>
+					</tr>
+					</c:forEach>
+					<%number++; %>
+				</c:forEach>
+			</table>
+			<br>
+			<button class="btn btn-success" type="submit">Add to quicklist</button>
+		</c:if>
+		</form>
+		</div>
 	</div>
+</div>
 	
 	<button type="button" class="btn btn-info" style="bottom: 0%; position: fixed;" onclick="window.location.href='index.jsp'">Back to main menu</button>
 		
@@ -372,11 +374,15 @@
 			}
 		}
 		/* Show or hide pokemon attacks */
-		function showAttacks(pokemon_id){
-			if(document.getElementById(pokemon_id).style.display === "none") {
-				document.getElementById(pokemon_id).style.display = "block";
-			} else {
-				document.getElementById(pokemon_id).style.display = "none";
+		function showAttacks(pokemon_name) {
+			var e = [];
+			var elems = document.getElementsByName(pokemon_name);
+			for (var i = 0; i < elems.length; i++) {
+				if (elems[i].style.display == "none") {
+					elems[i].style.display = "block"
+				} else {
+					elems[i].style.display = "none"
+				}
 			}
 		}
 	</script>

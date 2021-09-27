@@ -78,27 +78,17 @@
 			<tr>
 				<td><span class="button icon"></span></td>
 				<td style="width: 95%;">
-					<button class="btn btn-danger btn-block" onclick="window.location.href='pokemonTeamCreator.jsp'">Create Pokemon Teams</button>
-				</td>
-			</tr>
-		</table>
-		<br><br>
-		
-		<table style="width: 100%;">
-			<tr>
-				<td><span class="button icon"></span></td>
-				<td style="width: 95%;">
-					<button class="btn btn-danger btn-block" onclick="window.location.href='pokemonTeamCreator.jsp'">Create Pokemon Teams</button>
-				</td>
-			</tr>
-		</table>
-		<br><br>
-		
-		<table style="width: 100%;">
-			<tr>
-				<td><span class="button icon"></span></td>
-				<td style="width: 95%;">
 					<button class="btn btn-danger btn-block" onclick="window.location.href='pokemonSimilarityFinder.jsp'">Find similar Pokemon</button>
+				</td>
+			</tr>
+		</table>
+		<br><br>
+		
+		<table style="width: 100%;">
+			<tr>
+				<td><span class="button icon"></span></td>
+				<td style="width: 95%;">
+					<button class="btn btn-danger btn-block" onclick="window.location.href='pokemonTeamCreator.jsp'">Create Pokemon Teams</button>
 				</td>
 			</tr>
 		</table>

@@ -428,32 +428,34 @@ public class ServletPokemonFight extends HttpServlet {
 		String ail1 = activePokemon.getAil1();
 		String ail2 = activePokemon.getAil2();
 		
-		// Prüfe ob Pokemon einen Status hat
-		if(ail1 != null) {
-			
-			// Wenn Pokemon an Verbrennung-Status leidet, füge Schaden in Höhe von 1/8 max. HP
-			if(ail1.equals("BRN")) {
-				activePokemon.setHitpoints((int) (activePokemon.getHitpoints() - hpFracture));
-				explanationMng.addExplanationBeforeDamage(activePokemon.getName() + " took damage due to burning.<br>");
+		if(activePokemon.getHitpoints() > 0) {
+			// Prüfe ob Pokemon einen Status hat
+			if(ail1 != null) {
+				
+				// Wenn Pokemon an Verbrennung-Status leidet, füge Schaden in Höhe von 1/8 max. HP
+				if(ail1.equals("BRN")) {
+					activePokemon.setHitpoints((int) (activePokemon.getHitpoints() - hpFracture));
+					explanationMng.addExplanationBeforeDamage(activePokemon.getName() + " took damage due to burning.<br>");
+				}
+				
+				// Berechne Schaden Schweres Gift
+				//	Heavy Poison x*1/16 x inkrementiert sich um 1 je Runde wo Pokemon draussen; Reset auf 1 bei Wechsel
+				if(ail1.equals("PSN2") || ail1.equals("PSN")) {
+					activePokemon.setHitpoints((int) (activePokemon.getHitpoints() - hpFracture));
+					explanationMng.addExplanationBeforeDamage(activePokemon.getName() + " took damage due to poison.<br>");
+				}
 			}
 			
-			// Berechne Schaden Schweres Gift
-			//	Heavy Poison x*1/16 x inkrementiert sich um 1 je Runde wo Pokemon draussen; Reset auf 1 bei Wechsel
-			if(ail1.equals("PSN2") || ail1.equals("PSN")) {
+			// Wenn Egelsamen-Status, dann Schaden in Höhe von 1/8 max. HP
+			// Gegner wird um Betrag des Schadens geheilt
+			if(ail2 != null &&  ail2.contains("leech")) {
 				activePokemon.setHitpoints((int) (activePokemon.getHitpoints() - hpFracture));
-				explanationMng.addExplanationBeforeDamage(activePokemon.getName() + " took damage due to poison.<br>");
+				passivePokemon.setHitpoints((int) (passivePokemon.getHitpoints() + hpFracture));
+				explanationMng.addExplanationBeforeDamage(activePokemon.getName() + " took damage due to leech seed.<br>"
+						+ passivePokemon.getName() + " was healed a bit due to leech seed.");
 			}
+			explanationMng.addExplanationDefeat(activeTeam, checkPokemonDefeated(activeTeam.getPokemon()), checkTeamDefeated(activeTeam.getPokemon()));
 		}
-		
-		// Wenn Egelsamen-Status, dann Schaden in Höhe von 1/8 max. HP
-		// Gegner wird um Betrag des Schadens geheilt
-		if(ail2 != null &&  ail2.contains("leech")) {
-			activePokemon.setHitpoints((int) (activePokemon.getHitpoints() - hpFracture));
-			passivePokemon.setHitpoints((int) (passivePokemon.getHitpoints() + hpFracture));
-			explanationMng.addExplanationBeforeDamage(activePokemon.getName() + " took damage due to leech seed.<br>"
-					+ passivePokemon.getName() + " was healed a bit due to leech seed.");
-		}
-		explanationMng.addExplanationDefeat(passiveTeam, checkPokemonDefeated(passiveTeam.getPokemon()), checkTeamDefeated(passiveTeam.getPokemon()));
 	}
 	
 	// Methode zum Prüfen ob ein Pokemon besiegt wurde
